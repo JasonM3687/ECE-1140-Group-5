@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-01-29T23:05:01.317Z" agent="5.0 (Windows)" etag="OJCvL0Q8SYCxq7IZ0RwJ" version="14.2.9" type="github">
+<mxfile host="app.diagrams.net" modified="2021-01-29T23:09:31.794Z" agent="5.0 (Windows)" etag="MQC7GI3XwLbXHoW5_427" version="14.2.9" type="github">
   <diagram id="ZzeNlcGiF9x-yTzajEMn" name="Page-1">
     <mxGraphModel dx="2104" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -23,11 +23,19 @@
         <mxCell id="KRq555Xv5bsVZkIRecgD-3" value="SW Track Controller" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-18.0459770114943" y="620.1960784313726" width="245.51724137931032" height="132.94117647058823" as="geometry" />
         </mxCell>
+        <mxCell id="KRq555Xv5bsVZkIRecgD-81" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="KRq555Xv5bsVZkIRecgD-4" target="KRq555Xv5bsVZkIRecgD-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="KRq555Xv5bsVZkIRecgD-4" value="&lt;div&gt;&lt;font style=&quot;font-size: 18px&quot;&gt;Track Model&lt;/font&gt;&lt;/div&gt;&lt;div&gt;Track Layout&lt;/div&gt;&lt;div&gt;Grade and Elevation&lt;/div&gt;&lt;div&gt;Crossroads&lt;/div&gt;&lt;div&gt;Track Heaters&lt;/div&gt;&lt;div&gt;Stations&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-161.26436781609198" y="863.9215686274509" width="245.51724137931032" height="132.94117647058823" as="geometry" />
         </mxCell>
         <mxCell id="KRq555Xv5bsVZkIRecgD-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.45;entryY=-0.033;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="KRq555Xv5bsVZkIRecgD-2" target="KRq555Xv5bsVZkIRecgD-4">
-          <mxGeometry x="-550" y="310" as="geometry" />
+          <mxGeometry x="-550" y="310" as="geometry">
+            <Array as="points">
+              <mxPoint x="-182" y="820" />
+              <mxPoint x="-51" y="820" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="KRq555Xv5bsVZkIRecgD-76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="KRq555Xv5bsVZkIRecgD-5" target="KRq555Xv5bsVZkIRecgD-4">
           <mxGeometry relative="1" as="geometry" />
@@ -149,8 +157,17 @@
         <mxCell id="KRq555Xv5bsVZkIRecgD-77" value="&lt;div&gt;Train Status&lt;/div&gt;Occupancy" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="217.59" y="970" width="122.07" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="KRq555Xv5bsVZkIRecgD-79" value="Text" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="1030" y="830" width="40" height="20" as="geometry" />
+        <mxCell id="KRq555Xv5bsVZkIRecgD-79" value="&lt;div&gt;Speed Controls&lt;/div&gt;&lt;div&gt;Brake Commands&lt;/div&gt;&lt;div&gt;Light Commands&lt;/div&gt;&lt;div&gt;Door Controls&lt;/div&gt;&lt;div&gt;Station Announcements&lt;/div&gt;&lt;div&gt;Fault Status&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="830" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KRq555Xv5bsVZkIRecgD-80" value="&lt;div&gt;Speed Controls&lt;/div&gt;&lt;div&gt;Brake&lt;/div&gt;&lt;div&gt;Door Controls&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="850" y="430" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KRq555Xv5bsVZkIRecgD-82" value="&lt;div&gt;Occupancy&lt;/div&gt;&lt;div&gt;Train Position&lt;/div&gt;&lt;div&gt;Track Status&lt;/div&gt;&lt;div&gt;Track Temperature&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="10" y="780" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KRq555Xv5bsVZkIRecgD-83" value="Data Transfer" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="800.3399999999999" y="690" width="40" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
