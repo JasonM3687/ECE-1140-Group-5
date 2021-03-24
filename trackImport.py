@@ -25,8 +25,11 @@ class Block:
 		if(self.envTemp<=32):
 			self.heat=1
 
-class Beacon(Block):
-	data=""
+class Beacon:
+	def __init__(self,line,block,data):
+		self.line=line
+		self.block=block
+		self.data=data
 	def readBeacon(self):
 		return self.data
 
@@ -124,7 +127,46 @@ def trackPull(text):
 			tracks[-1].under=1
 		j=j+1
 
-	return tracks, beacons, signals
+		beacons.append(Beacon("Red",6,"Herron Ave"))
+		beacons.append(Beacon("Red",8,"Herron Ave"))
+		beacons.append(Beacon("Red",15,"Shadyside"))
+		beacons.append(Beacon("Red",17,"Swissville"))
+		beacons.append(Beacon("Red",20,"Herron Ave"))
+		beacons.append(Beacon("Red",22,"Penn Station"))
+		beacons.append(Beacon("Red",24,"Swissville"))
+		beacons.append(Beacon("Red",26,"Steel Plaza"))
+		beacons.append(Beacon("Red",34,"Penn Station"))
+		beacons.append(Beacon("Red",36,"First Ave"))
+		beacons.append(Beacon("Red",44,"Steel Plaza"))
+		beacons.append(Beacon("Red",46,"Station Square"))
+		beacons.append(Beacon("Red",47,"First Ave"))
+		beacons.append(Beacon("Red",49,"South Hills Junction"))
+		beacons.append(Beacon("Red",59,"Station Square"))
+		beacons.append(Beacon("Red",61,"Station Square"))
+  
+		beacons.append(Beacon("Green",1,"Station"))
+		beacons.append(Beacon("Green",8,"Pioneer"))
+		beacons.append(Beacon("Green",15,"Edgebrook"))
+		beacons.append(Beacon("Green",17,"Whited"))
+		beacons.append(Beacon("Green",21,"Station"))
+		beacons.append(Beacon("Green",23,"South Bank"))
+		beacons.append(Beacon("Green",32,"Central"))
+		beacons.append(Beacon("Green",40,"Inglewood"))
+		beacons.append(Beacon("Green",49,"Overbrook"))
+		beacons.append(Beacon("Green",58,"Glenbury"))
+		beacons.append(Beacon("Green",66,"Dormont"))
+		beacons.append(Beacon("Green",74,"Mt Lebanon"))
+		beacons.append(Beacon("Green",78,"Poplar"))
+		beacons.append(Beacon("Green",89,"Castle Shannon"))
+		beacons.append(Beacon("Green",97,"Mt Lebanon"))
+		beacons.append(Beacon("Green",101,"Dormont"))
+		beacons.append(Beacon("Green",106,"Glenbury"))
+		beacons.append(Beacon("Green",115,"Overbrook"))
+		beacons.append(Beacon("Green",124,"Inglewood"))
+		beacons.append(Beacon("Green",133,"Central"))
+		beacons.append(Beacon("Green",142,"Whited"))
+
+	return tracks, beacons, signals, stations
 
 
 def switchMake():
