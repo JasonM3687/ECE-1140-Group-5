@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from TrainDisplay import Ui_DisplayWindow
 from EngineerControl import Ui_EngineerWindow
 from TestUI import Ui_TestWindow
+from trainModel import Ui_MainWindow
 import time
 
 class Ui_LoginWindow(object):
@@ -23,8 +24,8 @@ class Ui_LoginWindow(object):
     headlightStatus = False
     cabinlightStatus = False
     doorStatus = False
-    kp = 2.0
-    ki = 2.0
+    kp = 0.0
+    ki = 0.0
     faultStatus = "NONE"
     modeStatus = "MANUAL"
     engineStatus = False
@@ -32,11 +33,11 @@ class Ui_LoginWindow(object):
     emergencyBrake = False
     intercom = False
     autoMode = False
-    CTCVelocity = 25
+    commanded = 25
     authority = 4
     speedLimit = 25
     power = 0
-
+    startTime = time.time()
 
 
     def setupUi1(self, LoginWindow):
@@ -127,6 +128,9 @@ class Ui_LoginWindow(object):
     def getServiceBrake(self):
         return self.serviceBrake
 
+    def getKp(self):
+        return self.kp
+
     #-------------------------------------------------------------------------------------
 
     lastTime = 0.0
@@ -137,17 +141,17 @@ class Ui_LoginWindow(object):
     def calcPower(self):
         #time since last calculation
         self.currentTime = time.time()
-        self.timeChange = self.currentTime - self.lastTime
+        self.timeChange = self.currentTime - self.startTime
 
         #Compute working error variables
         self.error = self.speed - self.currentVelocity
         self.errSum += self.error * self.timeChange
 
         #Compute PID power output
-        self.power = self.kp * self.error + self.ki * self.errSum
+        self.power = (self.kp * self.error) + (self.ki * self.errSum)
         print(self.power)
 
-        self.lastTime = self.currentTime
+        self.startTime = self.currentTime
 
 
 
@@ -202,6 +206,8 @@ class Ui_LoginWindow(object):
         self.testUI.headlightOutput.setText(str(self.headlightStatus))
         self.testUI.cabinlightOutput.setText(str(self.cabinlightStatus))
         self.testUI.doorOutput.setText(str(self.doorStatus))
+
+        self.testUI.CTCVelocityInput.setText(str(trainMod.getCommanded()))
 
 
         #Control Links
@@ -373,7 +379,11 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     LoginWindow = QtWidgets.QMainWindow()
+    TrainWindow = QtWidgets.QMainWindow()
     loginUI = Ui_LoginWindow()
     loginUI.setupUi1(LoginWindow)
+    trainMod = Ui_MainWindow()
+    trainMod.setupUi(TrainWindow)
     LoginWindow.show()
+    TrainWindow.show()
     sys.exit(app.exec_())
