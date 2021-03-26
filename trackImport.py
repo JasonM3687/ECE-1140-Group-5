@@ -2,7 +2,7 @@ import pylightxl as xl
 
 class Block:
 	heat=False
-	occ=False
+	occ=0
 	fail=0
 	direc=False
 	station=""

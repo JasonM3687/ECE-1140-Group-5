@@ -883,7 +883,7 @@ class Ui_MainWindow(object):
         self.failClear.setText(_translate("MainWindow", "No Failure"))
         self.label_10.setText(_translate("MainWindow", "Speed Limit:"))
         self.label_11.setText(_translate("MainWindow", "Section:"))
-        self.label_15.setText(_translate("MainWindow", "Length (ft):"))
+        self.label_15.setText(_translate("MainWindow", "Length (M):"))
         self.grade_box.setSuffix(_translate("MainWindow", "%"))
         self.groupBox_2.setTitle(_translate("MainWindow", "Block Select"))
         self.occ_label.setText(_translate("MainWindow", "N/A"))
@@ -1046,28 +1046,38 @@ class Ui_MainWindow(object):
         self.failClear.toggled.connect(self.update)
         self.heating_button.toggled.connect(self.update)
         
+        
     def importTrack(self):
         import trackImport
-        global tracks
-        global beacons
-        global signals
-        global stations
-        tracks, beacons, signals, stations=trackImport.trackPull(self.lineEdit.text())
-        global switches
-        switches=trackImport.switchMake()
-        self.block_select.setMaximum(len(tracks))
-        self.line_sel.addItem(tracks[0].line)
+        if(self.line_sel.currentText=="Green" or self.line_sel.currentText=="Red"):
+            return
+        
+        self.tracks, self.beacons, self.signals, self.stations=trackImport.trackPull(self.lineEdit.text())
+        self.switches=trackImport.switchMake()
+        self.trains=[]
+        for i in range(10):
+            self.trains.append(self.Train())
+        self.block_select.setMaximum(len(self.tracks))
+        self.line_sel.addItem(self.tracks[0].line)
         self.line_sel.addItem("Green")
         self.refresh()
+        
 
     def refresh(self):
         self.block()
-        for i in tracks:
+        self.trainUpdate()
+        self.crossUpdate()
+        self.switchUpdate()
+        self.stationUpdate()
+        for i in self.tracks:
             if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
                 self.sec_label.setText(i.section)
                 self.speed_label.setText(str(i.sLimit))
                 self.length_box.setValue(i.bLength)
-                self.occ_label.setText(str(i.occ))
+                if(i.occ==1):
+                    self.occ_label.setText("True")
+                else:
+                    self.occ_label.setText("False")
                 self.heating_button.setChecked(i.heat)
                 self.grade_box.setValue(i.bGrade)
                 self.elev_button.setValue(i.elev)
@@ -1081,7 +1091,7 @@ class Ui_MainWindow(object):
                     self.tcFail.setChecked(True)
                 elif(i.fail==3):
                     self.pFail.setChecked(True)
-                if(i.occ==1):
+                if(i.occ!=False):
                     self.stat_label.setText("Occupied")
                 else:
                     if(self.brFail.isChecked()):
@@ -1091,14 +1101,17 @@ class Ui_MainWindow(object):
                     elif(self.pFail.isChecked()):
                         self.stat_label.setText("Power Failure")
                     else:
-                        self.stat_label.setText("Clear")
+                        if(i.occ==1):
+                            self.stat_label.setText("Occupied")
+                        else:
+                            self.stat_label.setText("Clear")
                 self.switchUpdate()
                 self.unBlock()
                 break
 
     def update(self):
         self.block()
-        for i in tracks:
+        for i in self.tracks:
             if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
                 i.elev=self.elev_button.value()
                 i.cElev=self.celev_button.value()
@@ -1143,176 +1156,147 @@ class Ui_MainWindow(object):
         self.heating_button.blockSignals(False)
 
     def trainUpdate(self):
-        self.posT1.setText("{} {}".format(trains[0].posLine,trains[0].posBlock))
-        self.posT2.setText("{} {}".format(trains[1].posLine,trains[1].posBlock))
-        self.posT3.setText("{} {}".format(trains[2].posLine,trains[2].posBlock))
-        self.posT4.setText("{} {}".format(trains[3].posLine,trains[3].posBlock))
-        self.posT5.setText("{} {}".format(trains[4].posLine,trains[4].posBlock))
-        self.posT6.setText("{} {}".format(trains[5].posLine,trains[5].posBlock))
-        self.posT7.setText("{} {}".format(trains[6].posLine,trains[6].posBlock))
-        self.posT8.setText("{} {}".format(trains[7].posLine,trains[7].posBlock))
-        self.posT9.setText("{} {}".format(trains[8].posLine,trains[8].posBlock))
-        self.posT10.setText("{} {}".format(trains[9].posLine,trains[9].posBlock))
+        self.posT1.setText("{} {}".format(self.trains[0].posLine,self.trains[0].posBlock))
+        self.posT2.setText("{} {}".format(self.trains[1].posLine,self.trains[1].posBlock))
+        self.posT3.setText("{} {}".format(self.trains[2].posLine,self.trains[2].posBlock))
+        self.posT4.setText("{} {}".format(self.trains[3].posLine,self.trains[3].posBlock))
+        self.posT5.setText("{} {}".format(self.trains[4].posLine,self.trains[4].posBlock))
+        self.posT6.setText("{} {}".format(self.trains[5].posLine,self.trains[5].posBlock))
+        self.posT7.setText("{} {}".format(self.trains[6].posLine,self.trains[6].posBlock))
+        self.posT8.setText("{} {}".format(self.trains[7].posLine,self.trains[7].posBlock))
+        self.posT9.setText("{} {}".format(self.trains[8].posLine,self.trains[8].posBlock))
+        self.posT10.setText("{} {}".format(self.trains[9].posLine,self.trains[9].posBlock))
+        for i in self.tracks:
+            for j in self.trains:
+                if(j.posLine==i.line and j.posBlock==i.bNum):
+                    i.occ=1
+                    if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
+                        self.occ_label.setText("True")
+                    break
+                else:
+                    i.occ=0
+                    if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
+                        self.occ_label.setText("False")
+            
+                   
         
     def switchUpdate(self):
-        self.switch1.setText("Red:   "+str(switches[0].base)+" <-> "+str(switches[0].branch2 if switches[0].state else "YARD"))
-        self.switch2.setText("Red: "+str(switches[1].base)+" <-> "+str(switches[1].branch2 if switches[1].state else switches[1].branch1))
-        self.switch3.setText("Red: "+str(switches[2].base)+" <-> "+str(switches[2].branch2 if switches[2].state else switches[2].branch1))
-        self.switch4.setText("Red: "+str(switches[3].base)+" <-> "+str(switches[3].branch2 if switches[3].state else switches[3].branch1))
-        self.switch5.setText("Red: "+str(switches[4].base)+" <-> "+str(switches[4].branch2 if switches[4].state else switches[4].branch1))
-        self.switch6.setText("Red: "+str(switches[5].base)+" <-> "+str(switches[5].branch2 if switches[5].state else switches[5].branch1))
-        self.switch7.setText("Red: "+str(switches[6].base)+" <-> "+str(switches[6].branch2 if switches[6].state else switches[6].branch1))
-        if(switches[7].state):
+        self.switch1.setText("Red:   "+str(self.switches[0].base)+" <-> "+str(self.switches[0].branch2 if self.switches[0].state else "YARD"))
+        self.switch2.setText("Red: "+str(self.switches[1].base)+" <-> "+str(self.switches[1].branch2 if self.switches[1].state else self.switches[1].branch1))
+        self.switch3.setText("Red: "+str(self.switches[2].base)+" <-> "+str(self.switches[2].branch2 if self.switches[2].state else self.switches[2].branch1))
+        self.switch4.setText("Red: "+str(self.switches[3].base)+" <-> "+str(self.switches[3].branch2 if self.switches[3].state else self.switches[3].branch1))
+        self.switch5.setText("Red: "+str(self.switches[4].base)+" <-> "+str(self.switches[4].branch2 if self.switches[4].state else self.switches[4].branch1))
+        self.switch6.setText("Red: "+str(self.switches[5].base)+" <-> "+str(self.switches[5].branch2 if self.switches[5].state else self.switches[5].branch1))
+        self.switch7.setText("Red: "+str(self.switches[6].base)+" <-> "+str(self.switches[6].branch2 if self.switches[6].state else self.switches[6].branch1))
+        if(self.switches[7].state):
             self.switch8.setText("Green: 13 -> 12")
         else:
             self.switch8.setText("Green:  1 -> 13")
-        if(switches[8].state):
+        if(self.switches[8].state):
             self.switch9.setText("Green: 150 -> 29")
         else:
             self.switch9.setText("Green: 29 --> 30")
-        self.switch10.setText("Green: "+str(switches[9].base)+" --> "+str(switches[9].branch2 if switches[9].state else "YARD"))
-        if(switches[10].state):
+        self.switch10.setText("Green: "+str(self.switches[9].base)+" --> "+str(self.switches[9].branch2 if self.switches[9].state else "YARD"))
+        if(self.switches[10].state):
             self.switch11.setText("Green: 62 -> 63")
         else:
             self.switch11.setText("Green:  YARD -> 63")
-        if(switches[11].state):
+        if(self.switches[11].state):
             self.switch12.setText("Green: 77 -> 101")
         else:
             self.switch12.setText("Green:  76 -> 77")
-        if(switches[12].state):
+        if(self.switches[12].state):
             self.switch13.setText("Green: 100 -> 85")
         else:
             self.switch13.setText("Green:  85 -> 86")
         
     def crossUpdate(self):
-        if(tracks[46].cross==1):
+        if(self.tracks[46].cross==1):
             self.cross1Stat.setText("Crossing Open")
         else:
             self.cross1Stat.setText("Crossing Closed")
-        if(tracks[94].cross==1):
-            self.cross1Stat.setText("Crossing Open")
+        if(self.tracks[94].cross==1):
+            self.cross2Stat.setText("Crossing Open")
         else:
-            self.cross1Stat.setText("Crossing Closed")
+            self.cross2Stat.setText("Crossing Closed")
             
     def stationUpdate(self):
-        self.sales1.setText(str(stations[0].sales))
-        self.sales2.setText(str(stations[1].sales))
-        self.sales3.setText(str(stations[2].sales))
-        self.sales4.setText(str(stations[3].sales))
-        self.sales5.setText(str(stations[4].sales))
-        self.sales6.setText(str(stations[5].sales))
-        self.sales7.setText(str(stations[6].sales))
-        self.sales8.setText(str(stations[7].sales))
-        self.sales9.setText(str(stations[8].sales))
-        self.sales10.setText(str(stations[9].sales))
-        self.sales11.setText(str(stations[10].sales))
-        self.sales12.setText(str(stations[11].sales))
-        self.sales13.setText(str(stations[12].sales))
-        self.sales14.setText(str(stations[13].sales))
-        self.sales15.setText(str(stations[14].sales))
-        self.sales16.setText(str(stations[15].sales))
-        self.sales17.setText(str(stations[16].sales))
-        self.sales18.setText(str(stations[17].sales))
-        self.sales19.setText(str(stations[18].sales))
-        self.sales20.setText(str(stations[19].sales))
-        self.sales21.setText(str(stations[20].sales))
-        self.disemb1.setText(str(stations[0].disemb))
-        self.disemb2.setText(str(stations[1].disemb))
-        self.disemb3.setText(str(stations[2].disemb))
-        self.disemb4.setText(str(stations[3].disemb))
-        self.disemb5.setText(str(stations[4].disemb))
-        self.disemb6.setText(str(stations[5].disemb))
-        self.disemb7.setText(str(stations[6].disemb))
-        self.disemb8.setText(str(stations[7].disemb))
-        self.disemb9.setText(str(stations[8].disemb))
-        self.disemb10.setText(str(stations[9].disemb))
-        self.disemb11.setText(str(stations[10].disemb))
-        self.disemb12.setText(str(stations[11].disemb))
-        self.disemb13.setText(str(stations[12].disemb))
-        self.disemb14.setText(str(stations[13].disemb))
-        self.disemb15.setText(str(stations[14].disemb))
-        self.disemb16.setText(str(stations[15].disemb))
-        self.disemb17.setText(str(stations[16].disemb))
-        self.disemb18.setText(str(stations[17].disemb))
-        self.disemb19.setText(str(stations[18].disemb))
-        self.disemb20.setText(str(stations[19].disemb))
-        self.disemb21.setText(str(stations[20].disemb))
-        self.board1.setText(str(stations[0].board))
-        self.board2.setText(str(stations[1].board))
-        self.board3.setText(str(stations[2].board))
-        self.board4.setText(str(stations[3].board))
-        self.board5.setText(str(stations[4].board))
-        self.board6.setText(str(stations[5].board))
-        self.board7.setText(str(stations[6].board))
-        self.board8.setText(str(stations[7].board))
-        self.board9.setText(str(stations[8].board))
-        self.board10.setText(str(stations[9].board))
-        self.board11.setText(str(stations[10].board))
-        self.board12.setText(str(stations[11].board))
-        self.board13.setText(str(stations[12].board))
-        self.board14.setText(str(stations[13].board))
-        self.board15.setText(str(stations[14].board))
-        self.board16.setText(str(stations[15].board))
-        self.board17.setText(str(stations[16].board))
-        self.board18.setText(str(stations[17].board))
-        self.board19.setText(str(stations[18].board))
-        self.board20.setText(str(stations[19].board))
-        self.board21.setText(str(stations[20].board))
+        self.sales1.setText(str(self.stations[0].sales))
+        self.sales2.setText(str(self.stations[1].sales))
+        self.sales3.setText(str(self.stations[2].sales))
+        self.sales4.setText(str(self.stations[3].sales))
+        self.sales5.setText(str(self.stations[4].sales))
+        self.sales6.setText(str(self.stations[5].sales))
+        self.sales7.setText(str(self.stations[6].sales))
+        self.sales8.setText(str(self.stations[7].sales))
+        self.sales9.setText(str(self.stations[8].sales))
+        self.sales10.setText(str(self.stations[9].sales))
+        self.sales11.setText(str(self.stations[10].sales))
+        self.sales12.setText(str(self.stations[11].sales))
+        self.sales13.setText(str(self.stations[12].sales))
+        self.sales14.setText(str(self.stations[13].sales))
+        self.sales15.setText(str(self.stations[14].sales))
+        self.sales16.setText(str(self.stations[15].sales))
+        self.sales17.setText(str(self.stations[16].sales))
+        self.sales18.setText(str(self.stations[17].sales))
+        self.sales19.setText(str(self.stations[18].sales))
+        self.sales20.setText(str(self.stations[19].sales))
+        self.sales21.setText(str(self.stations[20].sales))
+        self.disemb1.setText(str(self.stations[0].disemb))
+        self.disemb2.setText(str(self.stations[1].disemb))
+        self.disemb3.setText(str(self.stations[2].disemb))
+        self.disemb4.setText(str(self.stations[3].disemb))
+        self.disemb5.setText(str(self.stations[4].disemb))
+        self.disemb6.setText(str(self.stations[5].disemb))
+        self.disemb7.setText(str(self.stations[6].disemb))
+        self.disemb8.setText(str(self.stations[7].disemb))
+        self.disemb9.setText(str(self.stations[8].disemb))
+        self.disemb10.setText(str(self.stations[9].disemb))
+        self.disemb11.setText(str(self.stations[10].disemb))
+        self.disemb12.setText(str(self.stations[11].disemb))
+        self.disemb13.setText(str(self.stations[12].disemb))
+        self.disemb14.setText(str(self.stations[13].disemb))
+        self.disemb15.setText(str(self.stations[14].disemb))
+        self.disemb16.setText(str(self.stations[15].disemb))
+        self.disemb17.setText(str(self.stations[16].disemb))
+        self.disemb18.setText(str(self.stations[17].disemb))
+        self.disemb19.setText(str(self.stations[18].disemb))
+        self.disemb20.setText(str(self.stations[19].disemb))
+        self.disemb21.setText(str(self.stations[20].disemb))
+        self.board1.setText(str(self.stations[0].board))
+        self.board2.setText(str(self.stations[1].board))
+        self.board3.setText(str(self.stations[2].board))
+        self.board4.setText(str(self.stations[3].board))
+        self.board5.setText(str(self.stations[4].board))
+        self.board6.setText(str(self.stations[5].board))
+        self.board7.setText(str(self.stations[6].board))
+        self.board8.setText(str(self.stations[7].board))
+        self.board9.setText(str(self.stations[8].board))
+        self.board10.setText(str(self.stations[9].board))
+        self.board11.setText(str(self.stations[10].board))
+        self.board12.setText(str(self.stations[11].board))
+        self.board13.setText(str(self.stations[12].board))
+        self.board14.setText(str(self.stations[13].board))
+        self.board15.setText(str(self.stations[14].board))
+        self.board16.setText(str(self.stations[15].board))
+        self.board17.setText(str(self.stations[16].board))
+        self.board18.setText(str(self.stations[17].board))
+        self.board19.setText(str(self.stations[18].board))
+        self.board20.setText(str(self.stations[19].board))
+        self.board21.setText(str(self.stations[20].board))
 
-class Train():
-    cSpeed=0
-    auth=0
-    occ=0
-    posLine="none"
-    posBlock=0
-    light=False
-    door=False
-    status=0
+    def getBlock(self,line,block):
+        for i in self.tracks:
+            if(i.line==line and i.bNum==block):
+                return i
+    
+    class Train():
+        cSpeed=0
+        auth=0
+        posLine="none"
+        posBlock=0
+        light=False
+        door=False
+        status=0
 
 
-if __name__=="__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui=Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    global trains
-    trains=[]
-    for i in range(10):
-        trains.append(Train())
-    while(True):
-        inout=input("--------------------------\nA) Change Input\nB) View Train Output\n--------------------------\n")
-        if(inout=="A" or inout=="a"):
-            inSel=input("--------------------------\nA) Switch Position\nB) Train Specific Inputs\n--------------------------\n")
-            if(inSel=="A" or inSel=="a"):
-                switchSel=int(input("Select Switch (1-13):"))
-                switchPos=int(input("Select State (0/1):"))
-                if(switchPos==1):
-                    switches[switchSel-1].state=True
-                else:
-                    switches[switchSel-1].state=False
-                ui.switchUpdate()
-            else:
-                trainSel=int(input("Select Train (1-10):"))
-                trainInSel=input("--------------------------\nA) Command Speed\nB) Authority\nC) Lights\nD) Occupancy\nE) Doors\nF) Position\nG) Train Status\n--------------------------\n")
-                if(trainInSel=="A" or trainInSel=="a"):
-                    trains[trainSel-1].cSpeed=int(input("Enter new Command Speed:"))
-                elif(trainInSel=="B" or trainInSel=="b"):
-                    trains[trainSel-1].auth=input("Enter new Authority:")
-                elif(trainInSel=="C" or trainInSel=="c"):
-                    trains[trainSel-1].light=(int(input("Enter new Light Status (0/1):"))==1)
-                elif(trainInSel=="D" or trainInSel=="d"):
-                    trains[trainSel-1].occ=int(input("Enter new Occupancy:"))
-                elif(trainInSel=="E" or trainInSel=="e"):
-                    trains[trainSel-1].door=(int(input("Enter new Door Status (0/1):"))==1)
-                elif(trainInSel=="F" or trainInSel=="f"):
-                    trains[trainSel-1].posLine=input("Enter new Train Position Line (Red/Green):")
-                    trains[trainSel-1].posBlock=int(input("Enter Train Position Block:"))
-                    ui.trainUpdate()
-                else:
-                    trains[trainSel-1].status=int(input("Enter new Status (0-3):"))
-        else:
-            trainSel=int(input("Select Train (1-10):"))
-            print("Command Speed: {}\nAuthority: {}\nOccupancy: {}\nPosition: {} {}\nLight Status: {}\nDoor Status: {}\nTrain Status: {}".format(trains[trainSel-1].cSpeed,trains[trainSel-1].auth,trains[trainSel-1].occ,trains[trainSel-1].posLine,trains[trainSel-1].posBlock,trains[trainSel-1].light,trains[trainSel-1].door,trains[trainSel-1].status))
-    sys.exit(app.exec_())

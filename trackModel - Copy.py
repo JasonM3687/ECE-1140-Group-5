@@ -561,7 +561,8 @@ class Ui_MainWindow(object):
         global tracks
         global beacons
         global signals
-        tracks, beacons, signals=trackImport.trackPull(self.lineEdit.text())
+        global stations
+        tracks, beacons, signals, stations=trackImport.trackPull(self.lineEdit.text())
         global switches
         switches=trackImport.switchMake()
         self.block_select.setMaximum(len(tracks))
