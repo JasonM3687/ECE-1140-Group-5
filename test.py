@@ -18,12 +18,18 @@ class TestStringMethods(unittest.TestCase):
         ui.refresh()
         self.assertEqual(ui.tracks[0].occ,1)
         
-    def test_stationSalesShown(self):
+    def test_stationMetricsShown(self):
         ui.lineEdit.setText("Track Layout & Vehicle Data vF2.xlsx")
         ui.importTrack()
         ui.stations[0].addSales(200)
         ui.stationUpdate()
         self.assertEqual(ui.sales1.text(),"200")
+        ui.stations[0].addBoard(50)
+        ui.stationUpdate()
+        self.assertEqual(ui.board1.text(),"50")
+        ui.stations[0].addDisemb(100)
+        ui.stationUpdate()
+        self.assertEqual(ui.disemb1.text(),"100")
         
     def test_trackFailureModes(self):
         ui.lineEdit.setText("Track Layout & Vehicle Data vF2.xlsx")
