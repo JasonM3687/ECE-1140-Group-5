@@ -29,10 +29,18 @@ String power;
 //-------------------------------------------------------
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE); //Set LCD I2C Address for LCD
 
+//Input/output status to be sent to train controller 
+String headLights;
+String internalLights;
+String doors;
+String serviceBrake;
+String emergencyBrake;
+String automaticMode;
+String trainModelSpeed;
 
 
 void setup() {
-  Serial.begin(200000);
+  Serial.begin(2000000);
   keypad_input.reserve(3); //Reserves 4 inputs max per keypad input
 
   lcd.begin(20, 4); //Initializes cols/rows of LCD
@@ -89,6 +97,10 @@ void loop() {
   setDoors();
   setIntercom();
   setAutomaticMode();
+  testHeadLights("1");
+  testInternalLights("1");
+  testTrainSpeedLimit("150");
+  testDoors("1");
 
 }
 else
@@ -96,30 +108,38 @@ else
       lcd.clear();  
 }
 
-void setHeadlights() {
+String setHeadlights() {
     int read53 = digitalRead(53);
     //Sets Headlight pin high if switch is pressed
   if (read53 == HIGH) {
        digitalWrite(49, HIGH);
-       Serial.print("Headlights: On\n");
+       headLights = "1";
+       Serial.print(headLights);
+       return headLights;
   }
   else if (read53 == LOW) {
        digitalWrite(49,LOW);
-       Serial.print("Headlights: Off\n");
+       headLights = "0";
+       Serial.print(headLights);
+       return headLights;
   }
 
 }
 
-void setInternalLights() {
+String setInternalLights() {
   int read52 = digitalRead(52);
   //Sets internal light pin high if switch is pressed
   if (read52 == HIGH) {
       digitalWrite(48, HIGH);
-      Serial.print("Internal Lights: On\n");
+      internalLights = "1";
+      Serial.print(internalLights);
+      return internalLights;
   }
   else if (read52 == LOW) {
       digitalWrite(48, LOW);
-      Serial.print("Internal Lights: Off\n");
+      internalLights = "0";
+      Serial.print(internalLights);
+      return internalLights;
   }
 }
 
@@ -128,12 +148,15 @@ void setServiceBrake() {
   //Sets Service Brake high if switch is pressed
   if (read45 == HIGH) {
       digitalWrite(44, HIGH);
-      Serial.print("Service Break Initialized\n");
+      serviceBrake = "1";
+      Serial.print(serviceBrake);
       delay(2000);
       trainSpeed = "000";
   }
   else if (read45 == LOW) {
       digitalWrite(44, LOW);
+      serviceBrake = "0";
+      Serial.print(serviceBrake);
   }
 }
 
@@ -142,6 +165,8 @@ void setEmergencyBrake() {
   //Sets Emergency Brake high if switch is pressed
  if (read5 == HIGH ) {
       //Sets Emergency Break high
+      emergencyBrake = "1'";
+      Serial.print(emergencyBrake);
       digitalWrite(6, HIGH);
       //Waits 1/4 Sec
       delay(250);
@@ -151,24 +176,29 @@ void setEmergencyBrake() {
       delay(250);
      //Sets Emergency Break high
       digitalWrite(6, HIGH);
-      Serial.print("Emergency Break Initialized\n");
       trainSpeed = "000";
  }
  else if (read5 == LOW) {
       digitalWrite(6, LOW);
+      emergencyBrake = "0";
+      Serial.print(emergencyBrake);
  }
 }
 
-void setDoors() {
+String setDoors() {
   int read2 = digitalRead(2);
   //Opens doors if switch is pressed
  if (read2 == HIGH) {
       digitalWrite(3, HIGH);
-      Serial.print("Doors are open\n");
+      doors = "1";
+      Serial.print(doors);
+      return doors;
  }
  else if (read2 == LOW) {
       digitalWrite(3, LOW);
-      Serial.print("Doors are closed\n");
+      doors = "0";
+      Serial.print(doors);
+      return doors;
  }
 }
 
@@ -189,7 +219,8 @@ void setAutomaticMode() {
   //Initiliazes Automatic Mode
  if (read13 == HIGH) {
       digitalWrite(11, HIGH);
-      Serial.print("Automatic Mode Initialized\n");
+      trainSpeed = trainModelSpeed;
+     // Serial.print("Automatic Mode Initialized\n");
  }
  else if (read13 == LOW) {
       digitalWrite(11, LOW);
@@ -245,4 +276,49 @@ void setKeypadLCD() {
   lcd.print("Tmp:");
   lcd.setCursor(17,0);
   lcd.print(temperature);
+}
+
+//-------------------------------------------------------Tests----------------------------------------------------------------
+//Testing if headlights are on
+void testHeadLights(String output) {
+    Serial.print("Testing Headlights["); 
+    Serial.print(setHeadlights());
+    Serial.print("]: ");
+    Serial.println((setHeadlights() == output) ? "Pass" : "Fail");
+}
+
+//Testing if internal lights are on
+void testInternalLights(String output) {
+    Serial.print("Testing Internal Lights["); 
+    Serial.print(setInternalLights());
+    Serial.print("]: ");
+    Serial.println((setInternalLights() == output) ? "Pass" : "Fail");
+}
+
+//Testing that speed cannot exceed speed limit
+void testTrainSpeedLimit(String limit) {
+    int speedint;
+    speedint = trainSpeed.toInt();
+    Serial.print("Testing Speed["); 
+    Serial.print(trainSpeed);
+    Serial.print("]: ");
+    Serial.println((trainSpeed <= limit) ? "Pass" : "Fail");
+    if (trainSpeed > limit) {
+      Serial.print("TRAIN IS OVER SPEED LIMIT, EMERGENCY BRAKE, SLOWING DOWN");
+        trainSpeed = "000";
+    }
+}
+
+//Testing that doors cannot be opened while train is in motion
+void testDoors(String output) {
+    
+    Serial.print("Testing Doors["); 
+    Serial.print(trainSpeed);
+    Serial.print("]: ");
+    Serial.println((trainSpeed == "000" & doors == output ) ? "Pass" : "Fail");
+    if (trainSpeed != "000" & doors == "1") {
+      Serial.print("TRAIN IS IN MOTION WITH DOORS OPEN, CLOSING DOORS");
+        doors = "0";
+        digitalWrite(3, LOW);
+    }
 }
