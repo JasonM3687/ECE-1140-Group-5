@@ -14,30 +14,40 @@ from PyQt5.QtCore import QDate, QTime, Qt, QDateTime
 import tkinter as tk
 from tkinter import filedialog
 from TestCases import Ui_AnotherWindow
-import waysideController
+from waysideController import waysideController
 import os
-from xxxxxx import xxxxxxx
-from xxxxxx import xxxxxxx
+from trackModel import TrackModel
+from CTC import CTCOFFICE
 
 
 class Ui_MainWindow(object):
-    def __init__(self):
-        self.blocks=[]
-        self.sections=[]
-        self.lines=[]
-        self.sugSpeed=0
-        self.auth=0
-        self.blockOccupanciesRed=[]
-        self.blockOccupanciesGreen=[]
-        self.stationOccupanciesRed=[]
-        self.stationOccupanciesGreen=[]
-        self.stationSalesRed=[]
-        self.stationSalesGreen=[]
-        self.faultStatusesRed=[]
-        self.faultStatusesGreen=[]
-        self.undergroundRed=[]
-        self.undergroundGreen=[]
-        self.waysideControllers = [[waysideController]*26]*2
+    sugSpeed=0
+    auth=0
+    waysideControllers=[[]*2]*26
+    trackModelDatabase=TrackModel()
+    CTC=CTCOFFICE()
+    redBlockNum=[]
+    greenBlockNum=[]
+
+    def setupControllers(self):
+        redCount=0
+        greenCount=1
+        redBlocks=self.trackModelDatabase.getRedBlocks()
+        greenBlocks=self.trackModelDatabase.getGreenBlocks()
+        for i in redBlocks:
+                redCount+=1
+                if self.redBlocks[i+1].section > self.redBlocks[i].section:
+                    self.redBlockNum.append(redCount)
+
+        for i in greenBlocks:
+                greenCount+=1
+                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
+                    self.greenBlockNum.append(greenCount)
+
+        for i in range(20):
+            self.waysideControllers[0].append( waysideController(i, "Red",self.redBlockNum[i]) )
+        for i in range(26):
+            self.waysideControllers[1].append( waysideController(i, "Green",self.greenBlockNum[i]) )
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -201,75 +211,6 @@ class Ui_MainWindow(object):
         self.label_11 = QtWidgets.QLabel(self.frame_9)
         self.label_11.setGeometry(QtCore.QRect(10, 10, 671, 741))
         self.label_11.setObjectName("label_11")
-        self.ABLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.ABLightLabelR.setGeometry(QtCore.QRect(480, 160, 21, 21))
-        self.ABLightLabelR.setObjectName("ABLightLabelR")
-        self.BCLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.BCLightLabelR.setGeometry(QtCore.QRect(540, 120, 21, 21))
-        self.BCLightLabelR.setObjectName("BCLightLabelR")
-        self.CDLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.CDLightLabelR.setGeometry(QtCore.QRect(620, 150, 21, 21))
-        self.CDLightLabelR.setObjectName("CDLightLabelR")
-        self.DELightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.DELightLabelR.setGeometry(QtCore.QRect(510, 200, 21, 21))
-        self.DELightLabelR.setObjectName("DELightLabelR")
-        self.EFLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.EFLightLabelR.setGeometry(QtCore.QRect(410, 200, 21, 21))
-        self.EFLightLabelR.setObjectName("EFLightLabelR")
-        self.FGLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.FGLightLabelR.setGeometry(QtCore.QRect(350, 200, 21, 21))
-        self.FGLightLabelR.setObjectName("FGLightLabelR")
-        self.GHLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.GHLightLabelR.setGeometry(QtCore.QRect(300, 230, 21, 21))
-        self.GHLightLabelR.setObjectName("GHLightLabelR")
-        self.STLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.STLightLabelR.setGeometry(QtCore.QRect(260, 280, 21, 21))
-        self.STLightLabelR.setObjectName("STLightLabelR")
-        self.HTLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.HTLightLabelR.setGeometry(QtCore.QRect(300, 270, 21, 21))
-        self.HTLightLabelR.setObjectName("HTLightLabelR")
-        self.HRLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.HRLightLabelR.setGeometry(QtCore.QRect(300, 340, 21, 21))
-        self.HRLightLabelR.setObjectName("HRLightLabelR")
-        self.RSLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.RSLightLabelR.setGeometry(QtCore.QRect(260, 330, 21, 21))
-        self.RSLightLabelR.setObjectName("RSLightLabelR")
-        self.HQLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.HQLightLabelR.setGeometry(QtCore.QRect(300, 400, 21, 21))
-        self.HQLightLabelR.setObjectName("HQLightLabelR")
-        self.PQLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.PQLightLabelR.setGeometry(QtCore.QRect(260, 420, 21, 21))
-        self.PQLightLabelR.setObjectName("PQLightLabelR")
-        self.OPLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.OPLightLabelR.setGeometry(QtCore.QRect(260, 460, 21, 21))
-        self.OPLightLabelR.setObjectName("OPLightLabelR")
-        self.HOLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.HOLightLabelR.setGeometry(QtCore.QRect(300, 470, 21, 21))
-        self.HOLightLabelR.setObjectName("HOLightLabelR")
-        self.HILightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.HILightLabelR.setGeometry(QtCore.QRect(300, 500, 21, 21))
-        self.HILightLabelR.setObjectName("HILightLabelR")
-        self.IJLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.IJLightLabelR.setGeometry(QtCore.QRect(220, 570, 21, 21))
-        self.IJLightLabelR.setObjectName("IJLightLabelR")
-        self.MNLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.MNLightLabelR.setGeometry(QtCore.QRect(120, 530, 21, 21))
-        self.MNLightLabelR.setObjectName("MNLightLabelR")
-        self.JKLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.JKLightLabelR.setGeometry(QtCore.QRect(100, 570, 21, 21))
-        self.JKLightLabelR.setObjectName("JKLightLabelR")
-        self.KLLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.KLLightLabelR.setGeometry(QtCore.QRect(30, 480, 21, 21))
-        self.KLLightLabelR.setObjectName("KLLightLabelR")
-        self.LMLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.LMLightLabelR.setGeometry(QtCore.QRect(80, 420, 21, 21))
-        self.LMLightLabelR.setObjectName("LMLightLabelR")
-        self.NJLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.NJLightLabelR.setGeometry(QtCore.QRect(170, 560, 21, 21))
-        self.NJLightLabelR.setObjectName("NJLightLabelR")
-        self.YrdDLightLabelR = QtWidgets.QLabel(self.frame_9)
-        self.YrdDLightLabelR.setGeometry(QtCore.QRect(600, 180, 41, 21))
-        self.YrdDLightLabelR.setObjectName("YrdDLightLabelR")
         self.frame_22 = QtWidgets.QFrame(self.tab_10)
         self.frame_22.setGeometry(QtCore.QRect(20, 10, 561, 741))
         self.frame_22.setStyleSheet("background:rgb(182, 182, 182)")
@@ -285,6 +226,9 @@ class Ui_MainWindow(object):
         self.label_830 = QtWidgets.QLabel(self.frame_23)
         self.label_830.setGeometry(QtCore.QRect(20, 20, 231, 41))
         self.label_830.setObjectName("label_830")
+        self.label_846 = QtWidgets.QLabel(self.frame_23)
+        self.label_846.setGeometry(QtCore.QRect(280, 20, 231, 41))
+        self.label_846.setObjectName("label_846")
         self.RedLightOccLabel = QtWidgets.QLabel(self.frame_23)
         self.RedLightOccLabel.setGeometry(QtCore.QRect(190, 130, 111, 41))
         self.RedLightOccLabel.setObjectName("RedLightOccLabel")
@@ -294,8 +238,12 @@ class Ui_MainWindow(object):
         self.RedLightStatLabel = QtWidgets.QLabel(self.frame_23)
         self.RedLightStatLabel.setGeometry(QtCore.QRect(200, 200, 111, 41))
         self.RedLightStatLabel.setObjectName("RedLightStatLabel")
+        self.RedLightSecSelBox = QtWidgets.QComboBox(self.frame_23)
+        self.RedLightSecSelBox.setGeometry(QtCore.QRect(20, 70, 241, 31))
+        self.RedLightSecSelBox.setStyleSheet("background:rgb(182, 182, 182)")
+        self.RedLightSecSelBox.setObjectName("RedLightSecSelBox")
         self.RedLightSelBox = QtWidgets.QComboBox(self.frame_23)
-        self.RedLightSelBox.setGeometry(QtCore.QRect(20, 70, 241, 31))
+        self.RedLightSelBox.setGeometry(QtCore.QRect(280, 70, 241, 31))
         self.RedLightSelBox.setStyleSheet("background:rgb(182, 182, 182)")
         self.RedLightSelBox.setObjectName("RedLightSelBox")
         self.label_834 = QtWidgets.QLabel(self.frame_23)
@@ -599,81 +547,6 @@ class Ui_MainWindow(object):
         self.label_22 = QtWidgets.QLabel(self.frame_20)
         self.label_22.setGeometry(QtCore.QRect(10, 10, 671, 741))
         self.label_22.setObjectName("label_22")
-        self.FGZLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.FGZLightLabelG.setGeometry(QtCore.QRect(130, 200, 31, 21))
-        self.FGZLightLabelG.setObjectName("FGZLightLabelG")
-        self.YZLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.YZLightLabelG.setGeometry(QtCore.QRect(100, 240, 21, 21))
-        self.YZLightLabelG.setObjectName("YZLightLabelG")
-        self.GHLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.GHLightLabelG.setGeometry(QtCore.QRect(140, 260, 21, 21))
-        self.GHLightLabelG.setObjectName("GHLightLabelG")
-        self.XYLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.XYLightLabelG.setGeometry(QtCore.QRect(90, 310, 21, 21))
-        self.XYLightLabelG.setObjectName("XYLightLabelG")
-        self.HILightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.HILightLabelG.setGeometry(QtCore.QRect(190, 310, 21, 21))
-        self.HILightLabelG.setObjectName("HILightLabelG")
-        self.WXLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.WXLightLabelG.setGeometry(QtCore.QRect(150, 350, 21, 21))
-        self.WXLightLabelG.setObjectName("WXLightLabelG")
-        self.IJLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.IJLightLabelG.setGeometry(QtCore.QRect(460, 310, 21, 21))
-        self.IJLightLabelG.setObjectName("IJLightLabelG")
-        self.VWLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.VWLightLabelG.setGeometry(QtCore.QRect(430, 350, 21, 21))
-        self.VWLightLabelG.setObjectName("VWLightLabelG")
-        self.UVLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.UVLightLabelG.setGeometry(QtCore.QRect(550, 450, 21, 21))
-        self.UVLightLabelG.setObjectName("UVLightLabelG")
-        self.JKLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.JKLightLabelG.setGeometry(QtCore.QRect(590, 410, 21, 21))
-        self.JKLightLabelG.setObjectName("JKLightLabelG")
-        self.YrdKLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.YrdKLightLabelG.setGeometry(QtCore.QRect(580, 350, 41, 21))
-        self.YrdKLightLabelG.setObjectName("YrdKLightLabelG")
-        self.KLLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.KLLightLabelG.setGeometry(QtCore.QRect(590, 600, 21, 21))
-        self.KLLightLabelG.setObjectName("KLLightLabelG")
-        self.TULightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.TULightLabelG.setGeometry(QtCore.QRect(550, 550, 21, 21))
-        self.TULightLabelG.setObjectName("TULightLabelG")
-        self.STLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.STLightLabelG.setGeometry(QtCore.QRect(450, 670, 21, 21))
-        self.STLightLabelG.setObjectName("STLightLabelG")
-        self.LMLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.LMLightLabelG.setGeometry(QtCore.QRect(500, 720, 21, 21))
-        self.LMLightLabelG.setObjectName("LMLightLabelG")
-        self.MNRLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.MNRLightLabelG.setGeometry(QtCore.QRect(330, 720, 31, 21))
-        self.MNRLightLabelG.setObjectName("MNRLightLabelG")
-        self.RSLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.RSLightLabelG.setGeometry(QtCore.QRect(370, 670, 21, 21))
-        self.RSLightLabelG.setObjectName("RSLightLabelG")
-        self.ONQLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.ONQLightLabelG.setGeometry(QtCore.QRect(190, 720, 31, 21))
-        self.ONQLightLabelG.setObjectName("ONQLightLabelG")
-        self.PQLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.PQLightLabelG.setGeometry(QtCore.QRect(140, 640, 21, 21))
-        self.PQLightLabelG.setObjectName("PQLightLabelG")
-        self.OPLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.OPLightLabelG.setGeometry(QtCore.QRect(120, 710, 21, 21))
-        self.OPLightLabelG.setObjectName("OPLightLabelG")
-        self.EFLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.EFLightLabelG.setGeometry(QtCore.QRect(130, 90, 21, 21))
-        self.EFLightLabelG.setObjectName("EFLightLabelG")
-        self.DELightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.DELightLabelG.setGeometry(QtCore.QRect(200, 20, 21, 21))
-        self.DELightLabelG.setObjectName("DELightLabelG")
-        self.CDLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.CDLightLabelG.setGeometry(QtCore.QRect(290, 20, 21, 21))
-        self.CDLightLabelG.setObjectName("CDLightLabelG")
-        self.ABLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.ABLightLabelG.setGeometry(QtCore.QRect(350, 70, 21, 21))
-        self.ABLightLabelG.setObjectName("ABLightLabelG")
-        self.BCLightLabelG = QtWidgets.QLabel(self.frame_20)
-        self.BCLightLabelG.setGeometry(QtCore.QRect(420, 100, 21, 21))
-        self.BCLightLabelG.setObjectName("BCLightLabelG")
         self.frame_33 = QtWidgets.QFrame(self.tab_19)
         self.frame_33.setGeometry(QtCore.QRect(30, 20, 541, 721))
         self.frame_33.setStyleSheet("border-color: rgb(182, 182, 182);")
@@ -681,8 +554,11 @@ class Ui_MainWindow(object):
         self.frame_33.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_33.setObjectName("frame_33")
         self.label_829 = QtWidgets.QLabel(self.frame_33)
-        self.label_829.setGeometry(QtCore.QRect(20, 20, 231, 41))
+        self.label_829.setGeometry(QtCore.QRect(280, 20, 231, 41))
         self.label_829.setObjectName("label_829")
+        self.label_845 = QtWidgets.QLabel(self.frame_33)
+        self.label_845.setGeometry(QtCore.QRect(20, 20, 231, 41))
+        self.label_845.setObjectName("label_845")
         self.GrnLightOccLabel = QtWidgets.QLabel(self.frame_33)
         self.GrnLightOccLabel.setGeometry(QtCore.QRect(190, 130, 111, 41))
         self.GrnLightOccLabel.setObjectName("GrnLightOccLabel")
@@ -692,8 +568,12 @@ class Ui_MainWindow(object):
         self.GrnLightStatLabel = QtWidgets.QLabel(self.frame_33)
         self.GrnLightStatLabel.setGeometry(QtCore.QRect(200, 200, 111, 41))
         self.GrnLightStatLabel.setObjectName("GrnLightStatLabel")
+        self.GrnLightSecSelBox = QtWidgets.QComboBox(self.frame_33)
+        self.GrnLightSecSelBox.setGeometry(QtCore.QRect(20, 70, 241, 31))
+        self.GrnLightSecSelBox.setStyleSheet("background:rgb(182, 182, 182)")
+        self.GrnLightSecSelBox.setObjectName("GrnLightSecSelBox")
         self.GrnLightSelBox = QtWidgets.QComboBox(self.frame_33)
-        self.GrnLightSelBox.setGeometry(QtCore.QRect(20, 70, 241, 31))
+        self.GrnLightSelBox.setGeometry(QtCore.QRect(280, 70, 241, 31))
         self.GrnLightSelBox.setStyleSheet("background:rgb(182, 182, 182)")
         self.GrnLightSelBox.setObjectName("GrnLightSelBox")
         self.label_828 = QtWidgets.QLabel(self.frame_33)
@@ -945,30 +825,8 @@ class Ui_MainWindow(object):
         self.label_835.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Towards:</span></p></body></html>"))
         self.MainTabsRed.setTabText(self.MainTabsRed.indexOf(self.tab_9), _translate("MainWindow", "Switches"))
         self.label_11.setText(_translate("MainWindow", "<html><head/><body><p><img src=\"C:/Users/Grant/Desktop/Junior_Year/School/Systems_and_Project_Engineering/Iteration_3_Test_File/Red Line.jpg\"/></p></body></html>"))
-        self.ABLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">AB</span></p></body></html>"))
-        self.BCLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">BC</span></p></body></html>"))
-        self.CDLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">CD</span></p></body></html>"))
-        self.DELightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">DE</span></p></body></html>"))
-        self.EFLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">EF</span></p></body></html>"))
-        self.FGLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">FG</span></p></body></html>"))
-        self.GHLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">GH</span></p></body></html>"))
-        self.STLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">ST</span></p></body></html>"))
-        self.HTLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">HT</span></p></body></html>"))
-        self.HRLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">HR</span></p></body></html>"))
-        self.RSLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">RS</span></p></body></html>"))
-        self.HQLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">HQ</span></p></body></html>"))
-        self.PQLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">PQ</span></p></body></html>"))
-        self.OPLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">OP</span></p></body></html>"))
-        self.HOLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">HO</span></p></body></html>"))
-        self.HILightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">HI</span></p></body></html>"))
-        self.IJLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">IJ</span></p></body></html>"))
-        self.MNLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">MN</span></p></body></html>"))
-        self.JKLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">JK</span></p></body></html>"))
-        self.KLLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">KL</span></p></body></html>"))
-        self.LMLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">LM</span></p></body></html>"))
-        self.NJLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">NJ</span></p></body></html>"))
-        self.YrdDLightLabelR.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">YrdD</span></p></body></html>"))
-        self.label_830.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Light Selection</span></p></body></html>"))
+        self.label_830.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Section Selection</span></p></body></html>"))
+        self.label_846.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Light Selection</span></p></body></html>"))
         self.RedLightOccLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxx</span></p></body></html>"))
         self.label_832.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Light Status:</span></p></body></html>"))
         self.RedLightStatLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxx</span></p></body></html>"))
@@ -1043,32 +901,8 @@ class Ui_MainWindow(object):
         self.label_840.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Switch Selection</span></p></body></html>"))
         self.MainTabsGrn.setTabText(self.MainTabsGrn.indexOf(self.tab_17), _translate("MainWindow", "Switches"))
         self.label_22.setText(_translate("MainWindow", "<html><head/><body><p><img src=\"C:/Users/Grant/Desktop/Junior_Year/School/Systems_and_Project_Engineering/Iteration_3_Test_File/Green Line.jpg\"/></p></body></html>"))
-        self.FGZLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">FGZ</span></p></body></html>"))
-        self.YZLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">YZ</span></p></body></html>"))
-        self.GHLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">GH</span></p></body></html>"))
-        self.XYLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">XY</span></p></body></html>"))
-        self.HILightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">HI</span></p></body></html>"))
-        self.WXLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">WX</span></p></body></html>"))
-        self.IJLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">IJ</span></p></body></html>"))
-        self.VWLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">VW</span></p></body></html>"))
-        self.UVLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">UV</span></p></body></html>"))
-        self.JKLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">JK</span></p></body></html>"))
-        self.YrdKLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">YrdK</span></p></body></html>"))
-        self.KLLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">KL</span></p></body></html>"))
-        self.TULightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">TU</span></p></body></html>"))
-        self.STLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">ST</span></p></body></html>"))
-        self.LMLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">LM</span></p></body></html>"))
-        self.MNRLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">MNR</span></p></body></html>"))
-        self.RSLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">RS</span></p></body></html>"))
-        self.ONQLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">ONQ</span></p></body></html>"))
-        self.PQLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">PQ</span></p></body></html>"))
-        self.OPLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">OP</span></p></body></html>"))
-        self.EFLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">EF</span></p></body></html>"))
-        self.DELightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">DE</span></p></body></html>"))
-        self.CDLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">CD</span></p></body></html>"))
-        self.ABLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:9pt; font-weight:600;\">AB</span></p></body></html>"))
-        self.BCLightLabelG.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">BC</span></p></body></html>"))
         self.label_829.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Light Selection</span></p></body></html>"))
+        self.label_845.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Section Selection</span></p></body></html>"))
         self.GrnLightOccLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxx</span></p></body></html>"))
         self.label_827.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Light Status:</span></p></body></html>"))
         self.GrnLightStatLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxx</span></p></body></html>"))
@@ -1142,7 +976,9 @@ class Ui_MainWindow(object):
         self.LoadedPLCLabel.setText(_translate("MainWindow","Currently Loaded PLC:   "+os.path.basename(file_path)))
         self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
         "font-weight: bold")
-        self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight) 
+        self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+        
+        self.setupControllers()
 
         self.LoadPLCButton.clicked.connect(self.clickedLF)
         self.RunButton.clicked.connect(self.clickedCommand)
@@ -1192,68 +1028,160 @@ class Ui_MainWindow(object):
 
     def UpdatePLC(self):
             _translate = QtCore.QCoreApplication.translate
-            exec(open(self.PLCFile).read())
             self.TimeLabel.setText(_translate("MainWindow", QDate.currentDate().toString(Qt.ISODate)+"   "+QTime.currentTime().toString(Qt.DefaultLocaleLongDate)))
             self.TimeLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
             "font-weight: bold")
             self.TimeLabel.setAlignment(QtCore.Qt.AlignRight)
 
-            self.blocks=xxxx.getBlocks()
-            self.sections=xxx.getSections()
-            self.lines=xxxx.getLines()
-            self.sugSpeed=xxx.getSugSpeed()
-            self.auth=xxxx.getAuth()
-            self.blockOccupanciesRed=xxxx.getRedBlockOccupancies()
-            self.blockOccupanciesGreen=xxxx.getGreenBlockOccupancies()
-            self.stationOccupanciesRed=xxxx.getRedStationOccupancies()
-            self.stationOccupanciesGreen=xxxx.getGreenStationOccupancies()
-            self.stationSalesRed=xxxx.getRedStationSales()
-            self.stationSalesGreen=xxxx.getGreenStationSales()
-            self.faultStatusesRed=xxxx.getRedFaultStatuses()
-            self.faultStatusesGreen=xxxx.getGreenFaultStatuses()
-            self.undergroundRed=xxxx.getRedUnderground()
-            self.undergroundGreen=xxxx.getGreenUnderground()
+            #CTC Inputs
+            self.routedBlocks=CTC.sentRouteBlocks
+            self.routedSections=CTC.sentRouteSections
+            self.routedLines=CTC.sentRoutelines
+            self.routeSugSpeed=CTC.suggestedSpeed
+            self.routedAuth=CTC.Auth
             
-            for i in self.blockOccupanciesRed:
-                self.waysideControllers[0][i].setBlockOccupancies(blockOccupanciesRed[i])
+            #Track Model Inputs
+            self.trackModelDatabase.importTrack()
+            self.redBlocks=self.trackModelDatabase.getRedBlocks()
+            self.greenBlocks=self.trackModelDatabase.getGreenBlocks()
 
-            for i in self.blockOccupanciesRed:
-                self.waysideControllers[1][i].setBlockOccupancies(blockOccupanciesGreen[i])   
+            self.greenTicketSales=self.trackModelDatabase.getGreenSales()
+            self.redTicketSales=self.trackModelDatabase.getRedSales()
+
+            #input Block Occupancies
+            redBlockOcc=[]
+            greenBlockOcc=[]
+            redTempBlockOcc=[]
+            greenTempBlockOcc=[]
             
-            for i in self.stationOccupanciesRed:
-                self.waysideControllers[0][i].setStationOccupancies(stationOccupanciesRed[i])
+            for i in self.redBlocks:
+                redTempBlockOcc.append(self.redBlocks[i].occ)
+                if self.redBlocks[i+1].section > self.redBlocks[i].section:
+                    redTempBlockOcc.append(self.redBlocks[i+1].occ)
+                    redBlockOcc.append(redTempBlockOcc)
+                    redTempBlockOcc.clear()
 
-            for i in self.stationOccupanciesGreen:
-                self.waysideControllers[1][i].setStationOccupancies(stationOccupanciesGreen[i])
+            for i in self.greenBlocks:
+                greenTempBlockOcc.append(self.greenBlocks[i].occ)
+                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
+                    greenBlockOcc.append(greenTempBlockOcc)
+                    greenTempBlockOcc.clear()
 
-            for i in self.stationSalesRed:
-                self.waysidecontrollers[0][i].setTicketSales(stationSalesRed[i])
+            for i in redBlockOcc:
+                self.waysideControllers[0][i].setBlockOccupancies(redBlockOcc[i])
+            for i in self.greenBlocks:
+                self.waysideControllers[1][i].setBlockOccupancies(greenBlockOcc[i])
 
-            for i in self.stationSalesGreen:
-                self.waysidecontrollers[1][i].setTicketSales(stationSalesGreen[i])
-
-            for i in self.faultStatusesRed:
-                self.waysideControllers[0][i].setFaultStatuses(faultStatusesRed[i])
-
-            for i in self.faultStatusesGreen:
-                self.waysideControllers[1][i].setFaultStatuses(faultStatusesGreen[i])
-
-            for i in self.undergroundRed:
-                self.waysideControllers[0][i].setUnderground(undergroundRed[i])
-
-            for i in self.undergroundGreen:
-                self.waysideControllers[1][i].setUnderground(undergroundGreen[i])
-
-            #routing 
-            for i in self.blocks:
-                self.waysideControllers[lines[i]][int(sections[i],2)].setPLCinputs(auth, blocks[i])
-
-            for i in self.blocks:
-                self.waysideControllers[lines[i]][int(sections[i],2)].setBlockSugSpeeds(sugSpeed)
-
+            #input Underground
+            redUnderground=[]
+            greenUnderground=[]
+            redTempUnderground=[]
+            greenTempUnderground=[]
             
-            #get functions
-        def
+            for i in self.redBlocks:
+                redTempUnderground.append(self.redBlocks[i].under)
+                if self.redBlocks[i+1].section > self.redBlocks[i].section:
+                    redUnderground.append(redTempUnderground)
+                    redTempUnderground.clear()
+
+            for i in self.greenBlocks:
+                greenTempUnderground.append(self.greenBlocks[i].under)
+                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
+                    greenUnderground.append(greenTempUnderground)
+                    greenTempUnderground.clear()
+
+            for i in redBlockOcc:
+                self.waysideControllers[0][i].setUnderground(redUnderground[i])
+            for i in self.greenBlocks:
+                self.waysideControllers[1][i].setUnderground(greenUnderground[i])
+
+            #input Authority
+
+            #input Fault Statuses
+            redFaults=[]
+            greenFaults=[]
+            redTempFaults=[]
+            greenTempFaults=[]
+            
+            for i in self.redBlocks:
+                redTempFaults.append(self.redBlocks[i].fail)
+                if self.redBlocks[i+1].section > self.redBlocks[i].section:
+                    redFaults.append(redTempFaults)
+                    redTempFaults.clear()
+
+            for i in self.greenBlocks:
+                greenTempFaults.append(self.greenBlocks[i].fail)
+                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
+                    greenFaults.append(greenTempFaults)
+                    greenTempFaults.clear()
+
+            for i in redBlockOcc:
+                self.waysideControllers[0][i].setFaultStatuses(redFaults[i])
+            for i in self.greenBlocks:
+                self.waysideControllers[1][i].setFaultStatuses(greenFaults[i])
+
+            #input routed Blocks
+            for i in self.waysideControllers[0]:
+                self.waysideControllers[0][i].clearRoutedBlocks()
+            for i in self.waysideControllers[1]:
+                self.waysideControllers[1][i].clearRoutedBlocks()
+            for i in self.routedBlocks:
+                self.waysideControllers[self.routedLines[i]][int(self.routedSections[i],2)].setRoutedBlocks(int(self.routedBlocks[i],2))
+            
+            
+            for i in self.waysideControllers[0]:
+                contentRed=[]
+                contentRed[0]="CurrentWaysideLine=Red"+"\n"
+                contentRed[1]="CurrentWaysideNumber="+i.toString()+"\n"
+                with open('PLC_IO.txt','w') as file:
+                    file.writelines(contentRed) 
+                self.waysideControllers[0][i].runPLC(self.PLCFile)
+
+            for i in self.waysideControllers[1]:
+                contentGreen=[]
+                contentGreen[0]="CurrentWaysideLine=Green"+"\n"
+                contentGreen[1]="CurrentWaysideNumber="+i.toString()+"\n"
+                with open('PLC_IO.txt','w') as file:
+                    file.writelines(contentGreen) 
+                self.waysideControllers[0][i].runPLC(self.PLCFile)     
+
+
+    #CTC get functions
+    #Get Block Occupancies
+    def getRedBlockOcc(self):
+        redBlockOcc=[]
+        for i in self.redBlocks:
+            redBlockOcc[i]=self.redBlocks[i].occ
+        return redBlockOcc
+        
+    def getGreenBlockOccpancies(self):
+        greenBlockOcc=[]
+        for i in self.greenBlocks:
+            greenBlockOcc[i]=self.greenBlocks[i].occ
+        return greenBlockOcc
+
+    #get Ticket Sales
+    def getGreenTickets(self):
+        return self.greenTicketSales
+
+    def getRedTickets(self):
+        return self.redTicketSales
+
+    #get authority
+
+    #get Fault Statuses
+    def getGreenFaults(self):
+        greenFaults=[]
+        for i in self.greenBlocks:
+            greenFaults[i]=self.greenBlocks[i].fail
+        return greenFaults
+    
+    def getRedFaults(self):
+        redFaults=[]
+        for i in self.redBlocks:
+            redFaults[i]=self.redBlocks[i].fail
+        return redFaults
+
 
 if __name__ == "__main__":
     import sys
@@ -1263,4 +1191,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
