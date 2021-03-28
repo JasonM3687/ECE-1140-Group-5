@@ -1286,11 +1286,13 @@ class Ui_MainWindow(object):
         self.board21.setText(str(self.stations[20].board))
 
     def getBlock(self,line,block):
+        self.update()
         for i in self.tracks:
             if(i.line==line and i.bNum==block):
                 return i
     
     def getRedBlocks(self):
+        self.update()
         reds=[]
         for i in self.tracks:
             if(i.line=="Red"):
@@ -1298,6 +1300,7 @@ class Ui_MainWindow(object):
         return reds
 
     def getGreenBlocks(self):
+        self.update()
         greens=[]
         for i in self.tracks:
             if(i.line=="Green"):
@@ -1305,6 +1308,7 @@ class Ui_MainWindow(object):
         return greens
         
     def getRedSales(self):
+        self.update()
         redsales=[]
         for i in self.stations:
             if(i.posLine=="Red"):
@@ -1312,6 +1316,7 @@ class Ui_MainWindow(object):
         return redsales
     
     def getGreenSales(self):
+        self.update()
         greensales=[]
         for i in self.stations:
             if(i.posLine=="Green"):
@@ -1322,41 +1327,49 @@ class Ui_MainWindow(object):
         for i in self.switches:
             if(i.base==block and i.line=="Red"):
                 i.state=state
+        self.refresh()
         
     def setGreenSwitch(self,block,state):
         for i in self.switches:
             if(i.base==block and i.line=="Green"):
                 i.state=state
+        self.refresh()
         
     def setRedAuth(self,block,state):
         for i in self.signals:
             if(i.line=="Red" and i.block==block):
                 i.setAuth(state)
-    
+        self.refresh()
+        
     def setGreenAuth(self,block,state):
         for i in self.signals:
             if(i.line=="Green" and i.block==block):
                 i.setAuth(state)
-                
+        self.refresh()
+             
     def setRedSpeed(self,block,state):
         for i in self.signals:
             if(i.line=="Red" and i.block==block):
                 i.setcSpeed(state)
+        self.refresh()
                 
     def setGreenSpeed(self,block,state):
         for i in self.signals:
             if(i.line=="Green" and i.block==block):
                 i.setcSpeed(state)
+        self.refresh()
                 
     def setRedLight(self,block,state):
         for i in self.tracks:
             if(i.line=="Red" and i.bNum==block):
                 i.light=state
+        self.refresh()
                 
     def setGreenLight(self,block,state):
         for i in self.tracks:
             if(i.line=="Green" and i.bNum==block):
                 i.light=state
+        self.refresh()
                 
     class Train():
         cSpeed=0
