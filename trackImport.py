@@ -130,6 +130,7 @@ def trackPull(text):
 
 		beacons.append(Beacon("Red",6,"Herron Ave"))
 		beacons.append(Beacon("Red",8,"Herron Ave"))
+		beacons.append(Beacon("Red",9,"Shadyside"))
 		beacons.append(Beacon("Red",15,"Shadyside"))
 		beacons.append(Beacon("Red",17,"Swissville"))
 		beacons.append(Beacon("Red",20,"Herron Ave"))
@@ -155,6 +156,7 @@ def trackPull(text):
 		beacons.append(Beacon("Green",40,"Inglewood"))
 		beacons.append(Beacon("Green",49,"Overbrook"))
 		beacons.append(Beacon("Green",58,"Glenbury"))
+		beacons.append(Beacon("Green",63,"Glenbury"))
 		beacons.append(Beacon("Green",66,"Dormont"))
 		beacons.append(Beacon("Green",74,"Mt Lebanon"))
 		beacons.append(Beacon("Green",78,"Poplar"))

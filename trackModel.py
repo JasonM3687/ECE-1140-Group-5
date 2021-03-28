@@ -1370,7 +1370,79 @@ class Ui_MainWindow(object):
             if(i.line=="Green" and i.bNum==block):
                 i.light=state
         self.refresh()
-                
+    
+    def getAuth(self,line,block):
+        self.update()
+        for i in self.signals:
+            if(i.line==line and i.block==block):
+                return i.getAuth()
+            
+    def getSpeed(self,line,block):
+        self.update()
+        for i in self.signals:
+            if(i.line==line and i.block==block):
+                cspeed=i.getSpeed()
+        for i in self.tracks:
+            if(i.line==line and i.bNum==block):
+                slimit=i.sLimit       
+        return cspeed, slimit
+            
+    def getBeacon(self,line,block):
+        for i in self.beacons:
+            if(i.line==line and i.block==block):
+                return i.readBeacon()
+    
+    def setTrainPos(self,train,line,block):
+        self.trains[train-1].posLine=line
+        self.trains[train-1].posBlock=block
+        self.refresh()
+        
+    def setTrainFault(self,train,fault):
+        self.trains[train-1].status=fault
+        self.refresh()
+        
+    def getLight(self,line,block):
+        self.update()
+        for i in self.tracks:
+            if(i.line==line and i.bNum==block):
+                return i.light
+        
+    def getStationSide(self,line,block):
+        for i in self.tracks:
+            if(i.line==line, i.bNum==block):
+                if(i.station=="Left"):
+                    return 0
+                elif(i.station=="Right"):
+                    return 1
+                elif(i.station=="Both"):
+                    return 2
+        
+    def getBlockGrade(self,line,block):
+        self.update()
+        for i in self.tracks:
+            if(i.line==line and i.bNum==block):
+                return i.bGrade, i.elev, i.cElev, i.bLength
+    
+    def getBoarding(self,line,block):
+        for i in self.stations:
+            if(i.posLine==line and i.posBlock==block):
+                i.addSales(150)
+                i.board=0
+                return 150
+        
+    def getSwitch(self,line,block):
+        for i in self.switches:
+            if(i.line==line and (i.base==block or i.branch1==block or i.branch2==block)):
+                if(i.state==0):
+                    return i.base, i.branch1
+                else:
+                    return i.base, i.branch2
+            
+    def getSignal(self,line,block):
+        for i in self.signals:
+            if(i.line==line and i.block==block):
+                return i.state
+        
     class Train():
         cSpeed=0
         auth=0
