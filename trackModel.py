@@ -1290,6 +1290,74 @@ class Ui_MainWindow(object):
             if(i.line==line and i.bNum==block):
                 return i
     
+    def getRedBlocks(self):
+        reds=[]
+        for i in self.tracks:
+            if(i.line=="Red"):
+                reds.append(i)
+        return reds
+
+    def getGreenBlocks(self):
+        greens=[]
+        for i in self.tracks:
+            if(i.line=="Green"):
+                greens.append(i)
+        return greens
+        
+    def getRedSales(self):
+        redsales=[]
+        for i in self.stations:
+            if(i.posLine=="Red"):
+                redsales.append(i)
+        return redsales
+    
+    def getGreenSales(self):
+        greensales=[]
+        for i in self.stations:
+            if(i.posLine=="Green"):
+                greensales.append(i)
+        return greensales
+        
+    def setRedSwitch(self,block,state):
+        for i in self.switches:
+            if(i.base==block and i.line=="Red"):
+                i.state=state
+        
+    def setGreenSwitch(self,block,state):
+        for i in self.switches:
+            if(i.base==block and i.line=="Green"):
+                i.state=state
+        
+    def setRedAuth(self,block,state):
+        for i in self.signals:
+            if(i.line=="Red" and i.block==block):
+                i.setAuth(state)
+    
+    def setGreenAuth(self,block,state):
+        for i in self.signals:
+            if(i.line=="Green" and i.block==block):
+                i.setAuth(state)
+                
+    def setRedSpeed(self,block,state):
+        for i in self.signals:
+            if(i.line=="Red" and i.block==block):
+                i.setcSpeed(state)
+                
+    def setGreenSpeed(self,block,state):
+        for i in self.signals:
+            if(i.line=="Green" and i.block==block):
+                i.setcSpeed(state)
+                
+    def setRedLight(self,block,state):
+        for i in self.tracks:
+            if(i.line=="Red" and i.bNum==block):
+                i.light=state
+                
+    def setGreenLight(self,block,state):
+        for i in self.tracks:
+            if(i.line=="Green" and i.bNum==block):
+                i.light=state
+                
     class Train():
         cSpeed=0
         auth=0
