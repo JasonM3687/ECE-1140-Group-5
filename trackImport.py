@@ -9,6 +9,7 @@ class Block:
 	envTemp=65
 	under=0
 	cross=0
+	light=0
 	def __init__(self, line, section, bNum, bLength, bGrade, sLimit, elev, cElev):
 		self.line=line
 		self.section=section
