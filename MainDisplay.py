@@ -18,14 +18,14 @@ import time
 class Ui_LoginWindow(object):
     #define static class variables
     speed = 0.0
-    currentVelocity = 0.0
+    currentVelocity = 4.0
     temperature = 0.0
     nextStation = "NONE"
     headlightStatus = False
     cabinlightStatus = False
     doorStatus = False
-    kp = 0.0
-    ki = 0.0
+    kp = 2.0
+    ki = 2.0
     faultStatus = "NONE"
     modeStatus = "MANUAL"
     engineStatus = False
@@ -38,6 +38,7 @@ class Ui_LoginWindow(object):
     speedLimit = 25
     power = 0
     startTime = time.time()
+    beaconMessage = "NONE"
 
 
     def setupUi1(self, LoginWindow):
@@ -136,7 +137,10 @@ class Ui_LoginWindow(object):
     lastTime = 0.0
     timeChange = 0.0
     errSum = 0.0
+    errSum2 = 0.0
     error = 0.0
+    error2 = 0.0
+    maxPower = 150000
     #Calculate power toi be sent to train controller
     def calcPower(self):
         #time since last calculation
@@ -145,13 +149,24 @@ class Ui_LoginWindow(object):
 
         #Compute working error variables
         self.error = self.speed - self.currentVelocity
-        self.errSum += self.error * self.timeChange
+        if self.power > self.maxPower:
+            self.errSum = errSum2 + (self.timeChange/2)*(self.error + self.error2)
+        else:
+            self.errSum = self.errSum2
 
         #Compute PID power output
         self.power = (self.kp * self.error) + (self.ki * self.errSum)
         print(self.power)
 
         self.startTime = self.currentTime
+        self.error2 = self.error
+        self.errSum2 = self.errSum
+
+    def getTrainModelInputs(self):
+        self.authority = trainMod.getAuthority()
+        self.currentVelocity = trainMod.getVelocity()
+        self.beaconMessage = trainMod.getBeacon()
+        self.commanded = trainMod.getCommanded()
 
 
 
@@ -292,8 +307,8 @@ class Ui_LoginWindow(object):
     def speedControl(self):
         if self.autoMode == False:
             self.speed = self.displayUI.speedInput.value()
-            if self.speed >= self.speedLimit:
-                self.speed = self.speedLimit
+            if self.speed >= self.commanded:
+                self.speed = self.commanded
                 self.displayUI.speedInput.setValue(self.speed)
         self.calcPower()
 
