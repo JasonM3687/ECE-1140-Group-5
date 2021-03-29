@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 
-class Ui_MainWindow(object):
+class trackModel(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1322, 790)
@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         pixmap2=(pixmap.scaledToHeight(self.tableView.height()))
         self.tableView.setPixmap(pixmap2)
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(10, 130, 361, 545))
+        self.groupBox.setGeometry(QtCore.QRect(10, 130, 361, 700))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -167,6 +167,24 @@ class Ui_MainWindow(object):
         self.label_10.setFont(font)
         self.label_10.setObjectName("label_10")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_10)
+        self.sigLabel = QtWidgets.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        self.sigLabel.setFont(font)
+        self.sigLabel.setObjectName("sigLabel")
+        self.formLayout.setWidget(15, QtWidgets.QFormLayout.LabelRole, self.sigLabel)
+        self.cSpeedLabel = QtWidgets.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        self.cSpeedLabel.setFont(font)
+        self.cSpeedLabel.setObjectName("cSpeedLabel")
+        self.formLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.cSpeedLabel)
+        self.authLabel = QtWidgets.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        self.authLabel.setFont(font)
+        self.authLabel.setObjectName("authLabel")
+        self.formLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.authLabel)
         self.label_11 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(20)
@@ -232,7 +250,7 @@ class Ui_MainWindow(object):
         self.sec_label.setFont(font)
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.sec_label)
         self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox_3.setGeometry(QtCore.QRect(10, 673, 361, 61))
+        self.groupBox_3.setGeometry(QtCore.QRect(10, 828, 361, 61))
         self.groupBox_3.setObjectName("groupBox_3")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.groupBox_3)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -893,6 +911,9 @@ class Ui_MainWindow(object):
         self.groupBox_3.setTitle(_translate("MainWindow", "Track Import"))
         self.label_6.setText(_translate("MainWindow", "Track File Path:"))
         self.importButton.setText(_translate("MainWindow", "Import Track"))
+        self.sigLabel.setText(_translate("MainWindow", "Signal State"))
+        self.cSpeedLabel.setText(_translate("MainWindow", "Command Speed"))
+        self.authLabel.setText(_translate("MainWindow", "Authority"))
         self.labelT1.setText(_translate("MainWindow", "Position Train  1:"))
         self.labelT2.setText(_translate("MainWindow", "Position Train  2:"))
         self.labelT3.setText(_translate("MainWindow", "Position Train  3:"))
@@ -1451,5 +1472,4 @@ class Ui_MainWindow(object):
         light=False
         door=False
         status=0
-
 
