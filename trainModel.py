@@ -778,6 +778,10 @@ class Ui_MainWindow(object):
                 self.doors = [self.doors_1,self.doors_2,self.doors_3,self.doors_4,self.doors_5]
                 self.setTemps = [self.setTemp_1,self.setTemp_2,self.setTemp_3,self.setTemp_4,self.setTemp_5]
                 self.currTemps = [self.currTemp_1,self.currTemp_2,self.currTemp_3,self.currTemp_4,self.currTemp_5]
+
+                self.timer = QtCore.QTimer()
+                self.timer.timeout.connect(self.updateEverything())
+                self.timer.start(1000)
                 
 
                 # button events and where to go
