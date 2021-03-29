@@ -10,44 +10,53 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import time
-from PyQt5.QtCore import QDate, QTime, Qt, QDateTime
+from PyQt5.QtCore import QDateTime, Qt, QTime, QDate
 import tkinter as tk
 from tkinter import filedialog
 from TestCases import Ui_AnotherWindow
 from waysideController import waysideController
 import os
-from trackModel import TrackModel
-from CTC import CTCOFFICE
+from trackModel import track
+import t1_1
+from t1_1 import CTCOFFICE
+import sys
+from tkinter import *
 
+#CTC=CTCOFFICE(window)
 
 class Ui_MainWindow(object):
+
     sugSpeed=0
     auth=0
     waysideControllers=[[]*2]*26
-    trackModelDatabase=TrackModel()
-    CTC=CTCOFFICE()
     redBlockNum=[]
     greenBlockNum=[]
+    prevRoutedBlocks=[]
+    prevRoutedLines=[]
+    prevRoutedSections=[]
+    routedBlockEqual=True
+    
+    def trackModelInput(self, obj):
+        self.trackModelDatabase=obj
 
+    def CTCInput(self,obj):
+        self.CTC=obj
+        
     def setupControllers(self):
-        redCount=0
-        greenCount=1
-        redBlocks=self.trackModelDatabase.getRedBlocks()
-        greenBlocks=self.trackModelDatabase.getGreenBlocks()
-        for i in redBlocks:
-                redCount+=1
-                if self.redBlocks[i+1].section > self.redBlocks[i].section:
-                    self.redBlockNum.append(redCount)
-
-        for i in greenBlocks:
-                greenCount+=1
-                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
-                    self.greenBlockNum.append(greenCount)
+        self.redStarts=[1,4,7,10,13,16,21,24,46,49,55,58,61,64,67,68,71,72,73,76]
+        self.greenStarts=[1,4,7,13,17,21,29,33,36,58,63,69,74,77,86,89,98,101,102,105,110,117,122,144,147,150]
 
         for i in range(20):
-            self.waysideControllers[0].append( waysideController(i, "Red",self.redBlockNum[i]) )
+            if i==19:
+                self.waysideControllers[0].append(waysideController(i,"Red",self.redStarts[i],1))
+            else:
+                self.waysideControllers[0].append( waysideController(i, "Red",self.redStarts[i],self.redStarts[i+1]-self.redStarts[i] ))
+            
         for i in range(26):
-            self.waysideControllers[1].append( waysideController(i, "Green",self.greenBlockNum[i]) )
+            if i==25:
+                self.waysideControllers[1].append( waysideController(i, "Green",self.greenStarts[i], 1) )
+            else:
+                self.waysideControllers[1].append( waysideController(i, "Green",self.greenStarts[i], self.greenStarts[i+1]-self.greenStarts[i]) )
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -756,6 +765,8 @@ class Ui_MainWindow(object):
         self.CommandEntryLabel.setObjectName("CommandEntryLabel")
         self.LoadPLCButton = QtWidgets.QPushButton(self.centralwidget)
         self.LoadPLCButton.setGeometry(QtCore.QRect(10, 860, 181, 41))
+        self.LogoutButton = QtWidgets.QPushButton(self.centralwidget)
+        self.LogoutButton.setGeometry(QtCore.QRect(200, 900, 141, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -763,6 +774,9 @@ class Ui_MainWindow(object):
         self.LoadPLCButton.setFont(font)
         self.LoadPLCButton.setStyleSheet("background:rgb(182, 182, 182)")
         self.LoadPLCButton.setObjectName("LoadPLCButton")
+        self.LogoutButton.setFont(font)
+        self.LogoutButton.setStyleSheet("background:rgb(182, 182, 182)")
+        self.LogoutButton.setObjectName("LoadPLCButton")
         self.RunButton = QtWidgets.QCommandLinkButton(self.centralwidget)
         self.RunButton.setGeometry(QtCore.QRect(1170, 860, 185, 41))
         font = QtGui.QFont()
@@ -955,6 +969,7 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.LoadPLCButton.setText(_translate("MainWindow", "Load PLC File"))
+        self.LogoutButton.setText(_translate("MainWindow", "Logout"))
         self.RunButton.setText(_translate("MainWindow", "Run Command"))
         self.TimeLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Time</span></p></body></html>"))
         self.LoadedPLCLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Currently Loaded PLC:</span></p></body></html>"))
@@ -966,6 +981,7 @@ class Ui_MainWindow(object):
     def realTime(self):
         _translate = QtCore.QCoreApplication.translate
         print("Load Your Initial PLC File:")
+        global root
         root=tk.Tk()
         root.withdraw()
         file_path = filedialog.askopenfilename()
@@ -982,10 +998,14 @@ class Ui_MainWindow(object):
 
         self.LoadPLCButton.clicked.connect(self.clickedLF)
         self.RunButton.clicked.connect(self.clickedCommand)
-
+        #self.LogoutButton.clicked.connect(self.clickedLogout)
+       
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.UpdatePLC)
-        self.timer.start(1000)
+        self.timer.start(50)
+
+    #def clickedLogout(self):
+        #sys.exit()
 
     def clickedCommand(self):
         if self.CommandEntryLabel.toPlainText() == "diagnosticFunction()":
@@ -1034,14 +1054,30 @@ class Ui_MainWindow(object):
             self.TimeLabel.setAlignment(QtCore.Qt.AlignRight)
 
             #CTC Inputs
-            self.routedBlocks=CTC.sentRouteBlocks
-            self.routedSections=CTC.sentRouteSections
-            self.routedLines=CTC.sentRoutelines
-            self.routeSugSpeed=CTC.suggestedSpeed
-            self.routedAuth=CTC.Auth
+            self.routedBlocks=self.CTC.SentRouteBlocks
+            self.routedSections=self.CTC.SentRouteSections
+            self.routedLines=self.CTC.SentRouteLines
+            self.routeSugSpeed=self.CTC.SentSuggestedSpeed
+            self.routedAuth=self.CTC.SentSuggestedAuth
+
             
+            self.routedBlockEqual=True
+            for i in range(len(self.routedBlocks)):
+                if self.prevRoutedBlocks[i]!=self.routedBlocks[i] and len(self.prevRoutedBlocks)!=0:
+                    self.routedBlockEqual=False
+            
+            if self.routedBlockEqual==False:
+                for i in range(len(self.routedBlocks)):
+                    self.waysideControllers[self.prevRoutedLines[i]][int(self.prevRoutedSections[i],2)].clearRoutedBlocks()
+                    self.waysideControllers[self.prevRoutedLines[i]][int(self.prevRoutedSections[i],2)].clearBlockAuthorities()
+                    self.waysideControllers[self.prevRoutedLines[i]][int(self.prevRoutedSections[i],2)].clearRoutedSpeeds()
+
+            self.prevRoutedBlocks=list(self.routedBlocks)
+            self.prevRoutedSections=list(self.routedSections)
+            self.prevRoutedLines=list(self.routedLines)
+
             #Track Model Inputs
-            self.trackModelDatabase.importTrack()
+            
             self.redBlocks=self.trackModelDatabase.getRedBlocks()
             self.greenBlocks=self.trackModelDatabase.getGreenBlocks()
 
@@ -1054,22 +1090,81 @@ class Ui_MainWindow(object):
             redTempBlockOcc=[]
             greenTempBlockOcc=[]
             
-            for i in self.redBlocks:
+            for i in range(len(self.redBlocks)):
                 redTempBlockOcc.append(self.redBlocks[i].occ)
-                if self.redBlocks[i+1].section > self.redBlocks[i].section:
-                    redTempBlockOcc.append(self.redBlocks[i+1].occ)
+                if self.redBlocks[i].section=='T':
+                    redBlockOcc.append(redTempBlockOcc)
+                elif self.redBlocks[i+1].section > self.redBlocks[i].section:
                     redBlockOcc.append(redTempBlockOcc)
                     redTempBlockOcc.clear()
 
-            for i in self.greenBlocks:
+            for i in range(len(self.greenBlocks)):
                 greenTempBlockOcc.append(self.greenBlocks[i].occ)
-                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
+                if self.greenBlocks[i].section=='Z':
+                    greenBlockOcc.append(greenTempBlockOcc)
+                elif self.greenBlocks[i+1].section > self.greenBlocks[i].section:
                     greenBlockOcc.append(greenTempBlockOcc)
                     greenTempBlockOcc.clear()
 
-            for i in redBlockOcc:
+            #next block Occs
+            self.waysideControllers[1][0].appendBlockOccupancies(self.greenBlocks[12].occ)#A
+            self.waysideControllers[1][1].appendBlockOccupancies(self.greenBlocks[2].occ)#B
+            self.waysideControllers[1][2].appendBlockOccupancies(self.greenBlocks[5].occ)#C
+            self.waysideControllers[1][3].appendBlockOccupancies(self.greenBlocks[16].occ)#D
+            self.waysideControllers[1][4].appendBlockOccupancies(self.greenBlocks[20].occ)#E
+            self.waysideControllers[1][5].appendBlockOccupancies(self.greenBlocks[29].occ)#F
+            self.waysideControllers[1][6].appendBlockOccupancies(self.greenBlocks[32].occ)#G
+            self.waysideControllers[1][7].appendBlockOccupancies(self.greenBlocks[35].occ)#H
+            self.waysideControllers[1][8].appendBlockOccupancies(self.greenBlocks[57].occ)#I
+            self.waysideControllers[1][9].appendBlockOccupancies(self.greenBlocks[62].occ)#J
+            self.waysideControllers[1][10].appendBlockOccupancies(self.greenBlocks[68].occ)#K
+            self.waysideControllers[1][11].appendBlockOccupancies(self.greenBlocks[73].occ)#L
+            self.waysideControllers[1][12].appendBlockOccupancies(self.greenBlocks[76].occ)#M
+            self.waysideControllers[1][13].appendBlockOccupancies(self.greenBlocks[85].occ)#N
+            self.waysideControllers[1][14].appendBlockOccupancies(self.greenBlocks[88].occ)#O
+            self.waysideControllers[1][15].appendBlockOccupancies(self.greenBlocks[97].occ)#P
+            self.waysideControllers[1][16].appendBlockOccupancies(self.greenBlocks[84].occ)#Q
+            self.waysideControllers[1][17].appendBlockOccupancies(self.greenBlocks[101].occ)#R
+            self.waysideControllers[1][18].appendBlockOccupancies(self.greenBlocks[104].occ)#S
+            self.waysideControllers[1][19].appendBlockOccupancies(self.greenBlocks[109].occ)#T
+            self.waysideControllers[1][20].appendBlockOccupancies(self.greenBlocks[116].occ)#U
+            self.waysideControllers[1][21].appendBlockOccupancies(self.greenBlocks[121].occ)#V
+            self.waysideControllers[1][22].appendBlockOccupancies(self.greenBlocks[143].occ)#W
+            self.waysideControllers[1][23].appendBlockOccupancies(self.greenBlocks[146].occ)#X
+            self.waysideControllers[1][24].appendBlockOccupancies(self.greenBlocks[149].occ)#Y
+            self.waysideControllers[1][25].appendBlockOccupancies(self.greenBlocks[28].occ)#Z
+
+            #next block faults
+            self.waysideControllers[1][0].appendBlockFaults(self.greenBlocks[12].fail)#A
+            self.waysideControllers[1][1].appendBlockFaults(self.greenBlocks[2].fail)#B
+            self.waysideControllers[1][2].appendBlockFaults(self.greenBlocks[5].fail)#C
+            self.waysideControllers[1][3].appendBlockFaults(self.greenBlocks[16].fail)#D
+            self.waysideControllers[1][4].appendBlockFaults(self.greenBlocks[20].fail)#E
+            self.waysideControllers[1][5].appendBlockFaults(self.greenBlocks[29].fail)#F
+            self.waysideControllers[1][6].appendBlockFaults(self.greenBlocks[32].fail)#G
+            self.waysideControllers[1][7].appendBlockFaults(self.greenBlocks[35].fail)#H
+            self.waysideControllers[1][8].appendBlockFaults(self.greenBlocks[57].fail)#I
+            self.waysideControllers[1][9].appendBlockFaults(self.greenBlocks[62].fail)#J
+            self.waysideControllers[1][10].appendBlockFaults(self.greenBlocks[68].fail)#K
+            self.waysideControllers[1][11].appendBlockFaults(self.greenBlocks[73].fail)#L
+            self.waysideControllers[1][12].appendBlockFaults(self.greenBlocks[76].fail)#M
+            self.waysideControllers[1][13].appendBlockFaults(self.greenBlocks[85].fail)#N
+            self.waysideControllers[1][14].appendBlockFaults(self.greenBlocks[88].fail)#O
+            self.waysideControllers[1][15].appendBlockFaults(self.greenBlocks[97].fail)#P
+            self.waysideControllers[1][16].appendBlockFaults(self.greenBlocks[84].fail)#Q
+            self.waysideControllers[1][17].appendBlockFaults(self.greenBlocks[101].fail)#R
+            self.waysideControllers[1][18].appendBlockFaults(self.greenBlocks[104].fail)#S
+            self.waysideControllers[1][19].appendBlockFaults(self.greenBlocks[109].fail)#T
+            self.waysideControllers[1][20].appendBlockFaults(self.greenBlocks[116].fail)#U
+            self.waysideControllers[1][21].appendBlockFaults(self.greenBlocks[121].fail)#V
+            self.waysideControllers[1][22].appendBlockFaults(self.greenBlocks[143].fail)#W
+            self.waysideControllers[1][23].appendBlockFaults(self.greenBlocks[146].fail)#X
+            self.waysideControllers[1][24].appendBlockFaults(self.greenBlocks[149].fail)#Y
+            self.waysideControllers[1][25].appendBlockFaults(self.greenBlocks[28].fail)#Z
+
+            for i in range(len(redBlockOcc)):
                 self.waysideControllers[0][i].setBlockOccupancies(redBlockOcc[i])
-            for i in self.greenBlocks:
+            for i in range(len(greenBlockOcc)):
                 self.waysideControllers[1][i].setBlockOccupancies(greenBlockOcc[i])
 
             #input Underground
@@ -1078,24 +1173,30 @@ class Ui_MainWindow(object):
             redTempUnderground=[]
             greenTempUnderground=[]
             
-            for i in self.redBlocks:
+            for i in range(len(self.redBlocks)):
                 redTempUnderground.append(self.redBlocks[i].under)
-                if self.redBlocks[i+1].section > self.redBlocks[i].section:
+                if self.redBlocks[i].section=='T':
+                    redUnderground.append(redTempUnderground)
+                elif self.redBlocks[i+1].section > self.redBlocks[i].section:
                     redUnderground.append(redTempUnderground)
                     redTempUnderground.clear()
 
-            for i in self.greenBlocks:
+            for i in range(len(self.greenBlocks)):
                 greenTempUnderground.append(self.greenBlocks[i].under)
-                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
+                if self.greenBlocks[i].section=='Z':
+                    greenUnderground.append(greenTempUnderground)
+                elif self.greenBlocks[i+1].section > self.greenBlocks[i].section:
                     greenUnderground.append(greenTempUnderground)
                     greenTempUnderground.clear()
 
-            for i in redBlockOcc:
+            for i in range(len(redUnderground)):
                 self.waysideControllers[0][i].setUnderground(redUnderground[i])
-            for i in self.greenBlocks:
+            for i in range(len(greenUnderground)):
                 self.waysideControllers[1][i].setUnderground(greenUnderground[i])
 
             #input Authority
+            for i in range(len(self.routedBlocks)):
+                self.waysideControllers[self.routedLines[i]][int(self.routedSections[i],2)].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
 
             #input Fault Statuses
             redFaults=[]
@@ -1103,60 +1204,72 @@ class Ui_MainWindow(object):
             redTempFaults=[]
             greenTempFaults=[]
             
-            for i in self.redBlocks:
+            for i in range(len(self.redBlocks)):
                 redTempFaults.append(self.redBlocks[i].fail)
-                if self.redBlocks[i+1].section > self.redBlocks[i].section:
+                if self.redBlocks[i].section=='T':
+                    redFaults.append(redTempFaults)
+                elif self.redBlocks[i+1].section > self.redBlocks[i].section:
                     redFaults.append(redTempFaults)
                     redTempFaults.clear()
 
-            for i in self.greenBlocks:
+            for i in range(len(self.greenBlocks)):
                 greenTempFaults.append(self.greenBlocks[i].fail)
-                if self.greenBlocks[i+1].section > self.greenBlocks[i].section:
+                if self.greenBlocks[i].section=='Z':
+                    greenFaults.append(greenTempFaults)
+                elif self.greenBlocks[i+1].section > self.greenBlocks[i].section:
                     greenFaults.append(greenTempFaults)
                     greenTempFaults.clear()
 
-            for i in redBlockOcc:
+            for i in range(len(redFaults)):
                 self.waysideControllers[0][i].setFaultStatuses(redFaults[i])
-            for i in self.greenBlocks:
+            for i in range(len(greenFaults)):
                 self.waysideControllers[1][i].setFaultStatuses(greenFaults[i])
 
             #input routed Blocks
-            for i in self.waysideControllers[0]:
-                self.waysideControllers[0][i].clearRoutedBlocks()
-            for i in self.waysideControllers[1]:
-                self.waysideControllers[1][i].clearRoutedBlocks()
-            for i in self.routedBlocks:
+            for i in range(len(self.routedBlocks)):
                 self.waysideControllers[self.routedLines[i]][int(self.routedSections[i],2)].setRoutedBlocks(int(self.routedBlocks[i],2))
             
             
-            for i in self.waysideControllers[0]:
+            for i in range(20):
                 contentRed=[]
-                contentRed[0]="CurrentWaysideLine=Red"+"\n"
-                contentRed[1]="CurrentWaysideNumber="+i.toString()+"\n"
-                with open('PLC_IO.txt','w') as file:
+                contentRed.append("CurrentWaysideLine=Red"+"\n")
+                contentRed.append("CurrentWaysideNumber="+str(i)+"\n")
+                with open('CurrentWayside.txt','w') as file:
                     file.writelines(contentRed) 
                 self.waysideControllers[0][i].runPLC(self.PLCFile)
 
-            for i in self.waysideControllers[1]:
-                contentGreen=[]
-                contentGreen[0]="CurrentWaysideLine=Green"+"\n"
-                contentGreen[1]="CurrentWaysideNumber="+i.toString()+"\n"
-                with open('PLC_IO.txt','w') as file:
-                    file.writelines(contentGreen) 
-                self.waysideControllers[0][i].runPLC(self.PLCFile)     
 
+            for i in range(26):
+                contentGreen=[]
+                contentGreen.append("CurrentWaysideLine=Green"+"\n")
+                contentGreen.append("CurrentWaysideNumber="+str(i)+"\n")
+                with open('CurrentWayside.txt','w') as file:
+                    file.writelines(contentGreen) 
+                self.waysideControllers[1][i].runPLC(self.PLCFile)     
+
+            with open('HWTrackControllerInputs.txt','r') as file:
+                HWContent=file.readlines()
+            HWContent[2]=str(self.waysideControllers[1][11].getRoutedBlocks())+'\n'
+            HWContent[4]=str(self.waysideControllers[1][11].getRoutedAuth())+'\n'
+            HWContent[6]=str(self.waysideControllers[1][11].getRoutedSpeeds())+'\n'
+            HWContent[8]=str(self.waysideControllers[1][11].getBlockOccupancies())+'\n'
+            HWContent[10]=str(self.waysideControllers[1][11].getFaultStatuses())+'\n'
+            HWContent[12]=str(self.waysideControllers[1][11].getUnderground())+'\n'
+
+            with open('HWTrackControllerInputs.txt','w') as file:
+                file.writelines(HWContent)
 
     #CTC get functions
     #Get Block Occupancies
     def getRedBlockOcc(self):
         redBlockOcc=[]
-        for i in self.redBlocks:
+        for i in range(len(self.redBlocks)):
             redBlockOcc[i]=self.redBlocks[i].occ
         return redBlockOcc
         
     def getGreenBlockOccpancies(self):
         greenBlockOcc=[]
-        for i in self.greenBlocks:
+        for i in range(len(self.greenBlocks)):
             greenBlockOcc[i]=self.greenBlocks[i].occ
         return greenBlockOcc
 
@@ -1172,16 +1285,82 @@ class Ui_MainWindow(object):
     #get Fault Statuses
     def getGreenFaults(self):
         greenFaults=[]
-        for i in self.greenBlocks:
+        for i in range(len(self.greenBlocks)):
             greenFaults[i]=self.greenBlocks[i].fail
         return greenFaults
     
     def getRedFaults(self):
         redFaults=[]
-        for i in self.redBlocks:
+        for i in range(len(self.redBlocks)):
             redFaults[i]=self.redBlocks[i].fail
         return redFaults
 
+
+    #TrackModel Get Functions
+    def getGreenAuth(self):
+        greenAuth=[]
+        for i in range(len(self.waysideControllers[1])):
+            greenAuth=greenAuth+(self.waysideControllers[1][i].getBlockAuth())
+
+        return greenAuth
+
+    def getRedAuth(self):
+        redAuth=[]
+        for i in range(len(self.waysideControllers[0])):
+            redAuth=redAuth+(self.waysideControllers[0][i].getBlockAuth())
+
+        return redAuth
+
+    def getGreenSpeedLimit(self):
+        greenSpeed=[]
+        for i in range(len(self.waysideControllers[1])):
+            greenSpeed=greenSpeed+(self.waysideControllers[1][i].getBlockSugSpeeds())
+
+        return greenSpeed
+
+    def getRedSpeedLimit(self):
+        redSpeed=[]
+        for i in range(len(self.waysideControllers[0])):
+            redSpeed=redSpeed+(self.waysideControllers[0][i].getBlockSugSpeeds())
+
+        return redSpeed
+    def getGreenSwitchPos(self):
+        greenSW=[]
+        greenSW=greenSW+self.waysideControllers[1][3].getSwitchPositions()+self.waysideControllers[1][6].getSwitchPositions()+self.waysideControllers[1][8].getSwitchPositions()+self.waysideControllers[1][10].getSwitchPositions()+self.waysideControllers[1][13].getSwitchPositions()
+
+        return greenSW
+    def getRedSwitchPos(self):
+        redSW=[]
+        redSW=redSW+self.waysideControllers[0][3].getSwitchPositions()+self.waysideControllers[0][5].getSwitchPositions()+self.waysideControllers[0][7].getSwitchPositions()+self.waysideControllers[0][9].getSwitchPositions()
+
+        return redSW
+
+    def getGreenTrainLightSigs(self):
+        greenTrainLights=[]
+        for i in range(len(self.waysideControllers[1])):
+            greenTrainLights=greenTrainLights+(self.waysideControllers[1][i].getTrainLightSignals())
+
+        return greenTrainLights
+    def getRedTrainLightSigs(self):
+        redTrainLights=[]
+        for i in range(len(self.waysideControllers[0])):
+            redTrainLights=redTrainLights+(self.waysideControllers[0][i].getTrainLightSignals())
+
+        return redTrainLights
+
+    def getGreenTrafficLights(self):
+        greenTrafficLights=[]
+        for i in range(len(self.waysideControllers[1])):
+            greenTrafficLights=greenTrafficLights+(self.waysideControllers[1][i].getTrafficLightStatus())
+
+        return greenTrafficLights
+
+    def getRedTrafficLights(self):
+        redTrafficLights=[]
+        for i in range(len(self.waysideControllers[0])):
+            redTrafficLights=redTrafficLights+(self.waysideControllers[0][i].getTrafficLightStatus())
+
+        return redTrafficLights
 
 if __name__ == "__main__":
     import sys
@@ -1190,4 +1369,18 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
+    
+    trackApp=QtWidgets.QApplication(sys.argv)
+    trackWindow=QtWidgets.QMainWindow()
+    trackModelDatabase=track()
+    trackModelDatabase.setupUi(trackWindow)
+    trackModelDatabase.importTrack()
+    ui.trackModelInput(trackModelDatabase)
+    window=root
+    CTC=CTCOFFICE(window)
+    ui.CTCInput(CTC)
+    window.mainloop()
     sys.exit(app.exec_())
+    
+    
+
