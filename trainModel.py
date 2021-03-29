@@ -780,7 +780,7 @@ class Ui_MainWindow(object):
                 self.currTemps = [self.currTemp_1,self.currTemp_2,self.currTemp_3,self.currTemp_4,self.currTemp_5]
 
                 self.timer = QtCore.QTimer()
-                self.timer.timeout.connect(self.updateEverything())
+                self.timer.timeout.connect(self.updateEverything)
                 self.timer.start(1000)
                 
 
@@ -795,13 +795,14 @@ class Ui_MainWindow(object):
                 self.engineFailure.clicked.connect(self.eFail)
                 self.signalFailure.clicked.connect(self.sFail)
                 self.brakeFailure.clicked.connect(self.bFail)
+                self.failureFixed.clicked.connect(self.failFix)
 
         def TrainWindow(self):
                 self.currentTrainDisplay = self.trainSelect.currentIndex() - 1
                 self.updateTrainDisplay(self.currentTrainDisplay)
 
         def updateTrainDisplay(self,trainNum):
-                self.currSpeed.display(self.trains[trainNum].velocity)
+                self.currSpeed.display(self.trains[trainNum].velocityMPH)
                 self.speedLimit.display(self.trains[trainNum].speed_limit)
                 self.commSpeed.display(self.trains[trainNum].commSpeed)
                 self.accelerationLimit.display(self.trains[trainNum].acceleration)
@@ -809,7 +810,7 @@ class Ui_MainWindow(object):
                 self.beacon.setText(self.trains[trainNum].beacon)
                 self.authorityOutput.setText(str(self.trains[trainNum].authority))
                 self.powerOutput.setText(str(self.trains[trainNum].power))
-                self.masOutput.setText(str(self.trains[trainNum].mass))
+                self.masOutput.setText(str(self.trains[trainNum].massTon))
 
                 #update door and light status status
                 for x in range(5):
@@ -886,13 +887,20 @@ class Ui_MainWindow(object):
                 self.failureOutput.setText("Brake Failure")
                 self.brakeFailure.setStyleSheet("background-color: rgb(255, 0, 0);")
 
-        def setPower(self,power,trainID):
-                self.trains[trainID-1].power = power
-                self.trains[trainID-1].calculateVelocity(2)
+        def failFix(self):
+                self.trains[self.currentTrainDisplay-1].engineFailure = False
+                self.trains[self.currentTrainDisplay-1].signalFailure = False
+                self.trains[self.currentTrainDisplay-1].brakeFailure = False
+                self.trains[self.currentTrainDisplay-1].faults = 0
+                self.engineFailure.setStyleSheet("background-color: rgb(234,234,234);")
+                self.signalFailure.setStyleSheet("background-color: rgb(234,234,234);")
+                self.brakeFailure.setStyleSheet("background-color: rgb(234,234,234);")
+                self.failureOutput.setText("No failures")
+                self.updateEverything()
 
         ################ train controller functions ###################
         def getVelocity(self,trainID):
-                return self.trains[trainID-1].velocity
+                return self.trains[trainID-1].velocityKM
 
         def getCommanded(self,trainID):
                 return self.trains[trainID-1].commSpeed
@@ -904,6 +912,7 @@ class Ui_MainWindow(object):
                 return self.trains[trainID-1].beacon
 
         def getValuesFromTrainController(self,trainID):
+                serviceTemp = self.trains[trainID-1].service
                 self.trains[trainID-1].power = self.trainController.getPower()
                 self.trains[trainID-1].externalStatus = self.trainController.getHeadlightStatus()
                 self.trains[trainID-1].internalStatus = self.trainController.getCabinLightStatus()
@@ -911,9 +920,12 @@ class Ui_MainWindow(object):
                 self.trains[trainID-1].emergency = self.trainController.getEBrake()
                 self.trains[trainID-1].service = self.trainController.getServiceBrake()
 
+                if (self.trains[trainID-1].service != serviceTemp) and (self.trains[trainID-1].service == 0):
+                        self.trains[trainID-1].brakesDone()
+
                 self.trains[trainID-1].calculateVelocity()
 
-                if (trainID-1) == self.currentTrainDisplay:
+                if (trainID) == self.currentTrainDisplay:
                         self.updateTrainDisplay(trainID-1)
 
         ################ track model functions ##################
@@ -925,13 +937,13 @@ class Ui_MainWindow(object):
                 self.trains[trainID-1].stationDoors = self.trackModel.getStationSide(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].blockGrade, self.trains[trainID-1].elevation, self.trains[trainID-1].cElevation, self.trains[trainID-1].blockLength = self.trackModel.getBlockGrade(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].boarding = self.trackModel.getBoarding(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                fake, self.trains[trainID-1].switchBlock = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
+                self.trains[trainID-1].base, self.trains[trainID-1].switchBlock = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].signal = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
 
-                self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].block)
+                self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trackModel.setTrainFault(trainID, self.trains[trainID-1].faults)
 
-                if (trainID-1) == self.currentTrainDisplay:
+                if (trainID) == self.currentTrainDisplay:
                         self.updateTrainDisplay(trainID-1)
 
 if __name__ == "__main__":

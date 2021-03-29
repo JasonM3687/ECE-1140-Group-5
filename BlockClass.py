@@ -1,118 +1,25 @@
 class Block():
-    def __init__(self,trainID):
-        self.ID = trainID
+    def __init__(self):
+        self.greenLineRoute = [63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,85,84,83,82,81,80,79,78,77,101,102,103,104,105,106,107,108,109,110,111,112,
+        113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,
+        9,8,7,6,5,4,3,2,1,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57]
 
-    lastSection = 'Z'
-    currSection = 0
-    currBlock = 0
-    nextBlock = 0
-    switchState = 0
+        self.initialize()
 
-    def setLine(self,line):
-        self.line = line
+    redLine = []
+    greenLine = []
+    
 
-    def determineNextBlock(self):
-        if self.line == "green":
-            self.currBlock = self.nextBlock
-            self.updateCurrentSection()
+    def initialize(self):
+        self.greenLine = self.greenLineRoute
 
-            if self.currBlock == 0:
-                self.nextBlock == 63
-            elif (self.lastSection == 'Z') or (self.lastSection == 'K') or (self.lastSection == 'L') or (self.lastSection == 'M'):
-                self.nextBlock += 1
-            elif (self.lastSection == 'N' and self.currSection == 'O'):
-                self.nextBlock += 1
-            elif (self.lastSection == 'O') or (self.lastSection == 'P'):
-                self.nextBlock += 1
-            elif (self.lastSection == 'Q') and (self.currBlock == 100):
-                self.nextBlock = 85
-            elif (self.lastSection == 'Q') and (self.currBlock == 77):
-                self.nextBlock == 101
-            elif (self.lastSection == 'Q'):
-                self.nextBlock -= 1
-            elif (self.lastSection == 'Y') and (self.currBlock == 150):
-                self.nextBlock = 28
-            elif (self.lastSection == 'R') or (self.lastSection == 'S') or (self.lastSection == 'T') or (self.lastSection == 'U') or (self.lastSection == 'V') or (self.lastSection == 'W') or (self.lastSection == 'X') or (self.lastSection == 'Y'):
-                self.nextBlock += 1
-            elif (self.lastSection == 'Z'):
-                self.nextBlock -= 1
-            elif (self.lastSection == 'F' and self.currSection == 'E'):
-                self.nextBlock -= 1
-            elif (self.lastSection == 'E' and self.currSection == 'D'):
-                self.nextBlock -= 1
-            elif (self.lastSection == 'D' and self.currSection == 'C'):
-                self.nextBlock -= 1
-            elif (self.lastSection == 'B') and (self.currBlock == 1):
-                self.nextBlock = 13
-            elif (self.lastSection == 'C') or (self.lastSection == 'B'):
-                self.nextBlock -= 1
-            elif (self.lastSection == 'A'):
-                self.nextBlock += 1
-            elif (self.lastSection == 'D') and (self.currSection == 'E'):
-                self.nextBlock += 1
-            elif (self.lastSection == 'E') and (self.currSection == 'F'):
-                self.nextBlock += 1
-            elif (self.lastSection == 'F') and (self.currSection == 'G'):
-                self.nextBlock += 1
-            elif (self.currSection == 'J') and self.switchState == 0:
-                self.nextBlock == 0
-            elif (self.lastSection == 'G') or (self.lastSection == 'H') or (self.lastSection == 'I') or (self.lastSection == 'J'):
-                self.nextBlock += 1
-
-            self.updateCurrentSection() 
-            
-    def updateCurrentSection(self): 
-        
-
-        if (self.currBlock == 63):
-            self.lastSection = self.currSection
-            self.currSection = 'K'
-        elif (self.currBlock == 69):
-            self.lastSection = self.currSection
-            self.currSection = 'L'
-        elif (self.currBlock == 74):
-            self.lastSection = self.currSection
-            self.currSection = 'M'
-        elif (self.currBlock == 77) and (self.currSection == 'M'):
-            self.lastSection = self.currSection
-            self.currSection = 'N'
-        elif (self.currBlock == 86):
-            self.lastSection = self.currSection
-            self.currSection = 'O'
-        elif (self.currBlock == 89):
-            self.lastSection = self.currSection
-            self.currSection = 'P'
-        elif (self.currBlock == 98):
-            self.lastSection = self.currSection
-            self.currSection = 'Q'
-        elif (self.currBlock == 85) and (self.currSection == 'Q'):
-            self.lastSection = self.currSection
-            self.currSection = 'P'
-        elif (self.currBlock == 101):
-            self.lastSection = self.currSection
-            self.currSection = 'R'
-        elif (self.currBlock == 102):
-            self.lastSection = self.currSection
-            self.currSection = 'S'
-        elif (self.currBlock == 105):
-            self.lastSection = self.currSection
-            self.currSection = 'T'
-        elif (self.currBlock == 110):
-            self.lastSection = self.currSection
-            self.currSection = 'U'
-        elif (self.currBlock == 117):
-            self.lastSection = self.currSection
-            self.currSection = 'V'
-        elif (self.currBlock == 122):
-            self.lastSection = self.currSection
-            self.currSection = 'W'
-        elif (self.currBlock == 144):
-            self.lastSection = self.currSection
-            self.currSection = 'X'
-        elif (self.currBlock == 147):
-            self.lastSection = self.currSection
-            self.currSection = 'Y'
-        elif (self.currBlock == 150):
-            self.lastSection = self.currSection
-            self.currSection = 'Z'
-        #elif (self.currBlock == 28) and (self.curr)
+    def greenSwitchYard(self,base,switchBlock):
+        if base == 57 and switchBlock == 0:
+            self.greenLine.append(0)
+        elif base == 57 and switchBlock == 58:
+            self.greenLine.append(58)
+            self.greenLine.append(59) 
+            self.greenLine.append(60) 
+            self.greenLine.append(61) 
+            self.greenLine.append(62)
+            self.greenLine.append(self.greenLineRoute)      
