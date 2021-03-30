@@ -1,0 +1,2 @@
+CurrentWaysideLine=Green
+CurrentWaysideNumber=25
