@@ -15,14 +15,12 @@ class TrainClass():
         velocity = 0
         prevVel = 0.0001
         acceleration = 0
-        accelerationDisplay = 0
         prevAcc = 0.0001
-        deceleration = 0
         power = 0
         massTon = 40.9     #in tons
         mass = 0
         boarding = 0
-        passenger = 20
+        passenger = 0
         crew = 2
         temperature = 68
         doorStatus = False
@@ -30,6 +28,7 @@ class TrainClass():
         externalStatus = False
         emergency = False
         service = False
+        brake = False
         brakeFailure = False
         engineFailure = False
         signalFailure = False
@@ -78,6 +77,8 @@ class TrainClass():
 
                         if self.emergency == 1:
                                 self.acceleration = self.maxAcceleration
+                        elif self.brake == 1:
+                                self.acceleration = self.maxAcceleration
                         elif self.service == 1:
                                 self.acceleration = self.maxAcceleration
                         elif (self.acceleration > self.maxAcceleration):
@@ -85,10 +86,21 @@ class TrainClass():
 
                         self.velocity = self.prevVel + (self.timeChange/2)*(self.acceleration + self.prevAcc)
 
+                        #stops brakes if speed is now less than speed limit
+                        if (self.brake == 1 and self.velocity < self.mphTOmps(self.speed_limit)):
+                                self.brakesDone()
+
+                        #makes sure the velocity is never greater than the speed limit
+                        if (self.velocity > self.mphTOmps(self.speed_limit)):
+                                self.brake = 1
+                                self.maxAcceleration = -1.12
+
+                        #makes sure the velocity never exceeds the max speed
                         if self.velocity > self.kmhTOmps(self.maxSpeed):
                                 self.velocity = self.kmhTOmps(self.maxSpeed)
                                 self.acceleration = 0
                         
+                        #if velocity becomes less than zero, it is essentially zero
                         if self.velocity < self.minSpeed:
                                 self.velocity = 0
                                 self.acceleration = 0
@@ -132,7 +144,6 @@ class TrainClass():
         def mpsTOkm(self,b):
                 return b*3.6
 
-
         def eBrakePressed(self):
                 self.maxAcceleration = -2.73
                 self.emergency = 1
@@ -142,8 +153,9 @@ class TrainClass():
                 self.service = 1
 
         def brakesDone(self):
-                self.maxAcceleration = 1.12
+                self.maxAcceleration = 0.5
                 self.emergency = 0
+                self.brake = 0
                 self.service = 0
 
         def openDoors(self):

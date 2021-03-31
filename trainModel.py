@@ -194,13 +194,13 @@ class Ui_MainWindow(object):
                 self.masOutput.setGeometry(QtCore.QRect(80, 120, 41, 16))
                 self.masOutput.setObjectName("masOutput")
                 self.authorityOutput_2 = QtWidgets.QLabel(self.groupBox_5)
-                self.authorityOutput_2.setGeometry(QtCore.QRect(120, 20, 47, 16))
+                self.authorityOutput_2.setGeometry(QtCore.QRect(150, 20, 47, 16))
                 self.authorityOutput_2.setObjectName("authorityOutput_2")
                 self.powerOutput_2 = QtWidgets.QLabel(self.groupBox_5)
-                self.powerOutput_2.setGeometry(QtCore.QRect(120, 40, 47, 16))
+                self.powerOutput_2.setGeometry(QtCore.QRect(150, 40, 47, 16))
                 self.powerOutput_2.setObjectName("powerOutput_2")
                 self.masOutput_2 = QtWidgets.QLabel(self.groupBox_5)
-                self.masOutput_2.setGeometry(QtCore.QRect(120, 120, 41, 16))
+                self.masOutput_2.setGeometry(QtCore.QRect(150, 120, 41, 16))
                 self.masOutput_2.setObjectName("masOutput_2")
                 self.trainSelect = QtWidgets.QComboBox(self.centralwidget)
                 self.trainSelect.setGeometry(QtCore.QRect(30, 10, 69, 22))
@@ -771,7 +771,8 @@ class Ui_MainWindow(object):
                 self.trains.append(TrainClass(8))
                 self.trains.append(TrainClass(9))
                 self.trains.append(TrainClass(10))
-                self.trains[0].blockNum=63
+                self.trains[0].blockNum=0
+                self.trains[0].blockLength = 1
 
                 #creating arrays for lights, doors
                 self.cabinLights = [self.internal_1,self.internal_2,self.internal_3,self.internal_4,self.internal_5]
@@ -803,12 +804,21 @@ class Ui_MainWindow(object):
                 self.updateTrainDisplay(self.currentTrainDisplay)
 
         def updateTrainDisplay(self,trainNum):
-                self.currSpeed.display(self.trains[trainNum].velocityMPH)
+                self.currSpeed.display(round(self.trains[trainNum].velocityMPH,1))
                 self.speedLimit.display(self.trains[trainNum].speed_limit)
                 self.commSpeed.display(self.trains[trainNum].commSpeed)
-                self.accelerationLimit.display(self.trains[trainNum].acceleration)
-                self.decelerationLimit.display(self.trains[trainNum].deceleration)
+                if (self.trains[trainNum].acceleration > 0):
+                        self.accelerationLimit.display(round(self.trains[trainNum].acceleration,1))
+                        self.decelerationLimit.display(0)
+                elif (self.trains[trainNum].acceleration < 0):
+                        self.accelerationLimit.display(0)
+                        self.decelerationLimit.display(abs(round(self.trains[trainNum].acceleration),1))
+                else:
+                        self.accelerationLimit.display(0)
+                        self.decelerationLimit.display(0)
+                
                 self.beacon.setText(self.trains[trainNum].beacon)
+                self.beacon.setStyleSheet("background-color: rgb(255,255,255)")
                 self.authorityOutput.setText(str(self.trains[trainNum].authority))
                 self.powerOutput.setText(str(self.trains[trainNum].power))
                 self.masOutput.setText(str(self.trains[trainNum].massTon))
@@ -866,37 +876,38 @@ class Ui_MainWindow(object):
                         self.currTemps[x].display(self.trains[trainID-1].temperature)
 
         def eFail(self):
-                self.trains[self.currentTrainDisplay-1].engineFailure = True
-                self.trains[self.currentTrainDisplay-1].faults = 1
+                self.trains[self.currentTrainDisplay].engineFailure = True
+                self.trains[self.currentTrainDisplay].faults = 1
 
                 self.failureOutput.setText("Engine Failure")
                 self.engineFailure.setStyleSheet("background-color: rgb(255, 0, 0);")
                 self.eBrakePressed()
 
         def sFail(self):
-                self.trains[self.currentTrainDisplay-1].signalFailure = True
-                self.trains[self.currentTrainDisplay-1].faults = 2
+                self.trains[self.currentTrainDisplay].signalFailure = True
+                self.trains[self.currentTrainDisplay].faults = 2
 
                 self.failureOutput.setText("Signal Pickup Failure")
                 self.signalFailure.setStyleSheet("background-color: rgb(255, 0, 0);")
                 self.eBrakePressed()
 
         def bFail(self):
-                self.trains[self.currentTrainDisplay-1].brakeFailure = True
-                self.trains[self.currentTrainDisplay-1].faults = 3
+                self.trains[self.currentTrainDisplay].brakeFailure = True
+                self.trains[self.currentTrainDisplay].faults = 3
 
                 self.failureOutput.setText("Brake Failure")
                 self.brakeFailure.setStyleSheet("background-color: rgb(255, 0, 0);")
 
         def failFix(self):
-                self.trains[self.currentTrainDisplay-1].engineFailure = False
-                self.trains[self.currentTrainDisplay-1].signalFailure = False
-                self.trains[self.currentTrainDisplay-1].brakeFailure = False
-                self.trains[self.currentTrainDisplay-1].faults = 0
+                self.trains[self.currentTrainDisplay].engineFailure = False
+                self.trains[self.currentTrainDisplay].signalFailure = False
+                self.trains[self.currentTrainDisplay].brakeFailure = False
+                self.trains[self.currentTrainDisplay].faults = 0
                 self.engineFailure.setStyleSheet("background-color: rgb(234,234,234);")
                 self.signalFailure.setStyleSheet("background-color: rgb(234,234,234);")
                 self.brakeFailure.setStyleSheet("background-color: rgb(234,234,234);")
                 self.failureOutput.setText("No failures")
+                self.trains[self.currentTrainDisplay].brakesDone()
                 self.updateEverything()
 
         ################ train controller functions ###################
@@ -913,6 +924,9 @@ class Ui_MainWindow(object):
 
         def getBeacon(self,trainID):
                 return self.trains[trainID-1].beacon
+
+        def getTrainFaults(self,trainID):
+                return self.trains[trainID-1].faults
 
         def getValuesFromTrainController(self,trainID):
                 emerTemp = self.trains[trainID-1].emergency
@@ -933,7 +947,7 @@ class Ui_MainWindow(object):
 
                 self.trains[trainID-1].calculateVelocity()
 
-                if (trainID) == self.currentTrainDisplay:
+                if (trainID-1) == self.currentTrainDisplay:
                         self.updateTrainDisplay(trainID-1)
 
         ################ track model functions ##################
