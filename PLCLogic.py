@@ -1,141 +1,76 @@
-from array import array
-def findController(controllerName):
-        line_number=0
-        with open("PLC_IO.txt",'r') as read_obj:
-            for line in read_obj:
-                line_number+=1
-                if controllerName in line:
-                    return line_number
 
-with open('CurrentWayside.txt','r') as file:
+from array import array
+import re
+with open('PLC_IO.txt','r') as file:
     Content=file.readlines()
 
-if Content[0]=="CurrentWaysideLine=Red":
-   pass
-else:
-    if Content[1]=="CurrentWaysideNumber=9":
-        controllerLine=findController("GreenController 9")
-        with open('PLC_IO.txt','r') as file:
-            Content=file.readlines()
-        blockOccs=[int(i) for i in Content[controllerLine+1].split() if i.isdigit()]
-        faultStatuses=[int(i) for i in Content[controllerLine+2].split() if i.isdigit()]
-        lightStatuses=[int(i) for i in Content[controllerLine+4].split() if i.isdigit()]
-        routedBlocks=[int(i) for i in Content[controllerLine+6].split() if i.isdigit()]
-        underground=[int(i) for i in Content[controllerLine+7].split() if i.isdigit()]
-        AuthChange=[]
-        light=[]
-        trainLight=[]
+GreenBlockOcc = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[12])]
+GreenFaults = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[13])]
+GreenSwitches = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[14])]
+GreenTrafficLights = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[15])]
+GreenRoute = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[17])]
+GreenUnderground = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[18])]
 
-        for i in range(len(blockOccs)-1):
-            AuthChange.append(blockOccs[i+1] or faultStatuses[i+1])
-            light.append(blockOccs[i+1] or faultStatuses[i+1])
-        
-        for i in range(len(underground)):
-            trainLight.append(underground[i])
-        
-        Content[controllerLine+5]="AuthZero="
-        for i in range(len(AuthChange)):
-            Content[controllerLine+5]=Content[controllerLine+5]+str(int(AuthChange[i]))+','
-        Content[controllerLine+5]=Content[controllerLine+5][:-1]
-        Content[controllerLine+5]=Content[controllerLine+5]+'\n'
-            
-        Content[controllerLine+4]="LightStatuses="
-        for i in range(len(lightStatuses)):
-            Content[controllerLine+4]=Content[controllerLine+4]+str(int(lightStatuses[i]))+','
-        Content[controllerLine+4]=Content[controllerLine+4][:-1]
-        Content[controllerLine+4]=Content[controllerLine+4]+'\n'
 
-        Content[controllerLine+8]="TrainLightSignals="
-        for i in range(len(trainLight)):
-            Content[controllerLine+8]=Content[controllerLine+8]+str(int(trainLight[i]))+','
-        Content[controllerLine+8]=Content[controllerLine+8][:-1]
-        Content[controllerLine+8]=Content[controllerLine+8]+'\n'
-        
-        with open('ControllerSignals.txt','w') as file:
-            file.writelines(Content)
-                
-        
-    elif Content[1]=="CurrentWaysideNumber=10":
-        controllerLine=findController("GreenController 10")
-        with open('PLC_IO.txt','r') as file:
-            Content=file.readlines()
-        blockOccs=[int(i) for i in Content[controllerLine+1].split() if i.isdigit()]
-        faultStatuses=[int(i) for i in Content[controllerLine+2].split() if i.isdigit()]
-        switchPos=faultStatuses=[int(i) for i in Content[controllerLine+3].split() if i.isdigit()]
-        lightStatuses=[int(i) for i in Content[controllerLine+4].split() if i.isdigit()]
-        routedBlocks=[int(i) for i in Content[controllerLine+6].split() if i.isdigit()]
-        underground=[int(i) for i in Content[controllerLine+7].split() if i.isdigit()]
-        AuthChange=[]
-        light=[]
-        trainLight=[]
+GreenSWOut=[0]*6
+TrainLightSigs=[0]*150
+AuthChange=[0]*150
+LightStatuses=[0]*150
 
-        for i in range(len(blockOccs)-1):
-            AuthChange.append(blockOccs[i+1] or faultStatuses[i+1])
-            light.append(blockOccs[i+1] or faultStatuses[i+1])
-        
-        for i in range(len(underground)):
-            trainLight.append(underground[i])
-        
-        Content[controllerLine+5]="AuthZero="
-        for i in range(len(AuthChange)):
-            Content[controllerLine+5]=Content[controllerLine+5]+str(int(AuthChange[i]))+','
-        Content[controllerLine+5]=Content[controllerLine+5][:-1]
-        Content[controllerLine+5]=Content[controllerLine+5]+'\n'
-            
-        Content[controllerLine+4]="LightStatuses="
-        for i in range(len(lightStatuses)):
-            Content[controllerLine+4]=Content[controllerLine+4]+str(int(lightStatuses[i]))+','
-        Content[controllerLine+4]=Content[controllerLine+4][:-1]
-        Content[controllerLine+4]=Content[controllerLine+4]+'\n'
+GreenSWOut[0]=GreenRoute[12] and GreenRoute[0] and not(GreenBlockOcc[0]) and not(GreenBlockOcc[12]) and not(GreenBlockOcc[11])
+GreenSWOut[1]=GreenRoute[28] and GreenRoute[29] and not(GreenBlockOcc[28]) and not(GreenBlockOcc[29]) and not(GreenBlockOcc[149])
+GreenSWOut[2]=GreenRoute[56] and GreenRoute[57] and not(GreenBlockOcc[56]) and not(GreenBlockOcc[57])
+GreenSWOut[3]=GreenRoute[62] and GreenRoute[61] and not(GreenBlockOcc[61]) and not(GreenBlockOcc[62])
+GreenSWOut[4]=GreenRoute[76] and GreenRoute[75] and not(GreenBlockOcc[75]) and not(GreenBlockOcc[76]) and not(GreenBlockOcc[100])
+GreenSWOut[5]=GreenRoute[84] and GreenRoute[85] and not(GreenBlockOcc[84]) and not(GreenBlockOcc[85]) and not(GreenBlockOcc[99])
 
-        Content[controllerLine+8]="TrainLightSignals="
-        for i in range(len(trainLight)):
-            Content[controllerLine+8]=Content[controllerLine+8]+str(int(trainLight[i]))+','
-        Content[controllerLine+8]=Content[controllerLine+8][:-1]
-        Content[controllerLine+8]=Content[controllerLine+8]+'\n'
+for i in range(len(TrainLightSigs)):
+    TrainLightSigs[i]=GreenUnderground[i] and GreenBlockOcc[i]
 
-        with open('ControllerSignals.txt','w') as file:
-            file.writelines(Content)
+for i in range(len(GreenBlockOcc)):
+    if(i==0):
+        LightStatuses[0] = GreenBlockOcc[12] = GreenFaults[28]
+        AuthChange[0] = GreenBlockOcc[12] or GreenFaults[28]
+    elif(i==149):
+        LightStatuses[149] = GreenBlockOcc[28] or GreenFaults [28]
+        AuthChange[0] = GreenBlockOcc[28] or GreenFaults[28]
+    elif(i==99):
+        LightStatuses[99] = GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
+        AuthChange[99]= GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
+    else:
+        LightStatuses[i] = GreenBlockOcc[i+1] or GreenFaults[i+1]
+        AuthChange[i] = GreenBlockOcc[i+1] or GreenFaults[i+1]
 
-    elif Content[1]=="CurrentWaysideNumber=11":
-        controllerLine=findController("GreenController 11")
-        with open('PLC_IO.txt','r') as file:
-            Content=file.readlines()
-        blockOccs=[int(i) for i in Content[controllerLine+1].split() if i.isdigit()]
-        faultStatuses=[int(i) for i in Content[controllerLine+2].split() if i.isdigit()]
-        switchPos=faultStatuses=[int(i) for i in Content[controllerLine+3].split() if i.isdigit()]
-        lightStatuses=[int(i) for i in Content[controllerLine+4].split() if i.isdigit()]
-        routedBlocks=[int(i) for i in Content[controllerLine+6].split() if i.isdigit()]
-        underground=[int(i) for i in Content[controllerLine+7].split() if i.isdigit()]
-        AuthChange=[]
-        light=[]
-        trainLight=[]
+with open('PLC_IO.txt','r') as file:
+    Content=file.readlines()
 
-        for i in range(len(blockOccs)-1):
-            AuthChange.append(blockOccs[i+1] or faultStatuses[i+1])
-            light.append(blockOccs[i+1] or faultStatuses[i+1])
-        
-        for i in range(len(underground)):
-            trainLight.append(underground[i])
-        
-        Content[controllerLine+5]="AuthZero="
-        for i in range(len(AuthChange)):
-            Content[controllerLine+5]=Content[controllerLine+5]+str(int(AuthChange[i]))+','
-        Content[controllerLine+5]=Content[controllerLine+5][:-1]
-        Content[controllerLine+5]=Content[controllerLine+5]+'\n'
-            
-        Content[controllerLine+4]="LightStatuses="
-        for i in range(len(lightStatuses)):
-            Content[controllerLine+4]=Content[controllerLine+4]+str(int(lightStatuses[i]))+','
-        Content[controllerLine+4]=Content[controllerLine+4][:-1]
-        Content[controllerLine+4]=Content[controllerLine+4]+'\n'
+tempstringSW=""
+for i in range(len(GreenSWOut)):
+    tempstringSW=tempstringSW+str(int(GreenSWOut[i]))+","
+tempstringSW=tempstringSW[:-1]
 
-        Content[controllerLine+8]="TrainLightSignals="
-        for i in range(len(trainLight)):
-            Content[controllerLine+8]=Content[controllerLine+8]+str(int(trainLight[i]))+','
-        Content[controllerLine+8]=Content[controllerLine+8][:-1]
-        Content[controllerLine+8]=Content[controllerLine+8]+'\n'
+Content[14]="SwitchPos="+tempstringSW+"\n"
 
-        with open('ControllerSignals.txt','w') as file:
-            file.writelines(Content)
-        
+tempstringTrainL=""
+for i in range(len(TrainLightSigs)):
+    tempstringTrainL=tempstringTrainL+str(int(TrainLightSigs[i]))+","
+tempstringTrainL=tempstringTrainL[:-1]
+
+Content[19]="TrainLightSignals="+tempstringTrainL+"\n"
+
+tempstringAuth=""
+for i in range(len(AuthChange)):
+    tempstringAuth=tempstringAuth+str(int(AuthChange[i]))+","
+tempstringAuth=tempstringAuth[:-1]
+
+Content[20]="AuthChange="+tempstringAuth+"\n"
+
+tempstringTrafL=""
+for i in range(len(LightStatuses)):
+    tempstringTrafL=tempstringTrafL+str(int(LightStatuses[i]))+","
+tempstringTrafL=tempstringTrafL[:-1]
+
+Content[15]="LightStatuses="+tempstringTrafL+"\n"
+
+with open('PLC_IO.txt','w') as file:
+    file.writelines(Content)
