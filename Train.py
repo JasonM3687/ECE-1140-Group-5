@@ -135,14 +135,10 @@ class TrainClass():
 
         def eBrakePressed(self):
                 self.maxAcceleration = -2.73
-                self.deceleration = 2.73
-                self.accelerationDisplay = 0
                 self.emergency = 1
 
         def serviceBrake(self):
                 self.maxAcceleration = -1.2
-                self.deceleration = 1.2
-                self.accelerationDisplay = 0
                 self.service = 1
 
         def brakesDone(self):
