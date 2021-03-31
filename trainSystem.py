@@ -1,10 +1,10 @@
-from PyQt5 import QtWidgets
-
-import MainDisplay
-import SWTrackControllerNew
-import t1_1
-import trackModel
 import trainModel
+import SWTrackControllerNew
+import trackModel
+import t1_updated
+from tkinter import Tk
+import MainDisplay
+from PyQt5 import QtWidgets
 
 if __name__=='__main__':
     import sys
@@ -29,7 +29,8 @@ if __name__=='__main__':
     trainC.setupUi1(trainCWindow)
     trainC.importTrain(train)
     
-    ctc=t1_1.CTCOFFICE()
+    ctcWindow=Tk()
+    ctc=t1_updated.CTCOFFICE(ctcWindow)
     
     trackCApp=QtWidgets.QApplication(sys.argv)
     trackCWindow=QtWidgets.QMainWindow()
@@ -43,5 +44,5 @@ if __name__=='__main__':
     trainWindow.show()
     trainCWindow.show()
     trackCWindow.show()
-    ctc.SHOW()
+    ctcWindow.mainloop()
     sys.exit(trackApp.exec_())

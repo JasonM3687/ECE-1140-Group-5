@@ -164,8 +164,7 @@ class waysideController:
         return self.routedBlocks
 
     def clearRoutedBlocks(self, prevBlocks):
-        for i in range(len(prevBlocks)):
-            self.routedBlocks[int(prevBlocks[i],2)-1]=0
+        self.routedBlocks[prevBlocks-1]=0
         line_number=0
         line_number=self.findController()
         line_number+=5
@@ -206,7 +205,8 @@ class waysideController:
         return self.routedAuth
        
     def clearBlockAuthorities(self, prevBlocks):
-        self.routedAuth[prevBlocks-1]=0
+        for i in range(len(prevBlocks)): 
+            self.routedAuth[int(prevBlocks[i],2)-1]=0
         line_number=0
         line_number=self.findController()
         line_number+=4
@@ -231,7 +231,8 @@ class waysideController:
         return self.blockSugSpeeds
         
     def clearRoutedSpeeds(self, prevBlocks):
-        self.blockSugSpeeds[prevBlocks-1]=0
+        for i in range(len(prevBlocks)):
+            self.blockSugSpeeds[int(prevBlocks[i],2)-1]=0
 
     def findController(self):
         line_number=0

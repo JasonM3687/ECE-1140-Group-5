@@ -615,8 +615,8 @@ class CTCOFFICE:
 			temp = self.routes[0]
 			for i in range(0,len(self.routes[0])):
 				self.SentRouteBlocks.append(format(temp[i],"08b"))
-				self.SentRouteSections.append(format((ord(self.sections[temp[i]-2]))-65,"08b"))
-				if(str(self.line_used[temp[i]-2])=="Green"):
+				self.SentRouteSections.append(format((ord(self.sections[i]))-65,"08b"))
+				if(str(self.line_used[i])=="Green"):
 					self.SentRouteLines.append(1)
 				else:
 					self.SentRouteLines.append(0)

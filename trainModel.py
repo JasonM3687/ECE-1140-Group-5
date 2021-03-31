@@ -771,8 +771,7 @@ class Ui_MainWindow(object):
                 self.trains.append(TrainClass(8))
                 self.trains.append(TrainClass(9))
                 self.trains.append(TrainClass(10))
-                self.trains[0].blockNum=0
-                self.trains[0].blockLength = 1
+                self.trains[0].blockNum=63
 
                 #creating arrays for lights, doors
                 self.cabinLights = [self.internal_1,self.internal_2,self.internal_3,self.internal_4,self.internal_5]
@@ -783,7 +782,7 @@ class Ui_MainWindow(object):
 
                 self.timer = QtCore.QTimer()
                 self.timer.timeout.connect(self.updateEverything)
-                self.timer.start(1000)
+                self.timer.start(100)
                 
 
                 # button events and where to go
@@ -812,7 +811,7 @@ class Ui_MainWindow(object):
                         self.decelerationLimit.display(0)
                 elif (self.trains[trainNum].acceleration < 0):
                         self.accelerationLimit.display(0)
-                        self.decelerationLimit.display(abs(round(self.trains[trainNum].acceleration),1))
+                        self.decelerationLimit.display(abs(round(self.trains[trainNum].acceleration,1)))
                 else:
                         self.accelerationLimit.display(0)
                         self.decelerationLimit.display(0)
@@ -918,7 +917,7 @@ class Ui_MainWindow(object):
                 return self.trains[trainID-1].commSpeed
 
         def getAuthority(self,trainID):
-                if(self.trains[trainID-1].authority<=1):
+                if(self.trains[trainID-1].authority<=0):
                         self.trainController.serviceBrakeControl()
                 return self.trains[trainID-1].authority
 
@@ -966,8 +965,6 @@ class Ui_MainWindow(object):
                 self.trains[trainID-1].signal = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
 
                 self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                if(self.trains[trainID-1].line=="Green" and self.trains[trainID-1].blockNum==72):
-                        self.trainController.serviceBrakeControl()
                 self.trackModel.setTrainFault(trainID, self.trains[trainID-1].faults)
 
                 if (trainID) == self.currentTrainDisplay:

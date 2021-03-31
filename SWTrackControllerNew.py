@@ -1076,6 +1076,7 @@ class Ui_MainWindow(object):
             self.routedLines=self.CTC.SentRouteLines
             self.routeSugSpeed=self.CTC.SentSuggestedSpeed
             self.routedAuth=self.CTC.SentSuggestedAuth
+            #print(self.routedAuth)
 
             self.routedBlockEqual=True
             if len(self.prevRoutedBlocks)!=0:

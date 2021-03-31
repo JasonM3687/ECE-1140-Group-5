@@ -154,14 +154,14 @@ class CTCOFFICE:
 		self.autodisp= IntVar(tab3)
 		self.routes=[]
 		self.sections=list()
-		self.track_blocks=list();
+		self.track_blocks=list()
 		self.line_used=list()
 		self.CurrentTravel= []
 		self.CurrentTravel_line_speed=[]
 		self.SentRouteBlocks=list()
 		self.SentRouteSections=list()
 		self.SentRouteLines=list()
-		self.SentSuggestedSpeed= 0
+		self.SentSuggestedSpeed= []
 		self.SentSuggestedAuth=[]
 		#Create Entries + Listboxes + Buttons
 		
@@ -611,7 +611,7 @@ class CTCOFFICE:
 		self.SentRouteBlocks.clear()
 		self.SentRouteSections.clear()
 		self.SentRouteLines.clear()
-		self.SentSuggestedSpeed= 0
+		self.SentSuggestedSpeed.clear()
 		self.SentSuggestedAuth.clear()
 		
 		if(len(self.routes)>0):
@@ -627,16 +627,16 @@ class CTCOFFICE:
 					self.SentRouteLines.append(0)
 			
 			#Make sure to verify with all routes
-			self.SentSuggestedSpeed= format(self.l4.get(0),"08b")
 			for i in range(0,self.l5.get(0)):
-				self.SentSuggestedAuth.append(self.l5.get(0)-i)
-			self.SentSuggestedAuth.append(0)
-   
-			print(self.SentRouteBlocks)
-			print(self.SentRouteSections)
+				self.SentSuggestedSpeed.append(format(self.l4.get(0),"08b"))
+				self.SentSuggestedAuth.append(format(self.l5.get(0)-i,"08b"))
+			self.SentSuggestedAuth.append(format(0,"08b"))
+			self.SentSuggestedSpeed.append(format(self.l4.get(0),"08b"))
+			
+			'''print(self.SentRouteSections)
 			print(self.SentRouteLines)
 			print(self.SentSuggestedSpeed)
-			print(self.SentSuggestedAuth)
+			print(self.SentSuggestedAuth)'''
 			temp_list= self.routes[0]
 			temp_list= np.append(temp_list,self.l.get(0))
 			self.CurrentTravel.append(temp_list)
