@@ -1081,11 +1081,6 @@ class trackModel(object):
         self.block_select.setMaximum(len(self.tracks))
         self.line_sel.addItem(self.tracks[0].line)
         self.line_sel.addItem("Green")
-        for i in self.tracks:
-            if(i.line=="Green" and i.bNum>=63 and i.bNum<=73):
-                for j in self.signals:
-                    if(j.line=="Green" and j.bNum==i.bNum):
-                        j.auth=73-i.bNum
         self.refresh()
         
 
@@ -1349,52 +1344,68 @@ class trackModel(object):
                 greensales.append(i)
         return greensales
         
-    def setRedSwitch(self,block,state):
+    def setRedSwitch(self,state):
+        j=0
         for i in self.switches:
-            if(i.base==block and i.line=="Red"):
-                i.state=state
+            if(i.line=="Red"):
+                i.state=state[j]
+                j=j+1
         self.refresh()
         
-    def setGreenSwitch(self,block,state):
+    def setGreenSwitch(self,state):
+        j=0
         for i in self.switches:
-            if(i.base==block and i.line=="Green"):
-                i.state=state
+            if(i.line=="Green"):
+                i.state=state[j]
+                j=j+1
         self.refresh()
         
-    def setRedAuth(self,block,state):
+    def setRedAuth(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Red" and i.block==block):
-                i.setAuth(state)
+            if(i.line=="Red"):
+                i.setAuth(state[j])
+                j=j+1
         self.refresh()
         
-    def setGreenAuth(self,block,state):
+    def setGreenAuth(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Green" and i.block==block):
-                i.setAuth(state)
+            if(i.line=="Green"):
+                i.setAuth(state[j])
+                j=j+1
         self.refresh()
              
-    def setRedSpeed(self,block,state):
+    def setRedSpeed(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Red" and i.block==block):
-                i.setcSpeed(state)
+            if(i.line=="Red"):
+                i.setcSpeed(state[j])
+                j=j+1
         self.refresh()
                 
-    def setGreenSpeed(self,block,state):
+    def setGreenSpeed(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Green" and i.block==block):
-                i.setcSpeed(state)
+            if(i.line=="Green"):
+                i.setcSpeed(state[j])
+                j=j+1
         self.refresh()
                 
-    def setRedLight(self,block,state):
+    def setRedLight(self,state):
+        j=0
         for i in self.tracks:
-            if(i.line=="Red" and i.bNum==block):
-                i.light=state
+            if(i.line=="Red"):
+                i.light=state[j]
+                j=j+1
         self.refresh()
                 
-    def setGreenLight(self,block,state):
+    def setGreenLight(self,state):
+        j=0
         for i in self.tracks:
-            if(i.line=="Green" and i.bNum==block):
-                i.light=state
+            if(i.line=="Green"):
+                i.light=state[j]
+                j=j+1
         self.refresh()
     
     def getAuth(self,line,block):

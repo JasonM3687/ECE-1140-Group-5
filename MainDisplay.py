@@ -287,11 +287,11 @@ class Ui_LoginWindow(object):
 
     def kiControl(self):
         self.ki = self.engineerUI.kiInput.value()
-        print(self.ki)
+        #print(self.ki)
 
     def kpControl(self):
         self.kp = self.engineerUI.kpInput.value()
-        print(self.kp)
+        #print(self.kp)
 
 
     #Verify correct username and password
@@ -320,7 +320,7 @@ class Ui_LoginWindow(object):
 
     def tempControl(self):
         self.temperature = self.displayUI.temperatureInput.value()
-        print(self.temperature)
+        #print(self.temperature)
 
     #Headlight off and on controls
     def headlightControl1(self):
