@@ -1,9 +1,10 @@
-import trainModel
-import SWTrackControllerNew
-import trackModel
-import t1_1
-import MainDisplay
 from PyQt5 import QtWidgets
+
+import MainDisplay
+import SWTrackControllerNew
+import t1_1
+import trackModel
+import trainModel
 
 if __name__=='__main__':
     import sys
