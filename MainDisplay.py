@@ -141,7 +141,7 @@ class Ui_LoginWindow(object):
     error = 0.0
     error2 = 0.0
     maxPower = 150000
-    #Calculate power toi be sent to train controller
+    #Calculate power to be sent to train controller
     def calcPower(self):
         #time since last calculation
         self.currentTime = time.time()
@@ -162,6 +162,7 @@ class Ui_LoginWindow(object):
         self.error2 = self.error
         self.errSum2 = self.errSum
 
+
     def getTrainModelInputs(self):
         self.authority = trainMod.getAuthority()
         self.currentVelocity = trainMod.getVelocity()
@@ -179,6 +180,7 @@ class Ui_LoginWindow(object):
         self.DisplayWindow.show()
 
         #Control links
+        self.getTrainModelInputs()
         self.displayUI.speedInput.valueChanged.connect(self.speedControl)
         self.displayUI.temperatureInput.valueChanged.connect(self.tempControl)
         self.displayUI.headlightOnButton.clicked.connect(self.headlightControl1)
@@ -240,6 +242,7 @@ class Ui_LoginWindow(object):
             self.emergencyBrake = True
         else:
             self.emergencyBrake = False;
+        self.getTrainModelInputs()
 
     def intercomControl(self):
         print("Current Station: " + self.nextStation)
@@ -262,6 +265,7 @@ class Ui_LoginWindow(object):
 
         if self.authority == 0:
             self.ebrakeControl()
+        self.getTrainModelInputs()
 
 
     def testRefresh(self):
@@ -277,6 +281,7 @@ class Ui_LoginWindow(object):
             self.serviceBrake = True
         else:
             self.serviceBrake = False;
+        self.getTrainModelInputs()
 
 
     def kiControl(self):
@@ -311,43 +316,51 @@ class Ui_LoginWindow(object):
                 self.speed = self.commanded
                 self.displayUI.speedInput.setValue(self.speed)
         self.calcPower()
+        self.getTrainModelInputs()
 
     def tempControl(self):
         self.temperature = self.displayUI.temperatureInput.value()
         print(self.temperature)
+        self.getTrainModelInputs()
 
     #Headlight off and on controls
     def headlightControl1(self):
         self.displayUI.headlightOnButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.headlightOffButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.headlightStatus = True
+        self.getTrainModelInputs()
 
     def headlightControl2(self):
         self.displayUI.headlightOffButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.headlightOnButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.headlightStatus = False
+        self.getTrainModelInputs()
 
     #Cabin light off and on controls
     def cabinlightControl1(self):
         self.displayUI.cabinlightOnButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.canbinlightOffButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.cabinlightStatus = True
+        self.getTrainModelInputs()
 
     def cabinlightControl2(self):
         self.displayUI.canbinlightOffButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.cabinlightOnButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.cabinlightStatus = False
+        self.getTrainModelInputs()
 
     #Door off and on controls
     def doorControl1(self):
         self.displayUI.doorOpenButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.doorCloseButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.doorStatus = True
+        self.getTrainModelInputs()
 
     def doorControl2(self):
         self.displayUI.doorCloseButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.doorOpenButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.doorStatus = False
+        self.getTrainModelInputs()
 
     #Engine off and on controls
     def engineControl1(self):
@@ -359,6 +372,7 @@ class Ui_LoginWindow(object):
         self.displayUI.modeOutput.setText(self.modeStatus)
         self.displayUI.kiInput.setText(str(self.ki))
         self.displayUI.kpInput.setText(str(self.kp))
+        self.getTrainModelInputs()
 
     def engineControl2(self):
         #if self.speed == 0:
@@ -368,6 +382,7 @@ class Ui_LoginWindow(object):
         self.displayUI.nextstationOutput.setText("")
         self.displayUI.faultStatusOutput.setText("")
         self.displayUI.modeOutput.setText("")
+        self.getTrainModelInputs()
 
     #deal with the logout button being pressed on each screen
     def logoutControl1(self):
