@@ -73,7 +73,10 @@ class Station:
 		self.sales+=num
 
 def trackPull(text):
-	loc=("Track Layout & Vehicle Data vF2.xlsx")
+	if(text==""):
+		loc=("Track Layout & Vehicle Data vF2.xlsx")
+	else:
+		loc=text
 	wb=xl.readxl(loc)
 	sheet="Red Line"
 

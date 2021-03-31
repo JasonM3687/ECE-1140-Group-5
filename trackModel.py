@@ -1125,7 +1125,7 @@ class trackModel(object):
         
     def importTrack(self):
         import trackImport
-        if(self.line_sel.currentText=="Green" or self.line_sel.currentText=="Red"):
+        if(self.line_sel.currentText()=="Green" or self.line_sel.currentText()=="Red"):
             return
         
         self.tracks, self.beacons, self.signals, self.stations=trackImport.trackPull(self.lineEdit.text())
@@ -1245,8 +1245,8 @@ class trackModel(object):
             self.beaconBlock.addItems(["6","7","8","9","15","16","17","20","21","22","24","25","26","34","35","36","44","45","46","47","48","49","59","60","61"])
         elif(self.beaconLine.currentText()=="Green"):
             self.beaconBlock.clear()
-            print("yea")
-            self.beaconBlock.addItems(["1","2","7","8","15","16","17","21","22","23","31","32","39","40","48","49","57","58","62","63","65","66","73","74","77","78","88","89","96","97","100","101","105","106","114","115","123","124","132","133","141","142"])
+            self.beaconBlock.addItems(["1","2","8","9","15","16","17","21","22","23","31","32","39","40","48","49","57","58","62","63","65","66","73","74","77","78","88","89","96","97","100","101","105","106","114","115","123","124","132","133","141","142"])
+        self.beaconBlockUpdate()
         
     def beaconBlockUpdate(self):
         for i in self.beacons:
