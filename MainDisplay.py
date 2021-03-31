@@ -167,7 +167,8 @@ class Ui_LoginWindow(object):
         self.currentVelocity = self.trainMod.getVelocity(1)
         self.beaconMessage = self.trainMod.getBeacon(1)
         self.commanded = self.trainMod.getCommanded(1)
-
+        self.displayUI.nextstationOutput.setText(self.beaconMessage)
+        self.displayUI.actualSpeed.setText(str(self.currentVelocity))
 
 
     #Create copy of display screen
@@ -194,6 +195,14 @@ class Ui_LoginWindow(object):
         self.displayUI.emergencybrakeButton.pressed.connect(self.ebrakeControl)
         self.displayUI.announcementButton.pressed.connect(self.intercomControl)
         self.displayUI.automaticModeButton.pressed.connect(self.automaticControl)
+
+        #Timer to refresh inputs every half second
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.getTrainModelInputs)
+        self.timer.start(1000)
+
+        
+
 
 
     def engineerWindow(self):
@@ -246,7 +255,7 @@ class Ui_LoginWindow(object):
 
     def intercomControl(self):
         self.getTrainModelInputs()
-        print("Current Station: " + self.beaconMessage)
+        print("We have arrived at " + self.beaconMessage + " station.")
 
     def automaticControl(self):
         if self.autoMode == False:
@@ -287,11 +296,11 @@ class Ui_LoginWindow(object):
 
     def kiControl(self):
         self.ki = self.engineerUI.kiInput.value()
-        #print(self.ki)
+        print(self.ki)
 
     def kpControl(self):
         self.kp = self.engineerUI.kpInput.value()
-        #print(self.kp)
+        print(self.kp)
 
 
     #Verify correct username and password
@@ -320,7 +329,7 @@ class Ui_LoginWindow(object):
 
     def tempControl(self):
         self.temperature = self.displayUI.temperatureInput.value()
-        #print(self.temperature)
+        print(self.temperature)
 
     #Headlight off and on controls
     def headlightControl1(self):
