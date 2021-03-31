@@ -56,7 +56,7 @@ class trackModel(object):
         self.tableView.setGeometry(QtCore.QRect(384, 9, 720, 724))
         self.tableView.setWhatsThis("")
         self.tableView.setObjectName("tableView")
-        imgpath="image.png"
+        imgpath="Track.png"
         pixmap=QtGui.QPixmap(imgpath)
         pixmap2=(pixmap.scaledToHeight(self.tableView.height()))
         self.tableView.setPixmap(pixmap2)
