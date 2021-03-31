@@ -43,7 +43,7 @@ class Switch:
 		self.state=state
 
 class Signal(Block):
-    state=0
+    state=1
     cSpeed=0
     auth=0
     def readSignal(self):
@@ -129,11 +129,14 @@ def trackPull(text):
 		j=j+1
 
 		beacons.append(Beacon("Red",6,"Herron Ave"))
+		beacons.append(Beacon("Red",7,"Shadyside"))
 		beacons.append(Beacon("Red",8,"Herron Ave"))
 		beacons.append(Beacon("Red",9,"Shadyside"))
 		beacons.append(Beacon("Red",15,"Shadyside"))
+		beacons.append(Beacon("Red",16,"Herron Ave"))
 		beacons.append(Beacon("Red",17,"Swissville"))
 		beacons.append(Beacon("Red",20,"Herron Ave"))
+		beacons.append(Beacon("Red",21,"Swissville"))
 		beacons.append(Beacon("Red",22,"Penn Station"))
 		beacons.append(Beacon("Red",24,"Swissville"))
 		beacons.append(Beacon("Red",26,"Steel Plaza"))
