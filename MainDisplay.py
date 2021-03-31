@@ -12,20 +12,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from TrainDisplay import Ui_DisplayWindow
 from EngineerControl import Ui_EngineerWindow
 from TestUI import Ui_TestWindow
-import trainModel
+from trainModel import Ui_MainWindow
 import time
 
 class Ui_LoginWindow(object):
     #define static class variables
     speed = 0.0
-    currentVelocity = 0
+    currentVelocity = 4.0
     temperature = 0.0
     nextStation = "NONE"
     headlightStatus = False
     cabinlightStatus = False
     doorStatus = False
-    kp = 9000.0
-    ki = 100.0
+    kp = 2.0
+    ki = 2.0
     faultStatus = "NONE"
     modeStatus = "MANUAL"
     engineStatus = False
@@ -33,20 +33,19 @@ class Ui_LoginWindow(object):
     emergencyBrake = False
     intercom = False
     autoMode = False
-    commanded = 30
-    authority = 0
-    speedLimit = 30
+    commanded = 25
+    authority = 4
+    speedLimit = 25
     power = 0
     startTime = time.time()
     beaconMessage = "NONE"
 
 
-    def setupUi1(self, LoginWindow1):
-        self.LoginWindow=LoginWindow1
-        self.LoginWindow.setObjectName("self.LoginWindow")
-        self.LoginWindow.resize(514, 361)
-        self.LoginWindow.setStyleSheet("background-color: rgb(240, 240, 180);")
-        self.centralwidget = QtWidgets.QWidget(self.LoginWindow)
+    def setupUi1(self, LoginWindow):
+        LoginWindow.setObjectName("LoginWindow")
+        LoginWindow.resize(514, 361)
+        LoginWindow.setStyleSheet("background-color: rgb(240, 240, 180);")
+        self.centralwidget = QtWidgets.QWidget(LoginWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.usernameLabel = QtWidgets.QLabel(self.centralwidget)
         self.usernameLabel.setGeometry(QtCore.QRect(120, 120, 91, 21))
@@ -84,17 +83,17 @@ class Ui_LoginWindow(object):
         self.passwordInput.setText("")
         self.passwordInput.setAlignment(QtCore.Qt.AlignCenter)
         self.passwordInput.setObjectName("passwordInput")
-        self.LoginWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(self.LoginWindow)
+        LoginWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(LoginWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 514, 26))
         self.menubar.setObjectName("menubar")
-        self.LoginWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(self.LoginWindow)
+        LoginWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(LoginWindow)
         self.statusbar.setObjectName("statusbar")
-        self.LoginWindow.setStatusBar(self.statusbar)
+        LoginWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi1(self.LoginWindow)
-        QtCore.QMetaObject.connectSlotsByName(self.LoginWindow)
+        self.retranslateUi1(LoginWindow)
+        QtCore.QMetaObject.connectSlotsByName(LoginWindow)
 
         #Login controls
         self.loginButton.clicked.connect(self.loginVerify)
@@ -103,12 +102,12 @@ class Ui_LoginWindow(object):
 
     def retranslateUi1(self, LoginWindow):
         _translate = QtCore.QCoreApplication.translate
-        self.LoginWindow.setWindowTitle(_translate("self.LoginWindow", "MainWindow"))
-        self.usernameLabel.setText(_translate("self.LoginWindow", "Username:"))
-        self.passwordLabel.setText(_translate("self.LoginWindow", "Password:"))
-        self.loginLabel.setText(_translate("self.LoginWindow", "Log In"))
-        self.loginButton.setText(_translate("self.LoginWindow", "Log In"))
-        self.cancelButton.setText(_translate("self.LoginWindow", "Cancel"))
+        LoginWindow.setWindowTitle(_translate("LoginWindow", "MainWindow"))
+        self.usernameLabel.setText(_translate("LoginWindow", "Username:"))
+        self.passwordLabel.setText(_translate("LoginWindow", "Password:"))
+        self.loginLabel.setText(_translate("LoginWindow", "Log In"))
+        self.loginButton.setText(_translate("LoginWindow", "Log In"))
+        self.cancelButton.setText(_translate("LoginWindow", "Cancel"))
 
     
     #----------Functions for Train Model To recieve outputs------------------------------
@@ -134,7 +133,7 @@ class Ui_LoginWindow(object):
         return self.kp
 
     #-------------------------------------------------------------------------------------
-    beans=0
+
     lastTime = 0.0
     timeChange = 0.0
     errSum = 0.0
@@ -142,7 +141,7 @@ class Ui_LoginWindow(object):
     error = 0.0
     error2 = 0.0
     maxPower = 150000
-    #Calculate power toi be sent to train controller
+    #Calculate power to be sent to train controller
     def calcPower(self):
         #time since last calculation
         self.currentTime = time.time()
@@ -150,35 +149,38 @@ class Ui_LoginWindow(object):
 
         #Compute working error variables
         self.error = self.speed - self.currentVelocity
-        if self.power < self.maxPower:
-            self.errSum = self.errSum2 + (self.timeChange/2)*(self.error + self.error2)
+        if self.power > self.maxPower:
+            self.errSum = errSum2 + (self.timeChange/2)*(self.error + self.error2)
         else:
             self.errSum = self.errSum2
 
         #Compute PID power output
         self.power = (self.kp * self.error) + (self.ki * self.errSum)
+        print(self.power)
 
         self.startTime = self.currentTime
         self.error2 = self.error
         self.errSum2 = self.errSum
 
+
     def getTrainModelInputs(self):
-        self.authority = self.trainMod.getAuthority(1)
-        self.currentVelocity = self.trainMod.getVelocity(1)
-        self.beaconMessage = self.trainMod.getBeacon(1)
-        self.commanded = self.trainMod.getCommanded(1)
+        self.authority = trainMod.getAuthority()
+        self.currentVelocity = trainMod.getVelocity()
+        self.beaconMessage = trainMod.getBeacon()
+        self.commanded = trainMod.getCommanded()
 
 
 
     #Create copy of display screen
     def driverWindow(self):
-        self.LoginWindow.hide()
+        LoginWindow.hide()
         self.DisplayWindow = QtWidgets.QMainWindow()
         self.displayUI = Ui_DisplayWindow()
         self.displayUI.setupUi(self.DisplayWindow)
         self.DisplayWindow.show()
 
         #Control links
+        self.getTrainModelInputs()
         self.displayUI.speedInput.valueChanged.connect(self.speedControl)
         self.displayUI.temperatureInput.valueChanged.connect(self.tempControl)
         self.displayUI.headlightOnButton.clicked.connect(self.headlightControl1)
@@ -197,7 +199,7 @@ class Ui_LoginWindow(object):
 
 
     def engineerWindow(self):
-        self.LoginWindow.hide()
+        LoginWindow.hide()
         self.EngineerWindow = QtWidgets.QMainWindow()
         self.engineerUI = Ui_EngineerWindow()
         self.engineerUI.setupUi(self.EngineerWindow)
@@ -209,7 +211,7 @@ class Ui_LoginWindow(object):
         self.engineerUI.kpInput.valueChanged.connect(self.kpControl)
 
     def testWindow(self):
-        self.LoginWindow.hide()
+        LoginWindow.hide()
         self.TestWindow = QtWidgets.QMainWindow()
         self.testUI = Ui_TestWindow()
         self.testUI.setupUi(self.TestWindow)
@@ -235,18 +237,15 @@ class Ui_LoginWindow(object):
 
     #Set train speed to zero after e brake button is pressed
     def ebrakeControl(self):
-        self.speed = 0
+        self.power = 0
         if self.emergencyBrake == False:
             self.emergencyBrake = True
-            while(self.currentVelocity>self.speed):
-                self.calcPower()
-                self.getTrainModelInputs()
         else:
-            self.emergencyBrake = False
+            self.emergencyBrake = False;
+        self.getTrainModelInputs()
 
     def intercomControl(self):
-        self.getTrainModelInputs()
-        print("Current Station: " + self.beaconMessage)
+        print("Current Station: " + self.nextStation)
 
     def automaticControl(self):
         if self.autoMode == False:
@@ -266,6 +265,7 @@ class Ui_LoginWindow(object):
 
         if self.authority == 0:
             self.ebrakeControl()
+        self.getTrainModelInputs()
 
 
     def testRefresh(self):
@@ -276,22 +276,21 @@ class Ui_LoginWindow(object):
         self.speedLimit = int(self.testUI.speedLimitInput.text())
 
     def serviceBrakeControl(self):
+        self.power = 0;
         if self.serviceBrake == False:
             self.serviceBrake = True
         else:
-            self.serviceBrake = False
-        while(self.serviceBrake == True and self.speed > 0):
-            self.speed = self.currentVelocity - 10
-            self.calcPower()
+            self.serviceBrake = False;
+        self.getTrainModelInputs()
 
 
     def kiControl(self):
         self.ki = self.engineerUI.kiInput.value()
-        #print(self.ki)
+        print(self.ki)
 
     def kpControl(self):
         self.kp = self.engineerUI.kpInput.value()
-        #print(self.kp)
+        print(self.kp)
 
 
     #Verify correct username and password
@@ -317,43 +316,51 @@ class Ui_LoginWindow(object):
                 self.speed = self.commanded
                 self.displayUI.speedInput.setValue(self.speed)
         self.calcPower()
+        self.getTrainModelInputs()
 
     def tempControl(self):
         self.temperature = self.displayUI.temperatureInput.value()
-        #print(self.temperature)
+        print(self.temperature)
+        self.getTrainModelInputs()
 
     #Headlight off and on controls
     def headlightControl1(self):
         self.displayUI.headlightOnButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.headlightOffButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.headlightStatus = True
+        self.getTrainModelInputs()
 
     def headlightControl2(self):
         self.displayUI.headlightOffButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.headlightOnButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.headlightStatus = False
+        self.getTrainModelInputs()
 
     #Cabin light off and on controls
     def cabinlightControl1(self):
         self.displayUI.cabinlightOnButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.canbinlightOffButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.cabinlightStatus = True
+        self.getTrainModelInputs()
 
     def cabinlightControl2(self):
         self.displayUI.canbinlightOffButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.cabinlightOnButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.cabinlightStatus = False
+        self.getTrainModelInputs()
 
     #Door off and on controls
     def doorControl1(self):
         self.displayUI.doorOpenButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.doorCloseButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.doorStatus = True
+        self.getTrainModelInputs()
 
     def doorControl2(self):
         self.displayUI.doorCloseButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.doorOpenButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.doorStatus = False
+        self.getTrainModelInputs()
 
     #Engine off and on controls
     def engineControl1(self):
@@ -365,6 +372,7 @@ class Ui_LoginWindow(object):
         self.displayUI.modeOutput.setText(self.modeStatus)
         self.displayUI.kiInput.setText(str(self.ki))
         self.displayUI.kpInput.setText(str(self.kp))
+        self.getTrainModelInputs()
 
     def engineControl2(self):
         #if self.speed == 0:
@@ -374,25 +382,25 @@ class Ui_LoginWindow(object):
         self.displayUI.nextstationOutput.setText("")
         self.displayUI.faultStatusOutput.setText("")
         self.displayUI.modeOutput.setText("")
+        self.getTrainModelInputs()
 
     #deal with the logout button being pressed on each screen
     def logoutControl1(self):
         if self.engineStatus == False:
             self.DisplayWindow.hide()
-            self.LoginWindow.show()
+            LoginWindow.show()
 
     def logoutControl2(self):
         if self.engineStatus == False:
             self.EngineerWindow.hide()
-            self.LoginWindow.show()
+            LoginWindow.show()
 
     def logoutControl3(self):
         if self.engineStatus == False:
             self.TestWindow.hide()
-            self.LoginWindow.show()
+            LoginWindow.show()
 
-    def importTrain(self,obj):
-        self.trainMod=obj
+
         
 
 
@@ -400,12 +408,12 @@ class Ui_LoginWindow(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    self.LoginWindow = QtWidgets.QMainWindow()
+    LoginWindow = QtWidgets.QMainWindow()
     TrainWindow = QtWidgets.QMainWindow()
-    loginUI = Ui_self.LoginWindow()
-    loginUI.setupUi1(self.LoginWindow)
+    loginUI = Ui_LoginWindow()
+    loginUI.setupUi1(LoginWindow)
     trainMod = Ui_MainWindow()
     trainMod.setupUi(TrainWindow)
-    self.LoginWindow.show()
+    LoginWindow.show()
     TrainWindow.show()
     sys.exit(app.exec_())
