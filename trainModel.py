@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Train import TrainClass
-from MainDisplay import Ui_LoginWindow
+import MainDisplay
 
 
 class Ui_MainWindow(object):

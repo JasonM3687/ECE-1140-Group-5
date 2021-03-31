@@ -164,7 +164,8 @@ class waysideController:
         return self.routedBlocks
 
     def clearRoutedBlocks(self, prevBlocks):
-        self.routedBlocks[prevBlocks-1]=0
+        for i in range(len(prevBlocks)):
+            self.routedBlocks[int(prevBlocks[i],2)-1]=0
         line_number=0
         line_number=self.findController()
         line_number+=5
