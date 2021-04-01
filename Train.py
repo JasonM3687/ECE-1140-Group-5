@@ -8,6 +8,7 @@ class TrainClass():
 
         authority = 0
         beacon = "Not In Service"
+        announcement = " "
         speed_limit = 0
         commSpeed = 0
         velocityMPH = 0
@@ -159,7 +160,7 @@ class TrainClass():
                 self.service = 0
 
         def openDoors(self):
-                if(self.stationDoors!=-1):
+                if(self.stationDoors!=-1 or self.doorStatus == 1):
                         self.doorStatus=True
                 else:
                         self.doorStatus=False

@@ -805,7 +805,7 @@ class Ui_MainWindow(object):
         def updateTrainDisplay(self,trainNum):
                 self.currSpeed.display(round(self.trains[trainNum].velocityMPH,1))
                 self.speedLimit.display(self.trains[trainNum].speed_limit)
-                self.commSpeed.display(self.trains[trainNum].commSpeed)
+                self.commSpeed.display(self.trains[trainNum].commSpeed / 1.609)
                 if (self.trains[trainNum].acceleration > 0):
                         self.accelerationLimit.display(round(self.trains[trainNum].acceleration,1))
                         self.decelerationLimit.display(0)
@@ -821,6 +821,7 @@ class Ui_MainWindow(object):
                 self.authorityOutput.setText(str(self.trains[trainNum].authority))
                 self.powerOutput.setText(str(self.trains[trainNum].power))
                 self.masOutput.setText(str(self.trains[trainNum].massTon))
+                self.lineColor.setText(self.trains[trainNum-1].announcement)
 
                 #update door and light status status
                 for x in range(5):
@@ -936,6 +937,7 @@ class Ui_MainWindow(object):
                 self.trains[trainID-1].doorStatus = self.trainController.getDoorStatus()
                 self.trains[trainID-1].emergency = self.trainController.getEBrake()
                 self.trains[trainID-1].service = self.trainController.getServiceBrake()
+                self.trains[trainID-1].announcement = self.trainController.getAnnouncement()
 
                 if self.trains[trainID-1].emergency != emerTemp and self.trains[trainID-1].emergency == 1:
                         self.eBrakePressed()
