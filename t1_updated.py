@@ -37,8 +37,9 @@ import numpy as np
 
 class CTCOFFICE:
 	
-	def __init__(self,m):		
+	def __init__(self,m,TC):		
 		#create Tab Window
+		self.TrainControl=TC;
 		self.master=m
 		self.tabControl = ttk.Notebook(self.master)
 		tab1 = ttk.Frame(self.tabControl,width=700,height=400) 
