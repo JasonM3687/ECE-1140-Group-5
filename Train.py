@@ -28,6 +28,7 @@ class TrainClass():
         doorStatus = False
         internalStatus = False
         externalStatus = False
+        externalStatusTrack = False
         emergency = False
         service = False
         brakeFailure = False
@@ -162,3 +163,9 @@ class TrainClass():
                         self.doorStatus=True
                 else:
                         self.doorStatus=False
+
+        def calculatePassengers(self):
+                temp = self.passenger
+                self.passenger = self.boarding - temp
+                if self.passenger > 250:
+                        self.passenger = 250

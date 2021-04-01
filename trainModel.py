@@ -85,19 +85,19 @@ class Ui_MainWindow(object):
                 self.decelerationLimit.setGeometry(QtCore.QRect(10, 220, 211, 41))
                 self.decelerationLimit.setObjectName("decelerationLimit")
                 self.label_2 = QtWidgets.QLabel(self.groupBox)
-                self.label_2.setGeometry(QtCore.QRect(20, 30, 81, 21))
+                self.label_2.setGeometry(QtCore.QRect(20, 20, 81, 41))
                 self.label_2.setObjectName("label_2")
                 self.label_3 = QtWidgets.QLabel(self.groupBox)
                 self.label_3.setGeometry(QtCore.QRect(20, 80, 71, 21))
                 self.label_3.setObjectName("label_3")
                 self.label_4 = QtWidgets.QLabel(self.groupBox)
-                self.label_4.setGeometry(QtCore.QRect(20, 132, 101, 21))
+                self.label_4.setGeometry(QtCore.QRect(20, 122, 71, 41))
                 self.label_4.setObjectName("label_4")
                 self.label_5 = QtWidgets.QLabel(self.groupBox)
-                self.label_5.setGeometry(QtCore.QRect(20, 180, 91, 21))
+                self.label_5.setGeometry(QtCore.QRect(20, 170, 71, 41))
                 self.label_5.setObjectName("label_5")
                 self.label_6 = QtWidgets.QLabel(self.groupBox)
-                self.label_6.setGeometry(QtCore.QRect(20, 232, 91, 21))
+                self.label_6.setGeometry(QtCore.QRect(20, 222, 91, 41))
                 self.label_6.setObjectName("label_6")
                 self.label_23 = QtWidgets.QLabel(self.groupBox)
                 self.label_23.setGeometry(QtCore.QRect(170, 30, 47, 21))
@@ -653,11 +653,11 @@ class Ui_MainWindow(object):
                 self.failureOutput.setText(_translate("MainWindow", "No failures initiated"))
                 self.failureFixed.setText(_translate("MainWindow", "Failure Fixed"))
                 self.groupBox.setTitle(_translate("MainWindow", "Train Movement"))
-                self.label_2.setText(_translate("MainWindow", "Current Speed:"))
+                self.label_2.setText(_translate("MainWindow", "Current\nSpeed:"))
                 self.label_3.setText(_translate("MainWindow", "Speed Limit:"))
-                self.label_4.setText(_translate("MainWindow", "Commanded Speed:"))
-                self.label_5.setText(_translate("MainWindow", "Acceleration Limit:"))
-                self.label_6.setText(_translate("MainWindow", "Deceleration Limit:"))
+                self.label_4.setText(_translate("MainWindow", "Commanded\nSpeed:"))
+                self.label_5.setText(_translate("MainWindow", "Acceleration:"))
+                self.label_6.setText(_translate("MainWindow", "Deceleration:"))
                 self.label_23.setText(_translate("MainWindow", "MPH"))
                 self.label_24.setText(_translate("MainWindow", "MPH"))
                 self.label_25.setText(_translate("MainWindow", "MPH"))
@@ -676,11 +676,11 @@ class Ui_MainWindow(object):
                 self.label_40.setText(_translate("MainWindow", "Mass:"))
                 self.authorityOutput.setText(_translate("MainWindow", "0"))
                 self.powerOutput.setText(_translate("MainWindow", "0"))
-                self.lengthOutput.setText(_translate("MainWindow", "105.6    feet"))
-                self.heightOutput.setText(_translate("MainWindow", "11.2      feet"))
-                self.widthOutput.setText(_translate("MainWindow", "8.7        feet"))
+                self.lengthOutput.setText(_translate("MainWindow", "105.6              feet"))
+                self.heightOutput.setText(_translate("MainWindow", "11.2                feet"))
+                self.widthOutput.setText(_translate("MainWindow", "8.7                  feet"))
                 self.masOutput.setText(_translate("MainWindow", "40.9"))
-                self.authorityOutput_2.setText(_translate("MainWindow", "miles"))
+                self.authorityOutput_2.setText(_translate("MainWindow", "blocks"))
                 self.powerOutput_2.setText(_translate("MainWindow", "watts"))
                 self.masOutput_2.setText(_translate("MainWindow", "tons"))
                 self.trainSelect.setItemText(0, _translate("MainWindow", "Train 1"))
@@ -839,10 +839,10 @@ class Ui_MainWindow(object):
                                 self.cabinLights[x].setText("On")
                                 self.cabinLights[x].setStyleSheet("background-color: rgb(57, 255, 35)")
 
-                        if self.trains[trainNum].internalStatus == False:
+                        if self.trains[trainNum].internalStatus == False and self.trains[trainNum].externalStatusTrack == 0:
                                 self.externalLights[x].setText("Off")
                                 self.externalLights[x].setStyleSheet("background-color: rgb(234, 234, 234)")
-                        else:
+                        elif self.trains[trainNum].internalStatus == True or self.trains[trainNum].externalStatusTrack == True:
                                 self.externalLights[x].setText("On")
                                 self.externalLights[x].setStyleSheet("background-color: rgb(57, 255, 35)")
 
@@ -859,6 +859,13 @@ class Ui_MainWindow(object):
                 self.passengerCount_4.display(self.trains[trainNum].passenger)
                 self.passengerCount_5.display(self.trains[trainNum].passenger)
                 self.passengerCount_6.display(self.trains[trainNum].passenger)
+
+                #set crew count
+                self.crewCount_11.display(self.trains[trainNum].crew)
+                self.crewCount_2.display(self.trains[trainNum].crew)
+                self.crewCount_4.display(self.trains[trainNum].crew)
+                self.crewCount_5.display(self.trains[trainNum].crew)
+                self.crewCount_6.display(self.trains[trainNum].crew)
 
         def updateEverything(self):
                 for i in range(1): 
@@ -962,16 +969,19 @@ class Ui_MainWindow(object):
                 tempBeacon = self.trackModel.getBeacon(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 if(tempBeacon!="None"):
                         self.trains[trainID-1].beacon=tempBeacon
-                self.trains[trainID-1].externalStatus = self.trackModel.getLight(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
+                self.trains[trainID-1].externalStatusTrack = self.trackModel.getLight(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].stationDoors = self.trackModel.getStationSide(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].openDoors()
                 self.trains[trainID-1].blockGrade, self.trains[trainID-1].elevation, self.trains[trainID-1].cElevation, self.trains[trainID-1].blockLength = self.trackModel.getBlockGrade(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].boarding = self.trackModel.getBoarding(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
+                self.trains[trainID-1].calculatePassengers()
                 self.trains[trainID-1].base, self.trains[trainID-1].switchBlock = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].signal = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
 
                 self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trackModel.setTrainFault(trainID, self.trains[trainID-1].faults)
+
+
 
                 if(self.trains[trainID-1].authority<=0):
                         self.trainController.serviceBrakeControl()
