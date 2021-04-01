@@ -275,17 +275,17 @@ class CTCOFFICE:
 			#Determine if train is on red line or green line load the correct Occupancy and Authority 
 			if(temp2==1):
 				#print("GREEN LINE FUNCTION")
-				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies; #TEST VALUES
+				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies; 
 				#print("GREEN LINE AUTHORITY")
-				BlockAuthority=[0,7,6,5,4,3,2,1,0,0] #TEST VALUES
+				BlockAuthority=[0,7,6,5,4,3,2,1,0,0] #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
 				#print("CALL THROUGHPUT FUNCTIONS")
-				Throughput=self.TrainControl.getGreenTickets; #TEST VALUES
-				Throughput_red=self.TrainControl.getRedTickets; #TEST VALUES
+				Throughput=self.TrainControl.getGreenTickets; 
+				Throughput_red=self.TrainControl.getRedTickets;
 			else:
 				#print("RED LINE FUNCTION")
-				BlockOccupancy=self.TrainControl.getRedBlockOcc;  #TEST VALUES
+				BlockOccupancy=self.TrainControl.getRedBlockOcc;
 				#print("RED LINE AUTHORITY")
-				BlockAuthority=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES
+				BlockAuthority=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
 				#print("CALL THROUGHPUT FUNCTIONS")
 				Throughput=self.TrainControl.getGreenTickets; #TEST VALUES
 				Throughput_red=self.TrainControl.getRedTickets; #TEST VALUES
