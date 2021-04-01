@@ -137,6 +137,9 @@ class Ui_LoginWindow(object):
     def getAnnouncement(self):
         return self.announcement
 
+    def getSetSpeed(self):
+        return self.speed
+
     #-------------------------------------------------------------------------------------
     beans=0
     lastTime = 0.0
@@ -170,7 +173,8 @@ class Ui_LoginWindow(object):
         self.authority = self.trainMod.getAuthority(1)
         self.currentVelocity = self.trainMod.getVelocity(1)
         self.beaconMessage = self.trainMod.getBeacon(1)
-        self.commanded = self.trainMod.getCommanded(1)
+        self.commanded = self.trainMod.getCommanded(1)/1.609344
+        self.speedLimit = self.trainMod.getSpeedLimit(1)
         self.displayUI.nextstationOutput.setText(self.beaconMessage)
         self.displayUI.actualSpeed.setText(str(self.currentVelocity/1.609344))
 
@@ -204,10 +208,6 @@ class Ui_LoginWindow(object):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.getTrainModelInputs)
         self.timer.start(100)
-
-        
-
-
 
     def engineerWindow(self):
         self.LoginWindow.hide()
@@ -248,14 +248,13 @@ class Ui_LoginWindow(object):
 
     #Set train speed to zero after e brake button is pressed
     def ebrakeControl(self):
-        self.speed = 0
         if self.emergencyBrake == False:
             self.emergencyBrake = True
-            while(self.currentVelocity>self.speed):
-                self.calcPower()
-                self.getTrainModelInputs()
         else:
             self.emergencyBrake = False
+        while(self.emergencyBrake == True and self.speed > 0):
+            self.speed = self.speed - .0001
+            self.calcPower()
 
     def intercomControl(self):
         self.getTrainModelInputs()
@@ -296,6 +295,7 @@ class Ui_LoginWindow(object):
             self.serviceBrake = False
         while(self.serviceBrake == True and self.speed > 0):
             self.speed = self.speed - .0001
+            self.displayUI.speedInput.setValue(self.speed)
             self.calcPower()
 
 
@@ -330,6 +330,10 @@ class Ui_LoginWindow(object):
             if self.speed >= self.commanded:
                 self.speed = self.commanded
                 self.displayUI.speedInput.setValue(self.speed)
+            if self.speed >= self.speedLimit:
+                self.speed = self.speedLimit
+                self.displayUI.speedInput.setValue(self.speed)
+
         self.calcPower()
 
     def tempControl(self):
@@ -360,11 +364,15 @@ class Ui_LoginWindow(object):
 
     #Door off and on controls
     def doorControl1(self):
+        if self.currentVelocity > 0:
+            return
         self.displayUI.doorOpenButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.doorCloseButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.doorStatus = True
 
     def doorControl2(self):
+        if self.currentVelocity > 0:
+            return
         self.displayUI.doorCloseButton.setStyleSheet("background-color:rgb(0, 255, 0)")
         self.displayUI.doorOpenButton.setStyleSheet("background-color:rgb(216, 216, 162)")
         self.doorStatus = False
@@ -379,6 +387,7 @@ class Ui_LoginWindow(object):
         self.displayUI.modeOutput.setText(self.modeStatus)
         self.displayUI.kiInput.setText(str(self.ki))
         self.displayUI.kpInput.setText(str(self.kp))
+        self.displayUI.temperatureInput.setValue(self.temperature)
 
     def engineControl2(self):
         #if self.speed == 0:
@@ -414,12 +423,12 @@ class Ui_LoginWindow(object):
 '''if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    self.LoginWindow = QtWidgets.QMainWindow()
+    LoginWindow = QtWidgets.QMainWindow()
     TrainWindow = QtWidgets.QMainWindow()
     loginUI = Ui_self.LoginWindow()
-    loginUI.setupUi1(self.LoginWindow)
+    loginUI.setupUi1(LoginWindow)
     trainMod = Ui_MainWindow()
     trainMod.setupUi(TrainWindow)
-    self.LoginWindow.show()
+    LoginWindow.show()
     TrainWindow.show()
     sys.exit(app.exec_())'''

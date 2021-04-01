@@ -921,8 +921,6 @@ class Ui_MainWindow(object):
                 return self.trains[trainID-1].commSpeed
 
         def getAuthority(self,trainID):
-                if(self.trains[trainID-1].authority<=0):
-                        self.trainController.serviceBrakeControl()
                 return self.trains[trainID-1].authority
 
         def getBeacon(self,trainID):
@@ -975,7 +973,10 @@ class Ui_MainWindow(object):
                 self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trackModel.setTrainFault(trainID, self.trains[trainID-1].faults)
 
-                if (trainID-1) == self.currentTrainDisplay:
+                if(self.trains[trainID-1].authority<=0):
+                        self.trainController.serviceBrakeControl()
+
+                if (trainID) == self.currentTrainDisplay:
                         self.updateTrainDisplay(trainID-1)
 
 if __name__ == "__main__":

@@ -122,8 +122,8 @@ def trackPull(text):
 		else:
 			tracks[-1].station="None"
 		if(j!=2):
-			if(wb.ws(sheet).index(j,12)!=""):
-				stations.append(Station(wb.ws(sheet).index(j,1),wb.ws(sheet).index(j,3),wb.ws(sheet).index(j,12)))
+			if(wb.ws(sheet).index(j,13)!=""):
+				stations.append(Station(wb.ws(sheet).index(j,1),wb.ws(sheet).index(j,3),wb.ws(sheet).index(j,13)))
 		if(wb.ws(sheet).index(j,7).find("UNDERGROUND")!=-1):
 			tracks[-1].under=1
 		j=j+1

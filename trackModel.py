@@ -1515,7 +1515,10 @@ class trackModel(object):
         self.trains[train-1].posBlock=block
         for i in self.stations:
             if(i.posLine==line and i.posBlock==block):
-                i.addSales(100)
+                if(self.trains[train-1].posBlock!=self.trains[train-1].prevBlock):
+                    i.addSales(100)
+                    print(str(self.trains[train-1].posBlock)+" "+str(self.trains[train-1].prevBlock))
+        self.trains[train-1].prevBlock=self.trains[train-1].posBlock
         self.refresh()
         
     def setTrainFault(self,train,fault):
@@ -1550,9 +1553,8 @@ class trackModel(object):
     def getBoarding(self,line,block):
         for i in self.stations:
             if(i.posLine==line and i.posBlock==block):
-                i.addSales(150)
                 i.board=0
-                return 150
+                return 100
         
     def getSwitch(self,line,block):
         for i in self.switches:
@@ -1578,6 +1580,7 @@ class trackModel(object):
         auth=0
         posLine="none"
         posBlock=0
+        prevBlock=0
         light=False
         door=False
         status=0
