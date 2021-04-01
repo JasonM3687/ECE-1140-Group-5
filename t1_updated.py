@@ -39,6 +39,7 @@ class CTCOFFICE:
 	
 	def __init__(self,m):		
 		#create Tab Window
+		
 		self.master=m
 		self.tabControl = ttk.Notebook(self.master)
 		tab1 = ttk.Frame(self.tabControl,width=700,height=400) 
@@ -253,7 +254,8 @@ class CTCOFFICE:
 		self.SS.place(x=200,y=460)
 		
 		#self.master.mainloop()
-		
+	def getTC(self,TC):
+		self.TrainControl=TC;
 	#TAB 1 FUNCTIONS
 	def GO(self):
 		
@@ -273,21 +275,21 @@ class CTCOFFICE:
 			
 			#Determine if train is on red line or green line load the correct Occupancy and Authority 
 			if(temp2==1):
-				print("GREEN LINE FUNCTION")
-				BlockOccupancy=[0,0,0,0,1,0,0,0,0,0] #TEST VALUES
-				print("GREEN LINE AUTHORITY")
-				BlockAuthority=[0,7,6,5,4,3,2,1,0,0] #TEST VALUES
-				print("CALL THROUGHPUT FUNCTIONS")
-				Throughput=[0,0,0,0] #TEST VALUES
-				Throughput_red=[0,0,0,100] #TEST VALUES
+				#print("GREEN LINE FUNCTION")
+				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies; 
+				#print("GREEN LINE AUTHORITY")
+				BlockAuthority=[0,7,6,5,4,3,2,1,0,0] #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
+				#print("CALL THROUGHPUT FUNCTIONS")
+				Throughput=self.TrainControl.getGreenTickets; 
+				Throughput_red=self.TrainControl.getRedTickets;
 			else:
-				print("RED LINE FUNCTION")
-				BlockOccupancy=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES
-				print("RED LINE AUTHORITY")
-				BlockAuthority=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES
-				print("CALL THROUGHPUT FUNCTIONS")
-				Throughput=[0,0,0,0] #TEST VALUES
-				Throughput_red=[0,70,0,0] #TEST VALUES
+				#print("RED LINE FUNCTION")
+				BlockOccupancy=self.TrainControl.getRedBlockOcc;
+				#print("RED LINE AUTHORITY")
+				BlockAuthority=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
+				#print("CALL THROUGHPUT FUNCTIONS")
+				Throughput=self.TrainControl.getGreenTickets; #TEST VALUES
+				Throughput_red=self.TrainControl.getRedTickets; #TEST VALUES
 			
 			#get Train ID
 			for y in range(0,len(row_indexer)):

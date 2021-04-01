@@ -1442,6 +1442,8 @@ class trackModel(object):
         for i in self.signals:
             if(i.line=="Red"):
                 i.setAuth(state[j])
+                if(state[j]==0):
+                    i.state=1
                 j=j+1
         self.refresh()
         
@@ -1450,6 +1452,8 @@ class trackModel(object):
         for i in self.signals:
             if(i.line=="Green"):
                 i.setAuth(state[j])
+                if(state[j]==0):
+                    i.state=1
                 j=j+1
         self.refresh()
              
