@@ -804,8 +804,8 @@ class Ui_MainWindow(object):
 
         def updateTrainDisplay(self,trainNum):
                 self.currSpeed.display(round(self.trains[trainNum].velocityMPH,1))
-                self.speedLimit.display(self.trains[trainNum].speed_limit)
-                self.commSpeed.display(self.trains[trainNum].commSpeed / 1.609)
+                self.speedLimit.display(round(self.trains[trainNum].speed_limit,1))
+                self.commSpeed.display(round((self.trains[trainNum].commSpeed / 1.609),1))
                 if (self.trains[trainNum].acceleration > 0):
                         self.accelerationLimit.display(round(self.trains[trainNum].acceleration,1))
                         self.decelerationLimit.display(0)
@@ -914,6 +914,9 @@ class Ui_MainWindow(object):
         def getVelocity(self,trainID):
                 return self.trains[trainID-1].velocityKM
 
+        def getSpeedLimit(self,trainID):
+                return self.trains[trainID-1].speed_limit
+
         def getCommanded(self,trainID):
                 return self.trains[trainID-1].commSpeed
 
@@ -938,9 +941,12 @@ class Ui_MainWindow(object):
                 self.trains[trainID-1].emergency = self.trainController.getEBrake()
                 self.trains[trainID-1].service = self.trainController.getServiceBrake()
                 self.trains[trainID-1].announcement = self.trainController.getAnnouncement()
+                self.trains[trainID-1].set_speed = self.trainController.getSetSpeed()
+
+                self.trains[trainID-1].openDoors()
 
                 if self.trains[trainID-1].emergency != emerTemp and self.trains[trainID-1].emergency == 1:
-                        self.eBrakePressed()
+                        self.trains[trainID-1].eBrakePressed()
                 elif (self.trains[trainID-1].service != serviceTemp) and (self.trains[trainID-1].service == 0):
                         self.trains[trainID-1].brakesDone()
                 elif (self.trains[trainID-1].service != serviceTemp) and (self.trains[trainID-1].service == 1) and (self.trains[trainID-1].emergency != 1):

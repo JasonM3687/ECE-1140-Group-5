@@ -14,6 +14,7 @@ class TrainClass():
         velocityMPH = 0
         velocityKM = 0
         velocity = 0
+        set_speed = 0
         prevVel = 0.0001
         acceleration = 0
         prevAcc = 0.0001
@@ -29,7 +30,6 @@ class TrainClass():
         externalStatus = False
         emergency = False
         service = False
-        brake = False
         brakeFailure = False
         engineFailure = False
         signalFailure = False
@@ -78,8 +78,6 @@ class TrainClass():
 
                         if self.emergency == 1:
                                 self.acceleration = self.maxAcceleration
-                        elif self.brake == 1:
-                                self.acceleration = self.maxAcceleration
                         elif self.service == 1:
                                 self.acceleration = self.maxAcceleration
                         elif (self.acceleration > self.maxAcceleration):
@@ -87,14 +85,13 @@ class TrainClass():
 
                         self.velocity = self.prevVel + (self.timeChange/2)*(self.acceleration + self.prevAcc)
 
-                        #stops brakes if speed is now less than speed limit
-                        if (self.brake == 1 and self.velocity < self.mphTOmps(self.speed_limit)):
-                                self.brakesDone()
-
                         #makes sure the velocity is never greater than the speed limit
-                        if (self.velocity > self.mphTOmps(self.speed_limit)):
-                                self.brake = 1
-                                self.maxAcceleration = -1.12
+                        if (self.velocity > self.mphTOmps(self.set_speed)):
+                                self.velocity > self.mphTOmps(self.set_speed)
+                                self.acceleration = 0
+                        elif (self.velocity > self.mphTOmps(self.speed_limit)):
+                                self.velocity = self.speed_limit
+                                self.acceleration = 0
 
                         #makes sure the velocity never exceeds the max speed
                         if self.velocity > self.kmhTOmps(self.maxSpeed):
@@ -156,11 +153,12 @@ class TrainClass():
         def brakesDone(self):
                 self.maxAcceleration = 0.5
                 self.emergency = 0
-                self.brake = 0
                 self.service = 0
 
         def openDoors(self):
-                if(self.stationDoors!=-1 or self.doorStatus == 1):
+                if (self.doorStatus == 0 and self.stationDoors != -1):
+                        self.doorStatus = False
+                elif(self.stationDoors!=-1 and self.doorStatus == 1):
                         self.doorStatus=True
                 else:
                         self.doorStatus=False
