@@ -821,7 +821,7 @@ class Ui_MainWindow(object):
                 self.authorityOutput.setText(str(self.trains[trainNum].authority))
                 self.powerOutput.setText(str(self.trains[trainNum].power))
                 self.masOutput.setText(str(self.trains[trainNum].massTon))
-                self.lineColor.setText(self.trains[trainNum-1].announcement)
+                self.lineColor.setText(self.trains[trainNum].announcement)
 
                 #update door and light status status
                 for x in range(5):
@@ -921,8 +921,6 @@ class Ui_MainWindow(object):
                 return self.trains[trainID-1].commSpeed
 
         def getAuthority(self,trainID):
-                if(self.trains[trainID-1].authority<=0):
-                        self.trainController.serviceBrakeControl()
                 return self.trains[trainID-1].authority
 
         def getBeacon(self,trainID):
@@ -974,6 +972,9 @@ class Ui_MainWindow(object):
 
                 self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trackModel.setTrainFault(trainID, self.trains[trainID-1].faults)
+
+                if(self.trains[trainID-1].authority<=0):
+                        self.trainController.serviceBrakeControl()
 
                 if (trainID) == self.currentTrainDisplay:
                         self.updateTrainDisplay(trainID-1)

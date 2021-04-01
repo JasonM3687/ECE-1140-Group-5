@@ -86,8 +86,9 @@ class TrainClass():
                         self.velocity = self.prevVel + (self.timeChange/2)*(self.acceleration + self.prevAcc)
 
                         #makes sure the velocity is never greater than the speed limit
-                        if (self.velocity > self.mphTOmps(self.set_speed)):
-                                self.velocity > self.mphTOmps(self.set_speed)
+                        if (self.velocity > self.mphTOmps(self.set_speed) and self.service == False):
+                                self.velocity = self.mphTOmps(self.set_speed)
+                                print(self.mphTOmps(self.set_speed))
                                 self.acceleration = 0
                         elif (self.velocity > self.mphTOmps(self.speed_limit)):
                                 self.velocity = self.speed_limit
