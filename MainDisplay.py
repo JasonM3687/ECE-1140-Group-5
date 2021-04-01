@@ -19,7 +19,7 @@ class Ui_LoginWindow(object):
     #define static class variables
     speed = 0.0
     currentVelocity = 0
-    temperature = 0.0
+    temperature = 68
     nextStation = "NONE"
     headlightStatus = False
     cabinlightStatus = False
@@ -39,6 +39,7 @@ class Ui_LoginWindow(object):
     power = 0
     startTime = time.time()
     beaconMessage = "NONE"
+    announcement = "I Hate Trains"
 
 
     def setupUi1(self, LoginWindow1):
@@ -132,6 +133,9 @@ class Ui_LoginWindow(object):
 
     def getKp(self):
         return self.kp
+        
+    def getAnnouncement(self):
+        return self.announcement
 
     #-------------------------------------------------------------------------------------
     beans=0
@@ -168,7 +172,7 @@ class Ui_LoginWindow(object):
         self.beaconMessage = self.trainMod.getBeacon(1)
         self.commanded = self.trainMod.getCommanded(1)
         self.displayUI.nextstationOutput.setText(self.beaconMessage)
-        self.displayUI.actualSpeed.setText(str(self.currentVelocity))
+        self.displayUI.actualSpeed.setText(str(self.currentVelocity/1.609344))
 
 
     #Create copy of display screen
@@ -255,7 +259,8 @@ class Ui_LoginWindow(object):
 
     def intercomControl(self):
         self.getTrainModelInputs()
-        print("We have arrived at " + self.beaconMessage + " station.")
+        self.announcement = "We have arrived at " + self.beaconMessage + " station."
+        print(self.announcement)
 
     def automaticControl(self):
         if self.autoMode == False:
