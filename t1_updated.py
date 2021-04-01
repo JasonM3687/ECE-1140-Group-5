@@ -37,9 +37,9 @@ import numpy as np
 
 class CTCOFFICE:
 	
-	def __init__(self,m,TC):		
+	def __init__(self,m):		
 		#create Tab Window
-		self.TrainControl=TC;
+		
 		self.master=m
 		self.tabControl = ttk.Notebook(self.master)
 		tab1 = ttk.Frame(self.tabControl,width=700,height=400) 
@@ -254,7 +254,8 @@ class CTCOFFICE:
 		self.SS.place(x=200,y=460)
 		
 		#self.master.mainloop()
-		
+	def getTC(self,TC):
+		self.TrainControl=TC;
 	#TAB 1 FUNCTIONS
 	def GO(self):
 		
