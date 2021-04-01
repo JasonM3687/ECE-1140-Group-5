@@ -38,7 +38,7 @@ if __name__=='__main__':
     trackC.trackModelInput(track)
     trackC.CTCInput(ctc)
     trackC.setupUi(trackCWindow)
-    
+    ctc.getTC(trackC)
     
     trackWindow.show()
     trainWindow.show()
