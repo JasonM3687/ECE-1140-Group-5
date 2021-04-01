@@ -274,21 +274,21 @@ class CTCOFFICE:
 			
 			#Determine if train is on red line or green line load the correct Occupancy and Authority 
 			if(temp2==1):
-				print("GREEN LINE FUNCTION")
-				BlockOccupancy=[0,0,0,0,1,0,0,0,0,0] #TEST VALUES
-				print("GREEN LINE AUTHORITY")
+				#print("GREEN LINE FUNCTION")
+				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies; #TEST VALUES
+				#print("GREEN LINE AUTHORITY")
 				BlockAuthority=[0,7,6,5,4,3,2,1,0,0] #TEST VALUES
-				print("CALL THROUGHPUT FUNCTIONS")
-				Throughput=[0,0,0,0] #TEST VALUES
-				Throughput_red=[0,0,0,100] #TEST VALUES
+				#print("CALL THROUGHPUT FUNCTIONS")
+				Throughput=self.TrainControl.getGreenTickets; #TEST VALUES
+				Throughput_red=self.TrainControl.getRedTickets; #TEST VALUES
 			else:
-				print("RED LINE FUNCTION")
-				BlockOccupancy=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES
-				print("RED LINE AUTHORITY")
+				#print("RED LINE FUNCTION")
+				BlockOccupancy=self.TrainControl.getRedBlockOcc;  #TEST VALUES
+				#print("RED LINE AUTHORITY")
 				BlockAuthority=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES
-				print("CALL THROUGHPUT FUNCTIONS")
-				Throughput=[0,0,0,0] #TEST VALUES
-				Throughput_red=[0,70,0,0] #TEST VALUES
+				#print("CALL THROUGHPUT FUNCTIONS")
+				Throughput=self.TrainControl.getGreenTickets; #TEST VALUES
+				Throughput_red=self.TrainControl.getRedTickets; #TEST VALUES
 			
 			#get Train ID
 			for y in range(0,len(row_indexer)):
