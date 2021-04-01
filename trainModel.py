@@ -964,6 +964,7 @@ class Ui_MainWindow(object):
 
         ################ track model functions ##################
         def getValuesFromTrackModel(self,trainID):
+                tempAuth = self.trains[trainID-1].authority
                 self.trains[trainID-1].authority = self.trackModel.getAuth(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trains[trainID-1].commSpeed, self.trains[trainID-1].speed_limit = self.trackModel.getSpeed(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 tempBeacon = self.trackModel.getBeacon(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
@@ -981,10 +982,10 @@ class Ui_MainWindow(object):
                 self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
                 self.trackModel.setTrainFault(trainID, self.trains[trainID-1].faults)
 
-
-
-                if(self.trains[trainID-1].authority<=0):
+                if self.trains[trainID-1].authority <= 0 and tempAuth != 0:
                         self.trainController.serviceBrakeControl()
+
+                
 
                 if (trainID) == self.currentTrainDisplay:
                         self.updateTrainDisplay(trainID-1)
