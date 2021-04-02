@@ -425,6 +425,38 @@ class CTCOFFICE:
 		self.l3.insert(x,self.ti.get())
 		self.l4.insert(x,self.s.get())
 		self.l5.insert(x,self.a.get())
+		
+		#get the stations
+		given=self.D.get()
+		stations=given.split("->");
+		#print("STAIONS ARE :"+ str(stations))
+		
+		#get the train
+		given=self.T.get()
+		Tr_ID=given.split(" ");
+		ID= Tr_ID[1]
+		begin_adding=0
+		generated_route=[]
+		generated_line_speed=[]
+		speed_added=0
+		for i in range (2,self.sc_rows):
+			if(self.sc2.cell(i,7).value is not None and stations[0].strip() in self.sc2.cell(i,7).value):
+				begin_adding=1;
+			if(begin_adding==1):
+				generated_route.append(self.sc2.cell(i,3).value)
+				if(self.sc2.cell(i,1).value=="Green"):
+					generated_line_speed.append(1);
+				else:
+					generated_line_speed.append(0);
+				if(speed_added==0):
+					generated_line_speed.append(self.sc2.cell(i,6).value);
+					speed_added=1;
+			if(self.sc2.cell(i,7).value is not None and stations[1].strip() in self.sc2.cell(i,7).value):
+				begin_adding=0;
+				
+
+		self.routes.append(generated_route);
+		#print("GENERATED ROUTE IS: "+str(generated_route))
 		self.T.set("")
 		self.D.set("")
 		self.ti.set("")
@@ -443,8 +475,11 @@ class CTCOFFICE:
 		loc= filedialog.askopenfilename()
 		wb = openpyxl.load_workbook(loc)
 		sc= wb.active
+		self.sc2=sc;
 		rows= sc.max_row
 		cols= sc.max_column
+		self.sc_rows=rows;
+		self.sc_cols=cols;
 		recieved_Time=list()
 		recieved_Route=list()
 		recieved_AUTH=list()
@@ -633,11 +668,11 @@ class CTCOFFICE:
 					self.SentRouteLines.append(0)
 			
 			#Make sure to verify with all routes
-			for i in range(0,self.l5.get(0)):
-				self.SentSuggestedSpeed.append(format(self.l4.get(0),"08b"))
-				self.SentSuggestedAuth.append(format(self.l5.get(0)-i,"08b"))
+			for i in range(0,int(self.l5.get(0))):
+				self.SentSuggestedSpeed.append(format(int(self.l4.get(0)),"08b"))
+				self.SentSuggestedAuth.append(format(int(self.l5.get(0))-i,"08b"))
 			self.SentSuggestedAuth.append(format(0,"08b"))
-			self.SentSuggestedSpeed.append(format(self.l4.get(0),"08b"))
+			self.SentSuggestedSpeed.append(format(int(self.l4.get(0)),"08b"))
 			
 			'''print(self.SentRouteSections)
 			print(self.SentRouteLines)
@@ -647,7 +682,7 @@ class CTCOFFICE:
 			temp_list= np.append(temp_list,self.l.get(0))
 			self.CurrentTravel.append(temp_list)
 			self.CurrentTravel_line_speed.append(self.SentRouteLines[0])
-			self.CurrentTravel_line_speed.append(self.l4.get(0))
+			self.CurrentTravel_line_speed.append(int(self.l4.get(0)))
 			self.Remove()
 			
 		
