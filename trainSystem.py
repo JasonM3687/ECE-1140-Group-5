@@ -29,8 +29,8 @@ if __name__=='__main__':
     trainC.setupUi1(trainCWindow)
     trainC.importTrain(train)
     
-    ctcWindow=Tk()
-    ctc=t1_updated.CTCOFFICE(ctcWindow)
+    
+    ctc=t1_updated.CTCOFFICE()
     
     trackCApp=QtWidgets.QApplication(sys.argv)
     trackCWindow=QtWidgets.QMainWindow()
@@ -44,5 +44,5 @@ if __name__=='__main__':
     trainWindow.show()
     trainCWindow.show()
     trackCWindow.show()
-    ctcWindow.mainloop()
+    ctc.SHOW()
     sys.exit(trackApp.exec_())

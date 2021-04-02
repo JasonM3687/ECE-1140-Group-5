@@ -2114,6 +2114,11 @@ class Ui_MainWindow(object):
         return self.redTicketSales
 
     #get authority
+    def getGreenAuth(self):
+        return self.waysideControllers[1].getBlockAuth()
+
+    def getRedAuth(self):
+        return self.waysideControllers[0].getBlockAuth()
 
     #get Fault Statuses
     def getGreenFaults(self):

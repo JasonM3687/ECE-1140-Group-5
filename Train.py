@@ -35,6 +35,7 @@ class TrainClass():
         engineFailure = False
         signalFailure = False
         faults = 0
+        prevblock=0
         blockNum = 0
         nextblock = 0
         line = "Green"
@@ -159,13 +160,15 @@ class TrainClass():
         def openDoors(self):
                 if (self.doorStatus == 0 and self.stationDoors != -1):
                         self.doorStatus = False
-                elif(self.stationDoors!=-1 and self.doorStatus == 1):
+                elif(self.stationDoors!=-1 or self.doorStatus == 1):
                         self.doorStatus=True
                 else:
                         self.doorStatus=False
 
         def calculatePassengers(self):
-                temp = self.passenger
-                self.passenger = self.boarding - temp
+                if (self.boarding != 0 and self.prevblock!=self.blockNum and self.blockNum!=65):
+                        temp = self.passenger
+                        self.passenger = self.boarding - temp
                 if self.passenger > 250:
                         self.passenger = 250
+                self.prevblock=self.blockNum

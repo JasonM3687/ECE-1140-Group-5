@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Train import TrainClass
 import MainDisplay
+import time
 
 
 class Ui_MainWindow(object):
@@ -916,6 +917,41 @@ class Ui_MainWindow(object):
                 self.failureOutput.setText("No failures")
                 self.trains[self.currentTrainDisplay].brakesDone()
                 self.updateEverything()
+                
+        beans=0
+        lastTime = 0.0
+        timeChange = 0.0
+        errSum = 0.0
+        errSum2 = 0.0
+        error = 0.0
+        error2 = 0.0
+        maxPower = 150000
+        currentVelocity=0
+        startTime=0
+        kp=0
+        ki=0
+        speed=0
+        power=0
+                
+        def calcTrainPower(self):
+                #time since last calculation
+                self.currentTime = time.time()
+                self.timeChange = self.currentTime - self.startTime
+
+                #Compute working error variables
+                self.error = self.speed - self.currentVelocity
+                if self.power < self.maxPower:
+                        self.errSum = self.errSum2 + (self.timeChange/2)*(self.error + self.error2)
+                else:
+                        self.errSum = self.errSum2
+
+                #Compute PID power output
+                self.power = (self.kp * self.error) + (self.ki * self.errSum)
+
+                self.startTime = self.currentTime
+                self.error2 = self.error
+                self.errSum2 = self.errSum
+
 
         ################ train controller functions ###################
         def getVelocity(self,trainID):
@@ -948,7 +984,8 @@ class Ui_MainWindow(object):
                 self.trains[trainID-1].announcement = self.trainController.getAnnouncement()
                 self.trains[trainID-1].set_speed = self.trainController.getSetSpeed()
 
-                self.trains[trainID-1].openDoors()
+                if (self.trains[trainID-1].doorStatus == 1):
+                        self.trains[trainID-1].openDoors()
 
                 if self.trains[trainID-1].emergency != emerTemp and self.trains[trainID-1].emergency == 1:
                         self.trains[trainID-1].eBrakePressed()

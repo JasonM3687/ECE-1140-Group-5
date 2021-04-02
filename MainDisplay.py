@@ -39,7 +39,7 @@ class Ui_LoginWindow(object):
     power = 0
     startTime = time.time()
     beaconMessage = "NONE"
-    announcement = "I Hate Trains"
+    announcement = "Next Stop: Dormont"
 
 
     def setupUi1(self, LoginWindow1):

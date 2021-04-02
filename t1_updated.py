@@ -37,10 +37,10 @@ import numpy as np
 
 class CTCOFFICE:
 	
-	def __init__(self,m):		
+	def __init__(self):		
 		#create Tab Window
 		
-		self.master=m
+		self.master=Tk()
 		self.tabControl = ttk.Notebook(self.master)
 		tab1 = ttk.Frame(self.tabControl,width=700,height=400) 
 		tab2 = ttk.Frame(self.tabControl,width=700,height=600) 
@@ -253,14 +253,15 @@ class CTCOFFICE:
 		self.SS=ttk.Label(tab4, text="")
 		self.SS.place(x=200,y=460)
 		
-		#self.master.mainloop()
+	def SHOW(self):
+		self.master.mainloop()
 	def getTC(self,TC):
 		self.TrainControl=TC;
 	#TAB 1 FUNCTIONS
 	def GO(self):
 		
 	
-		
+		print("6")
 		delete_later=list() 
 		
 		row_indexer=["Train 1","Train 2","Train 3","Train 4","Train 5","Train 6","Train 7","Train 8","Train 9","Train 10"]
@@ -270,26 +271,29 @@ class CTCOFFICE:
 			write_row=0
 			
 			indexing=i*2
+			print("5")
 			temp2=self.CurrentTravel_line_speed[indexing]
 			temp3=self.CurrentTravel_line_speed[indexing+1]
 			
 			#Determine if train is on red line or green line load the correct Occupancy and Authority 
 			if(temp2==1):
 				#print("GREEN LINE FUNCTION")
-				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies; 
+				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies()
+				print(BlockOccupancy)
+				print("0")
 				#print("GREEN LINE AUTHORITY")
-				BlockAuthority=[0,7,6,5,4,3,2,1,0,0] #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
+				BlockAuthority=self.TrainControl.getGreenAuth() #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
 				#print("CALL THROUGHPUT FUNCTIONS")
-				Throughput=self.TrainControl.getGreenTickets; 
-				Throughput_red=self.TrainControl.getRedTickets;
+				Throughput=self.TrainControl.getGreenTickets()
+				Throughput_red=self.TrainControl.getRedTickets()
 			else:
 				#print("RED LINE FUNCTION")
-				BlockOccupancy=self.TrainControl.getRedBlockOcc;
+				BlockOccupancy=self.TrainControl.getRedBlockOcc()
 				#print("RED LINE AUTHORITY")
 				BlockAuthority=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
 				#print("CALL THROUGHPUT FUNCTIONS")
-				Throughput=self.TrainControl.getGreenTickets; #TEST VALUES
-				Throughput_red=self.TrainControl.getRedTickets; #TEST VALUES
+				Throughput=self.TrainControl.getGreenTickets() #TEST VALUES
+				Throughput_red=self.TrainControl.getRedTickets() #TEST VALUES
 			
 			#get Train ID
 			for y in range(0,len(row_indexer)):

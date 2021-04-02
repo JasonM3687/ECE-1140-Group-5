@@ -1410,7 +1410,7 @@ class trackModel(object):
         redsales=[]
         for i in self.stations:
             if(i.posLine=="Red"):
-                redsales.append(i)
+                redsales.append(i.sales)
         return redsales
     
     def getGreenSales(self):
@@ -1418,7 +1418,7 @@ class trackModel(object):
         greensales=[]
         for i in self.stations:
             if(i.posLine=="Green"):
-                greensales.append(i)
+                greensales.append(i.sales)
         return greensales
         
     def setRedSwitch(self,state):
@@ -1543,7 +1543,7 @@ class trackModel(object):
                 elif(i.station=="Right"):
                     return 1
                 elif(i.station=="Both"):
-                    return -1
+                    return 2
         return -1
         
     def getBlockGrade(self,line,block):
@@ -1559,6 +1559,7 @@ class trackModel(object):
             if(i.posLine==line and i.posBlock==block):
                 i.board=0
                 return 100
+        return 0
         
     def getSwitch(self,line,block):
         for i in self.switches:
