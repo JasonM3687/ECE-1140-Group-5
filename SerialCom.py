@@ -1,28 +1,50 @@
 import serial
 
-ser = serial.Serial('COM3', baudrate = 9600, timeout = 1)
-limit = 150
-while 1:
+def getDoors():
+    return doors
 
-    arduinoData = ser.readline().decode('ascii')
-    power = arduinoData
-    print("Power" + power)
-    arduinoData = ser.readline().decode('ascii')
-    headlights = arduinoData
-    print("headlights" + headlights)
-    arduinoData = ser.readline().decode('ascii')
-    internallights = arduinoData
-    print("internallights" + internallights)
-    arduinoData = ser.readline().decode('ascii')
-    servicebrake = arduinoData
-    print("servicebrake" + servicebrake)
-    arduinoData = ser.readline().decode('ascii')
-    emergencybrake = arduinoData
-    print("emergencybrake" + emergencybrake)
-    arduinoData = ser.readline().decode('ascii')
-    doors = arduinoData
-    print("doors" + doors)
-    ser.write(limit)
-    arduinoData = ser.readline().decode('ascii')
-    print(arduinoData)
+def getSpeed():
+    return speed
+
+def getHeadlights():
+    return headlights
+
+def getInternallights():
+    return internallights
+
+def getServiceBrake():
+    return servicebrake
+
+def getEmergencyBrake():
+    return emergencybrake
+
+
+if __name__ == "__main__":
+
+    ser = serial.Serial('COM3', baudrate = 9600, timeout = 1)
+
+    while 1:
+
+    
+        arduinoData = ser.readline().decode('ascii')
+        doors = arduinoData
+        print("Doors: " + doors)
+        arduinoData = ser.readline().decode('ascii')
+        speed = arduinoData
+        print("Speed: " + speed)
+        arduinoData = ser.readline().decode('ascii')
+        headlights = arduinoData
+        print("Headlights: " + headlights)
+        arduinoData = ser.readline().decode('ascii')
+        internallights = arduinoData
+        print("Internallights: " + internallights)
+        arduinoData = ser.readline().decode('ascii')
+        servicebrake = arduinoData
+        print("Servicebrake: " + servicebrake)
+        arduinoData = ser.readline().decode('ascii')
+        emergencybrake = arduinoData
+        print("Emergencybrake: " + emergencybrake)
+  
+    
+
    
