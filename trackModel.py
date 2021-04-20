@@ -95,12 +95,14 @@ class trackModel(object):
         self.label_env.setFont(font)
         self.label_env.setObjectName("label_env")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_env)
-        self.env_temp = QtWidgets.QLabel(self.groupBox)
+        self.env_temp = QtWidgets.QSpinBox(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(16)
         self.env_temp.setFont(font)
         self.env_temp.setObjectName("env_temp")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.env_temp)
+        self.env_temp.setMinimum(-10)
+        self.env_temp.setMaximum(110)
         self.heating_button = QtWidgets.QRadioButton(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -937,7 +939,6 @@ class trackModel(object):
         self.label_2.setText(_translate("MainWindow", "Occupied:"))
         self.label_3.setText(_translate("MainWindow", "Track Heating:"))
         self.label_env.setText(_translate("MainWindow", "Env Temp (F):"))
-        self.env_temp.setText(_translate("MainWindow", "N/A"))
         self.heating_button.setText(_translate("MainWindow", "Enable"))
         self.label_4.setText(_translate("MainWindow", "Grade:"))
         self.label_5.setText(_translate("MainWindow", "Elevation (M):"))
@@ -1121,6 +1122,7 @@ class trackModel(object):
         self.heating_button.toggled.connect(self.update)
         self.beaconLine.activated.connect(self.beaconLineUpdate)
         self.beaconBlock.activated.connect(self.beaconBlockUpdate)
+        self.env_temp.valueChanged.connect(self.update)
         
         
     def importTrack(self):
@@ -1150,15 +1152,11 @@ class trackModel(object):
                 self.sec_label.setText(i.section)
                 self.speed_label.setText(str(i.sLimit))
                 self.length_box.setValue(i.bLength)
-                if(i.occ==1):
-                    self.occ_label.setText("True")
-                else:
-                    self.occ_label.setText("False")
                 self.heating_button.setChecked(i.heat)
                 self.grade_box.setValue(i.bGrade)
                 self.elev_button.setValue(i.elev)
                 self.celev_button.setValue(i.cElev)
-                self.env_temp.setText(str(i.envTemp))
+                self.env_temp.setValue(i.envTemp)
                 if(self.getSignalObj(i.line,i.bNum).state==1):
                     self.sigShow.setStyleSheet("background-color: red")
                     self.sigShow.setText("Stop")
@@ -1175,20 +1173,25 @@ class trackModel(object):
                     self.tcFail.setChecked(True)
                 elif(i.fail==3):
                     self.pFail.setChecked(True)
-                if(i.occ!=False):
+                if(i.occ==1):
                     self.stat_label.setText("Occupied")
+                    self.occ_label.setText("True")
                 else:
                     if(self.brFail.isChecked()):
                         self.stat_label.setText("Broken Rail")
+                        self.occ_label.setText("True")
                     elif(self.tcFail.isChecked()):
                         self.stat_label.setText("Circuit Failure")
+                        self.occ_label.setText("True")
                     elif(self.pFail.isChecked()):
                         self.stat_label.setText("Power Failure")
+                        self.occ_label.setText("True")
                     else:
                         if(i.occ==1):
                             self.stat_label.setText("Occupied")
                         else:
                             self.stat_label.setText("Clear")
+                            self.occ_label.setText("False")
                 self.switchUpdate()
                 self.unBlock()
                 break
@@ -1202,6 +1205,7 @@ class trackModel(object):
                 i.bGrade=self.grade_box.value()
                 i.bLength=self.length_box.value()
                 i.heat=self.heating_button.isChecked()
+                i.setTemp(self.env_temp.value())
                 if(self.failClear.isChecked()):
                     i.fail=0
                     self.stat_label.setText("Clear")
@@ -1214,7 +1218,10 @@ class trackModel(object):
                 elif(self.pFail.isChecked()):
                     i.fail=3
                     self.stat_label.setText("Power Failure")
+                i.checkFail()
+                print(i.occ)
                 self.unBlock()
+                self.refresh()
                 break
     
     def block(self):
@@ -1268,13 +1275,9 @@ class trackModel(object):
             for j in self.trains:
                 if(j.posLine==i.line and j.posBlock==i.bNum):
                     i.occ=1
-                    if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
-                        self.occ_label.setText("True")
                     break
                 else:
                     i.occ=0
-                    if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
-                        self.occ_label.setText("False")
             
                    
         
@@ -1517,11 +1520,15 @@ class trackModel(object):
     def setTrainPos(self,train,line,block):
         self.trains[train-1].posLine=line
         self.trains[train-1].posBlock=block
+        self.getBlock(line,block).occ=1
+        self.getBlock(self.trains[train-1].posLine,self.trains[train-1].prevBlock).occ=0
         for i in self.stations:
             if(i.posLine==line and i.posBlock==block):
                 if(self.trains[train-1].posBlock!=self.trains[train-1].prevBlock):
-                    i.addSales(100)
-                    print(str(self.trains[train-1].posBlock)+" "+str(self.trains[train-1].prevBlock))
+                    for j in self.signals:
+                        if(j.posBlock==block and j.posLine==line and j.auth==0):
+                            i.addSales(100)
+                            print(str(self.trains[train-1].posBlock)+" "+str(self.trains[train-1].prevBlock))
         self.trains[train-1].prevBlock=self.trains[train-1].posBlock
         self.refresh()
         
