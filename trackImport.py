@@ -25,6 +25,13 @@ class Block:
 		self.envTemp=temp
 		if(self.envTemp<=32):
 			self.heat=1
+		else:
+			self.heat=0
+	def checkFail(self):
+		if(self.fail!=0 or self.occ==1):
+			self.occ=1
+		else:
+			self.occ=0
 
 class Beacon:
 	def __init__(self,line,block,data):
@@ -71,6 +78,8 @@ class Station:
 		self.disemb+=num
 	def addSales(self,num):
 		self.sales+=num
+		self.addBoard(num)
+		self.addDisemb(num)
 
 def trackPull(text):
 	loc=("Track Layout & Vehicle Data vF2.xlsx")
@@ -84,7 +93,7 @@ def trackPull(text):
 	tracks=[]
 	while i<78:
 		tracks.append(Block(wb.ws(sheet).index(i,1),wb.ws(sheet).index(i,2),wb.ws(sheet).index(i,3),wb.ws(sheet).index(i,4),wb.ws(sheet).index(i,5),wb.ws(sheet).index(i,6),wb.ws(sheet).index(i,9),wb.ws(sheet).index(i,10)))
-		signals.append(Signal(wb.ws(sheet).index(i,1),wb.ws(sheet).index(i,2),wb.ws(sheet).index(i,3),wb.ws(sheet).index(i,4),wb.ws(sheet).index(i,5),wb.ws(sheet).index(i,6),wb.ws(sheet).index(i,9),wb.ws(sheet).index(i,10)))
+		signals.append(Signal(tracks[-1].line,tracks[-1].section,tracks[-1].bNum,tracks[-1].bLength,tracks[-1].bGrade,tracks[-1].sLimit,tracks[-1].elev,tracks[-1].cElev))
 		if(tracks[-1].direc=="Uni"):
 			tracks[-1].direc=False
 		else:
@@ -100,6 +109,7 @@ def trackPull(text):
 		if(i!=2):
 			if(wb.ws(sheet).index(i,12)!=""):
 				stations.append(Station(wb.ws(sheet).index(i,1),wb.ws(sheet).index(i,3),wb.ws(sheet).index(i,12)))
+				beacons.append(Beacon(wb.ws(sheet).index(i,1),wb.ws(sheet).index(i,3),wb.ws(sheet).index(i,12)))
 		if(wb.ws(sheet).index(i,7).find("UNDERGROUND")!=-1):
 			tracks[-1].under=1
 		i=i+1
@@ -108,7 +118,7 @@ def trackPull(text):
 	j=2
 	while j<152:
 		tracks.append(Block(wb.ws(sheet).index(j,1),wb.ws(sheet).index(j,2),wb.ws(sheet).index(j,3),wb.ws(sheet).index(j,4),wb.ws(sheet).index(j,5),wb.ws(sheet).index(j,6),wb.ws(sheet).index(j,9),wb.ws(sheet).index(j,10)))
-		signals.append(Signal(wb.ws(sheet).index(i,1),wb.ws(sheet).index(i,2),wb.ws(sheet).index(i,3),wb.ws(sheet).index(i,4),wb.ws(sheet).index(i,5),wb.ws(sheet).index(i,6),wb.ws(sheet).index(i,9),wb.ws(sheet).index(i,10)))
+		signals.append(Signal(wb.ws(sheet).index(j,1),wb.ws(sheet).index(j,2),wb.ws(sheet).index(j,3),wb.ws(sheet).index(j,4),wb.ws(sheet).index(j,5),wb.ws(sheet).index(j,6),wb.ws(sheet).index(j,9),wb.ws(sheet).index(j,10)))
 		if(tracks[-1].direc=="Uni"):
 			tracks[-1].direc=False
 		else:
@@ -122,52 +132,53 @@ def trackPull(text):
 		else:
 			tracks[-1].station="None"
 		if(j!=2):
-			if(wb.ws(sheet).index(j,12)!=""):
-				stations.append(Station(wb.ws(sheet).index(j,1),wb.ws(sheet).index(j,3),wb.ws(sheet).index(j,12)))
+			if(wb.ws(sheet).index(j,13)!=""):
+				stations.append(Station(wb.ws(sheet).index(j,1),wb.ws(sheet).index(j,3),wb.ws(sheet).index(j,13)))
+				beacons.append(Beacon(wb.ws(sheet).index(j,1),wb.ws(sheet).index(j,3),wb.ws(sheet).index(j,13)))
 		if(wb.ws(sheet).index(j,7).find("UNDERGROUND")!=-1):
 			tracks[-1].under=1
 		j=j+1
 
-		beacons.append(Beacon("Red",6,"Herron Ave"))
-		beacons.append(Beacon("Red",8,"Herron Ave"))
-		beacons.append(Beacon("Red",9,"Shadyside"))
-		beacons.append(Beacon("Red",15,"Shadyside"))
-		beacons.append(Beacon("Red",17,"Swissville"))
-		beacons.append(Beacon("Red",20,"Herron Ave"))
-		beacons.append(Beacon("Red",22,"Penn Station"))
-		beacons.append(Beacon("Red",24,"Swissville"))
-		beacons.append(Beacon("Red",26,"Steel Plaza"))
-		beacons.append(Beacon("Red",34,"Penn Station"))
-		beacons.append(Beacon("Red",36,"First Ave"))
-		beacons.append(Beacon("Red",44,"Steel Plaza"))
-		beacons.append(Beacon("Red",46,"Station Square"))
-		beacons.append(Beacon("Red",47,"First Ave"))
-		beacons.append(Beacon("Red",49,"South Hills Junction"))
-		beacons.append(Beacon("Red",59,"Station Square"))
-		beacons.append(Beacon("Red",61,"Station Square"))
+		beacons.append(Beacon("Red",6,"HERRON AVE"))
+		beacons.append(Beacon("Red",8,"HERRON AVE"))
+		beacons.append(Beacon("Red",9,"SHADYSIDE"))
+		beacons.append(Beacon("Red",15,"SHADYSIDE"))
+		beacons.append(Beacon("Red",17,"SWISSVILLE"))
+		beacons.append(Beacon("Red",20,"HERRON AVE"))
+		beacons.append(Beacon("Red",22,"PENN STATION"))
+		beacons.append(Beacon("Red",24,"SWISSVILLE"))
+		beacons.append(Beacon("Red",26,"STEEL PLAZE"))
+		beacons.append(Beacon("Red",34,"PENN STATION"))
+		beacons.append(Beacon("Red",36,"FIRST AVE"))
+		beacons.append(Beacon("Red",44,"STEEL PLAZE"))
+		beacons.append(Beacon("Red",46,"STATION SQUARE"))
+		beacons.append(Beacon("Red",47,"FIRST AVE"))
+		beacons.append(Beacon("Red",49,"SOUTH HILLS JUNCTION"))
+		beacons.append(Beacon("Red",59,"STATION SQUARE"))
+		beacons.append(Beacon("Red",61,"STATION SQUARE"))
   
-		beacons.append(Beacon("Green",1,"Station"))
-		beacons.append(Beacon("Green",8,"Pioneer"))
-		beacons.append(Beacon("Green",15,"Edgebrook"))
-		beacons.append(Beacon("Green",17,"Whited"))
-		beacons.append(Beacon("Green",21,"Station"))
-		beacons.append(Beacon("Green",23,"South Bank"))
-		beacons.append(Beacon("Green",32,"Central"))
-		beacons.append(Beacon("Green",40,"Inglewood"))
-		beacons.append(Beacon("Green",49,"Overbrook"))
-		beacons.append(Beacon("Green",58,"Glenbury"))
-		beacons.append(Beacon("Green",63,"Glenbury"))
-		beacons.append(Beacon("Green",66,"Dormont"))
-		beacons.append(Beacon("Green",74,"Mt Lebanon"))
-		beacons.append(Beacon("Green",78,"Poplar"))
-		beacons.append(Beacon("Green",89,"Castle Shannon"))
-		beacons.append(Beacon("Green",97,"Mt Lebanon"))
-		beacons.append(Beacon("Green",101,"Dormont"))
-		beacons.append(Beacon("Green",106,"Glenbury"))
-		beacons.append(Beacon("Green",115,"Overbrook"))
-		beacons.append(Beacon("Green",124,"Inglewood"))
-		beacons.append(Beacon("Green",133,"Central"))
-		beacons.append(Beacon("Green",142,"Whited"))
+		beacons.append(Beacon("Green",1,"STATION"))
+		beacons.append(Beacon("Green",8,"PIONEER"))
+		beacons.append(Beacon("Green",15,"EDGEBROOK"))
+		beacons.append(Beacon("Green",17,"WHITED"))
+		beacons.append(Beacon("Green",21,"STATION"))
+		beacons.append(Beacon("Green",23,"SOUTH BANK"))
+		beacons.append(Beacon("Green",32,"CENTRAL"))
+		beacons.append(Beacon("Green",40,"INGLEWOOD"))
+		beacons.append(Beacon("Green",49,"OVERBROOK"))
+		beacons.append(Beacon("Green",58,"GLENBURY"))
+		beacons.append(Beacon("Green",63,"GLENBURY"))
+		beacons.append(Beacon("Green",66,"DORMONT"))
+		beacons.append(Beacon("Green",74,"MT LEBANON"))
+		beacons.append(Beacon("Green",78,"POPLAR"))
+		beacons.append(Beacon("Green",89,"CASTLE SHANNON"))
+		beacons.append(Beacon("Green",97,"MT LEBANON"))
+		beacons.append(Beacon("Green",101,"DORMONT"))
+		beacons.append(Beacon("Green",106,"GLENBURY"))
+		beacons.append(Beacon("Green",115,"OVERBROOK"))
+		beacons.append(Beacon("Green",124,"INGLEWOOD"))
+		beacons.append(Beacon("Green",133,"CENTRAL"))
+		beacons.append(Beacon("Green",142,"WHITED"))
 
 	return tracks, beacons, signals, stations
 

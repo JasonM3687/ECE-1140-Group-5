@@ -36,13 +36,13 @@ class trackModel(object):
         self.gridLayout.addWidget(self.block_select, 1, 1, 1, 1)
         self.label_9 = QtWidgets.QLabel(self.groupBox_2)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_9.setFont(font)
         self.label_9.setObjectName("label_9")
         self.gridLayout.addWidget(self.label_9, 1, 0, 1, 1)
         self.label_12 = QtWidgets.QLabel(self.groupBox_2)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_12.setFont(font)
         self.label_12.setObjectName("label_12")
         self.gridLayout.addWidget(self.label_12, 0, 0, 1, 1)
@@ -61,7 +61,7 @@ class trackModel(object):
         pixmap2=(pixmap.scaledToHeight(self.tableView.height()))
         self.tableView.setPixmap(pixmap2)
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(10, 130, 361, 700))
+        self.groupBox.setGeometry(QtCore.QRect(10, 130, 361, 605))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -73,34 +73,36 @@ class trackModel(object):
         self.formLayout.setObjectName("formLayout")
         self.label = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label)
         self.label_2 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_2)
         self.label_3 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_3.setFont(font)
         self.label_3.setObjectName("label_3")
         self.formLayout.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.label_3)
         self.label_env = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_env.setFont(font)
         self.label_env.setObjectName("label_env")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_env)
-        self.env_temp = QtWidgets.QLabel(self.groupBox)
+        self.env_temp = QtWidgets.QSpinBox(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(16)
         self.env_temp.setFont(font)
         self.env_temp.setObjectName("env_temp")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.env_temp)
+        self.env_temp.setMinimum(-10)
+        self.env_temp.setMaximum(110)
         self.heating_button = QtWidgets.QRadioButton(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -109,19 +111,19 @@ class trackModel(object):
         self.formLayout.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.heating_button)
         self.label_4 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
         self.formLayout.setWidget(7, QtWidgets.QFormLayout.LabelRole, self.label_4)
         self.label_5 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
         self.formLayout.setWidget(8, QtWidgets.QFormLayout.LabelRole, self.label_5)
         self.label_16 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_16.setFont(font)
         self.label_16.setObjectName("label_16")
         self.formLayout.setWidget(10, QtWidgets.QFormLayout.LabelRole, self.label_16)
@@ -136,7 +138,7 @@ class trackModel(object):
         self.formLayout.setWidget(11, QtWidgets.QFormLayout.FieldRole, self.brFail)
         self.label_8 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_8.setFont(font)
         self.label_8.setObjectName("label_8")
         self.formLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.label_8)
@@ -163,37 +165,55 @@ class trackModel(object):
         self.buttonGroup.addButton(self.failClear)
         self.formLayout.setWidget(14, QtWidgets.QFormLayout.FieldRole, self.failClear)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_10.setFont(font)
         self.label_10.setObjectName("label_10")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_10)
         self.sigLabel = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.sigLabel.setFont(font)
         self.sigLabel.setObjectName("sigLabel")
         self.formLayout.setWidget(15, QtWidgets.QFormLayout.LabelRole, self.sigLabel)
         self.cSpeedLabel = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.cSpeedLabel.setFont(font)
         self.cSpeedLabel.setObjectName("cSpeedLabel")
-        self.formLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.cSpeedLabel)
+        self.formLayout.setWidget(16, QtWidgets.QFormLayout.LabelRole, self.cSpeedLabel)
         self.authLabel = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.authLabel.setFont(font)
         self.authLabel.setObjectName("authLabel")
-        self.formLayout.setWidget(11, QtWidgets.QFormLayout.LabelRole, self.authLabel)
+        self.formLayout.setWidget(17, QtWidgets.QFormLayout.LabelRole, self.authLabel)
+        self.sigShow = QtWidgets.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.sigShow.setFont(font)
+        self.sigShow.setObjectName("sigShow")
+        self.formLayout.setWidget(15, QtWidgets.QFormLayout.FieldRole, self.sigShow)
+        self.cSpeedShow = QtWidgets.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.cSpeedShow.setFont(font)
+        self.cSpeedShow.setObjectName("cSpeedShow")
+        self.formLayout.setWidget(16, QtWidgets.QFormLayout.FieldRole, self.cSpeedShow)
+        self.authShow = QtWidgets.QLabel(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.authShow.setFont(font)
+        self.authShow.setObjectName("authShow")
+        self.formLayout.setWidget(17, QtWidgets.QFormLayout.FieldRole, self.authShow)
         self.label_11 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_11.setFont(font)
         self.label_11.setObjectName("label_11")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_11)
         self.label_15 = QtWidgets.QLabel(self.groupBox)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(16)
         self.label_15.setFont(font)
         self.label_15.setObjectName("label_15")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_15)
@@ -250,7 +270,7 @@ class trackModel(object):
         self.sec_label.setFont(font)
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.sec_label)
         self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox_3.setGeometry(QtCore.QRect(10, 828, 361, 61))
+        self.groupBox_3.setGeometry(QtCore.QRect(10, 733, 361, 61))
         self.groupBox_3.setObjectName("groupBox_3")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.groupBox_3)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -876,6 +896,36 @@ class trackModel(object):
         self.disemb21.setObjectName("disemb21")
         self.gridLayout.addWidget(self.disemb21,22,4)
         
+        self.groupBox6 = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox6.setGeometry(QtCore.QRect(384, 740, 543, 53))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox6.sizePolicy().hasHeightForWidth())
+        self.groupBox6.setSizePolicy(sizePolicy)
+        self.groupBox6.setMinimumSize(QtCore.QSize(0, 0))
+        self.groupBox6.setObjectName("groupBox6")
+        self.gridLayout2 = QtWidgets.QGridLayout(self.groupBox6)
+        self.gridLayout2.setObjectName("gridLayout2")
+        
+        self.beaconLine = QtWidgets.QComboBox(self.groupBox_2)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.beaconLine.setFont(font)
+        self.beaconLine.setObjectName("beaconLine")
+        self.gridLayout2.addWidget(self.beaconLine, 0, 0)
+        self.beaconBlock = QtWidgets.QComboBox(self.groupBox_2)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.beaconBlock.setFont(font)
+        self.beaconBlock.setObjectName("beaconBlock")
+        self.gridLayout2.addWidget(self.beaconBlock, 0, 1)
+        self.beaconData=QtWidgets.QLabel(self.groupBox5)
+        self.beaconData.setFont(font)
+        self.beaconData.setObjectName("beaconData")
+        self.gridLayout2.addWidget(self.beaconData,0,2)
+        self.beaconLine.addItems(["Red","Green"])
+        
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -889,7 +939,6 @@ class trackModel(object):
         self.label_2.setText(_translate("MainWindow", "Occupied:"))
         self.label_3.setText(_translate("MainWindow", "Track Heating:"))
         self.label_env.setText(_translate("MainWindow", "Env Temp (F):"))
-        self.env_temp.setText(_translate("MainWindow", "N/A"))
         self.heating_button.setText(_translate("MainWindow", "Enable"))
         self.label_4.setText(_translate("MainWindow", "Grade:"))
         self.label_5.setText(_translate("MainWindow", "Elevation (M):"))
@@ -899,7 +948,7 @@ class trackModel(object):
         self.tcFail.setText(_translate("MainWindow", "Circuit Failure"))
         self.pFail.setText(_translate("MainWindow", "Power Failure"))
         self.failClear.setText(_translate("MainWindow", "No Failure"))
-        self.label_10.setText(_translate("MainWindow", "Speed Limit:"))
+        self.label_10.setText(_translate("MainWindow", "Speed Limit(Km/H):"))
         self.label_11.setText(_translate("MainWindow", "Section:"))
         self.label_15.setText(_translate("MainWindow", "Length (M):"))
         self.grade_box.setSuffix(_translate("MainWindow", "%"))
@@ -912,8 +961,13 @@ class trackModel(object):
         self.label_6.setText(_translate("MainWindow", "Track File Path:"))
         self.importButton.setText(_translate("MainWindow", "Import Track"))
         self.sigLabel.setText(_translate("MainWindow", "Signal State"))
-        self.cSpeedLabel.setText(_translate("MainWindow", "Command Speed"))
+        self.cSpeedLabel.setText(_translate("MainWindow", "Set Speed(Km/H)"))
         self.authLabel.setText(_translate("MainWindow", "Authority"))
+        self.sigShow.setText(_translate("MainWindow", "N/A"))
+        self.cSpeedShow.setText(_translate("MainWindow", "N/A"))
+        self.authShow.setText(_translate("MainWindow", "N/A"))
+        self.groupBox6.setTitle(_translate("MainWindow", "Beacon Viewer"))
+        self.beaconData.setText(_translate("MainWindow", "N/A"))
         self.labelT1.setText(_translate("MainWindow", "Position Train  1:"))
         self.labelT2.setText(_translate("MainWindow", "Position Train  2:"))
         self.labelT3.setText(_translate("MainWindow", "Position Train  3:"))
@@ -1066,6 +1120,9 @@ class trackModel(object):
         self.brFail.toggled.connect(self.update)
         self.failClear.toggled.connect(self.update)
         self.heating_button.toggled.connect(self.update)
+        self.beaconLine.activated.connect(self.beaconLineUpdate)
+        self.beaconBlock.activated.connect(self.beaconBlockUpdate)
+        self.env_temp.valueChanged.connect(self.update)
         
         
     def importTrack(self):
@@ -1095,15 +1152,19 @@ class trackModel(object):
                 self.sec_label.setText(i.section)
                 self.speed_label.setText(str(i.sLimit))
                 self.length_box.setValue(i.bLength)
-                if(i.occ==1):
-                    self.occ_label.setText("True")
-                else:
-                    self.occ_label.setText("False")
                 self.heating_button.setChecked(i.heat)
                 self.grade_box.setValue(i.bGrade)
                 self.elev_button.setValue(i.elev)
                 self.celev_button.setValue(i.cElev)
-                self.env_temp.setText(str(i.envTemp))
+                self.env_temp.setValue(i.envTemp)
+                if(self.getSignalObj(i.line,i.bNum).state==1):
+                    self.sigShow.setStyleSheet("background-color: red")
+                    self.sigShow.setText("Stop")
+                else:
+                    self.sigShow.setStyleSheet("background-color: lightgreen")
+                    self.sigShow.setText("Go")
+                self.authShow.setText(str(self.getSignalObj(i.line,i.bNum).auth))
+                self.cSpeedShow.setText(str(self.getSignalObj(i.line,i.bNum).cSpeed))
                 if(i.fail==0):
                     self.failClear.setChecked(True)
                 elif(i.fail==1):
@@ -1112,20 +1173,25 @@ class trackModel(object):
                     self.tcFail.setChecked(True)
                 elif(i.fail==3):
                     self.pFail.setChecked(True)
-                if(i.occ!=False):
+                if(i.occ==1):
                     self.stat_label.setText("Occupied")
+                    self.occ_label.setText("True")
                 else:
                     if(self.brFail.isChecked()):
                         self.stat_label.setText("Broken Rail")
+                        self.occ_label.setText("True")
                     elif(self.tcFail.isChecked()):
                         self.stat_label.setText("Circuit Failure")
+                        self.occ_label.setText("True")
                     elif(self.pFail.isChecked()):
                         self.stat_label.setText("Power Failure")
+                        self.occ_label.setText("True")
                     else:
                         if(i.occ==1):
                             self.stat_label.setText("Occupied")
                         else:
                             self.stat_label.setText("Clear")
+                            self.occ_label.setText("False")
                 self.switchUpdate()
                 self.unBlock()
                 break
@@ -1139,6 +1205,7 @@ class trackModel(object):
                 i.bGrade=self.grade_box.value()
                 i.bLength=self.length_box.value()
                 i.heat=self.heating_button.isChecked()
+                i.setTemp(self.env_temp.value())
                 if(self.failClear.isChecked()):
                     i.fail=0
                     self.stat_label.setText("Clear")
@@ -1151,7 +1218,10 @@ class trackModel(object):
                 elif(self.pFail.isChecked()):
                     i.fail=3
                     self.stat_label.setText("Power Failure")
+                i.checkFail()
+                print(i.occ)
                 self.unBlock()
+                self.refresh()
                 break
     
     def block(self):
@@ -1176,6 +1246,20 @@ class trackModel(object):
         self.failClear.blockSignals(False)
         self.heating_button.blockSignals(False)
 
+    def beaconLineUpdate(self):
+        if(self.beaconLine.currentText()=="Red"):
+            self.beaconBlock.clear()
+            self.beaconBlock.addItems(["6","7","8","9","15","16","17","20","21","22","24","25","26","34","35","36","44","45","46","47","48","49","59","60","61"])
+        elif(self.beaconLine.currentText()=="Green"):
+            self.beaconBlock.clear()
+            print("yea")
+            self.beaconBlock.addItems(["1","2","7","8","15","16","17","21","22","23","31","32","39","40","48","49","57","58","62","63","65","66","73","74","77","78","88","89","96","97","100","101","105","106","114","115","123","124","132","133","141","142"])
+        
+    def beaconBlockUpdate(self):
+        for i in self.beacons:
+            if(self.beaconLine.currentText()==i .line and self.beaconBlock.currentText()==str(i.block)):
+                self.beaconData.setText(str(i.data))
+                
     def trainUpdate(self):
         self.posT1.setText("{} {}".format(self.trains[0].posLine,self.trains[0].posBlock))
         self.posT2.setText("{} {}".format(self.trains[1].posLine,self.trains[1].posBlock))
@@ -1191,13 +1275,9 @@ class trackModel(object):
             for j in self.trains:
                 if(j.posLine==i.line and j.posBlock==i.bNum):
                     i.occ=1
-                    if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
-                        self.occ_label.setText("True")
                     break
                 else:
                     i.occ=0
-                    if(i.line==self.line_sel.currentText() and i.bNum==self.block_select.value()):
-                        self.occ_label.setText("False")
             
                    
         
@@ -1333,7 +1413,7 @@ class trackModel(object):
         redsales=[]
         for i in self.stations:
             if(i.posLine=="Red"):
-                redsales.append(i)
+                redsales.append(i.sales)
         return redsales
     
     def getGreenSales(self):
@@ -1341,81 +1421,115 @@ class trackModel(object):
         greensales=[]
         for i in self.stations:
             if(i.posLine=="Green"):
-                greensales.append(i)
+                greensales.append(i.sales)
         return greensales
         
-    def setRedSwitch(self,block,state):
+    def setRedSwitch(self,state):
+        j=0
         for i in self.switches:
-            if(i.base==block and i.line=="Red"):
-                i.state=state
+            if(i.line=="Red"):
+                i.state=state[j]
+                j=j+1
         self.refresh()
         
-    def setGreenSwitch(self,block,state):
+    def setGreenSwitch(self,state):
+        j=0
         for i in self.switches:
-            if(i.base==block and i.line=="Green"):
-                i.state=state
+            if(i.line=="Green"):
+                i.state=state[j]
+                j=j+1
         self.refresh()
         
-    def setRedAuth(self,block,state):
+    def setRedAuth(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Red" and i.block==block):
-                i.setAuth(state)
+            if(i.line=="Red"):
+                i.setAuth(state[j])
+                if(state[j]==0):
+                    i.state=1
+                j=j+1
         self.refresh()
         
-    def setGreenAuth(self,block,state):
+    def setGreenAuth(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Green" and i.block==block):
-                i.setAuth(state)
+            if(i.line=="Green"):
+                i.setAuth(state[j])
+                if(state[j]==0):
+                    i.state=1
+                j=j+1
         self.refresh()
              
-    def setRedSpeed(self,block,state):
+    def setRedSpeed(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Red" and i.block==block):
-                i.setcSpeed(state)
+            if(i.line=="Red"):
+                i.setcSpeed(state[j])
+                j=j+1
         self.refresh()
                 
-    def setGreenSpeed(self,block,state):
+    def setGreenSpeed(self,state):
+        j=0
         for i in self.signals:
-            if(i.line=="Green" and i.block==block):
-                i.setcSpeed(state)
+            if(i.line=="Green"):
+                i.setcSpeed(state[j])
+                j=j+1
         self.refresh()
                 
-    def setRedLight(self,block,state):
+    def setRedLight(self,state):
+        j=0
         for i in self.tracks:
-            if(i.line=="Red" and i.bNum==block):
-                i.light=state
+            if(i.line=="Red"):
+                i.light=state[j]
+                j=j+1
         self.refresh()
                 
-    def setGreenLight(self,block,state):
+    def setGreenLight(self,state):
+        j=0
         for i in self.tracks:
-            if(i.line=="Green" and i.bNum==block):
-                i.light=state
+            if(i.line=="Green"):
+                i.light=state[j]
+                j=j+1
         self.refresh()
     
     def getAuth(self,line,block):
         self.update()
         for i in self.signals:
-            if(i.line==line and i.block==block):
-                return i.getAuth()
+            if(i.line==line and i.bNum==block):
+                return i.auth
+        return 0
             
     def getSpeed(self,line,block):
         self.update()
+        cspeed=0
+        slimit=0
         for i in self.signals:
-            if(i.line==line and i.block==block):
-                cspeed=i.getSpeed()
+            if(i.line==line and i.bNum==block):
+                cspeed=i.cSpeed
         for i in self.tracks:
             if(i.line==line and i.bNum==block):
                 slimit=i.sLimit       
-        return cspeed, slimit
+        return cspeed, slimit/1.609
             
     def getBeacon(self,line,block):
         for i in self.beacons:
             if(i.line==line and i.block==block):
                 return i.readBeacon()
+        return "None"
     
     def setTrainPos(self,train,line,block):
         self.trains[train-1].posLine=line
         self.trains[train-1].posBlock=block
+        self.getBlock(line,block).occ=1
+        self.getBlock(self.trains[train-1].posLine,self.trains[train-1].prevBlock).occ=0
+        for i in self.stations:
+            if(i.posLine==line and i.posBlock==block):
+                if(self.trains[train-1].posBlock!=self.trains[train-1].prevBlock):
+                    for j in self.signals:
+                        if(j.posBlock==block and j.posLine==line and j.auth==0):
+                            i.addSales(100)
+                            print(str(self.trains[train-1].posBlock)+" "+str(self.trains[train-1].prevBlock))
+        self.trains[train-1].prevBlock=self.trains[train-1].posBlock
         self.refresh()
         
     def setTrainFault(self,train,fault):
@@ -1437,19 +1551,22 @@ class trackModel(object):
                     return 1
                 elif(i.station=="Both"):
                     return 2
+        return -1
         
     def getBlockGrade(self,line,block):
         self.update()
         for i in self.tracks:
             if(i.line==line and i.bNum==block):
                 return i.bGrade, i.elev, i.cElev, i.bLength
+            if(i.line==line and block==0):
+                return self.tracks[0].bGrade,self.tracks[0].elev,self.tracks[0].cElev,self.tracks[0].bLength
     
     def getBoarding(self,line,block):
         for i in self.stations:
             if(i.posLine==line and i.posBlock==block):
-                i.addSales(150)
                 i.board=0
-                return 150
+                return 100
+        return 0
         
     def getSwitch(self,line,block):
         for i in self.switches:
@@ -1458,18 +1575,34 @@ class trackModel(object):
                     return i.base, i.branch1
                 else:
                     return i.base, i.branch2
+        return block, block
             
     def getSignal(self,line,block):
         for i in self.signals:
             if(i.line==line and i.block==block):
                 return i.state
         
+    def getSignalObj(self,line,block):
+        for i in self.signals:
+            if(i.line==line and i.bNum==block):
+                return i
+            
     class Train():
         cSpeed=0
         auth=0
         posLine="none"
         posBlock=0
+        prevBlock=0
         light=False
         door=False
         status=0
 
+if __name__=="__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui=trackModel()
+    ui.setupUi(MainWindow)
+    ui.importTrack()
+    MainWindow.show()
+    sys.exit(app.exec_())
