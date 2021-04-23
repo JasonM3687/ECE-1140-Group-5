@@ -342,6 +342,7 @@ class CTCOFFICE:
 	#TAB 2 FUNCTIONS
 	def Mode(self):
 		if(self.MM.get()==0):
+			#send a signal to grant that maintenance mode is on
 			self.plus.config(state=DISABLED)
 			self.minus.config(state=DISABLED)
 			self.togg.config(state=DISABLED)
@@ -351,6 +352,7 @@ class CTCOFFICE:
 			self.togg.config(state=NORMAL)
 		return
 	def AddC(self):
+		#need to convert this info to binary and send to Grant
 		t=self.l6.get(0,"end")
 		test=self.list_to_string(self.closure)
 		if((self.closure.get() in t) or test==""):
@@ -365,7 +367,8 @@ class CTCOFFICE:
 			self.l6.delete(x)
 		return 
 	def TOGGLE(self):
-		
+		#need to look at positions set by grant and constantly update array
+		#send a signal to grant
 		x=self.l7.curselection()
 		if(x !=tuple() and len(self.switches)>0):
 			if(self.switches[x[0]] == "OFF"):
@@ -379,6 +382,7 @@ class CTCOFFICE:
 		x=self.l7.curselection()
 		if(len(self.switches)>0):
 			message="SWITCH IS "+str(self.switches[x[0]])
+		#replace this and other instance with python notificaions
 		command = f'''
 		osascript -e 'display notification "{message}" with title "{title}"'
 		'''
@@ -454,7 +458,7 @@ class CTCOFFICE:
 			if(self.sc2.cell(i,7).value is not None and stations[1].strip() in self.sc2.cell(i,7).value):
 				begin_adding=0;
 				
-
+		#if the number in the speed place is greater than 0 and below the speed limit for first block on route{
 		self.routes.append(generated_route);
 		#print("GENERATED ROUTE IS: "+str(generated_route))
 		self.T.set("")
@@ -462,9 +466,11 @@ class CTCOFFICE:
 		self.ti.set("")
 		self.a.set("")
 		self.s.set("")
+		#} (closing partentsis of if statment comment line 457)
 		return	
 	def Auto(self):
 		if(self.autodisp.get()==1):
+			#look at position of train at top of schedule if it reaches that block wait some time then dispatch it
 			self.disp.config(state=DISABLED)
 		else:
 			self.disp.config(state=NORMAL)
