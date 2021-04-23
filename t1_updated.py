@@ -258,6 +258,7 @@ class CTCOFFICE:
 	def getTC(self,TC):
 		self.TrainControl=TC;
 	#TAB 1 FUNCTIONS
+	#need to create function that sends signal to grant to stop updating when user is typing,the updated info needs to be sent to Grant to update
 	def GO(self):
 		
 	
