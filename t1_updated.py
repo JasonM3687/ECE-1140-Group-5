@@ -53,9 +53,7 @@ class CTCOFFICE:
 		self.tabControl.add(tab4, text ='DEBUG') 
 		self.tabControl.pack(expand = 1, fill ="both")
 		self.end=0
-		
-		#--KEEP UPDATING THE TRAIN STATS--
-		threading.Timer(2.0, self.GO).start()
+	
 		
 		
 		#rename screen title
@@ -69,6 +67,8 @@ class CTCOFFICE:
 		self.C=["60","75","STATION 12","STATION 1","291","100"]
 		
 		self.Trains_current= [[0 for x in range (6)]for y in range (10)]
+		self.PAUSE_BEACON=0;
+		self.NEW_DATA_BEACON=0;
 		
 		#Set string variables for entry boxes
 		self.sp=StringVar(tab1)
@@ -80,8 +80,14 @@ class CTCOFFICE:
 		self.tpred=StringVar(tab1)
 		
 		#Create Entry boxes
-		self.E=  ttk.Entry(tab1,width=35,textvariable=self.sp,foreground='blue').place(x=255,y=195)
-		self.E1= ttk.Entry(tab1,width=35,textvariable=self.aut,foreground='blue').place(x=255,y=250)
+		self.E=  tkinter.Entry(tab1,width=35,textvariable=self.sp,foreground='blue')
+		self.E.bind('<Button>',self.handle_click)
+		self.E.place(x=255,y=195)
+		
+		self.E1= ttk.Entry(tab1,width=35,textvariable=self.aut,foreground='blue')
+		self.E1.bind('<Button>',self.handle_click);
+		self.E1.place(x=255,y=250);
+		
 		self.E2= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.pos,foreground='blue').place(x=255,y=305)
 		self.E3= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.des,foreground='blue').place(x=255,y=360)
 		#self.E4= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.occ,foreground='blue').place(x=255,y=415)
@@ -98,7 +104,7 @@ class CTCOFFICE:
 		
 		#Create Labels + Logout Button
 		self.B1 = ttk.Button(tab1, text="Logout", width=8,command=self.OUT).place(x=580,y=550)
-		self.Bnew = ttk.Button(tab1, text="Update", width=8).place(x=480,y=495)
+		self.Bnew = ttk.Button(tab1, text="Update", width=8,command =self.Update_SA).place(x=480,y=495)
 		self.B2 = ttk.Button(tab1, text="GO ->", width=4,command=self.GO).place(x=586,y=130)
 		self.B3 = ttk.Label(tab1, text="TRAIN STATUS",font=('Helvetica',19,'bold'),foreground='blue').place(x=35,y=65)
 		self.B4 = ttk.Label(tab1, text="SPEED (Mph)").place(x=135,y=195)
@@ -118,6 +124,9 @@ class CTCOFFICE:
 		self.im = Image.open("Track.png")
 		self.im= self.im.resize((275,350),Image.ANTIALIAS)
 		self.img = ImageTk.PhotoImage(self.im)
+		self.MM_BEACON=0;
+		self.REMOVE_CLOSURE_BEACON=0;
+		self.CLOSURE_BEACON=0;
 		
 		#Create Labels + ListBoxes + Buttons
 		self.V1 =ttk.Label(tab2, text="TRACK STATUS",font=('Helvetica',19,'bold'),foreground='blue').place(x=35,y=65)
@@ -259,10 +268,20 @@ class CTCOFFICE:
 		self.TrainControl=TC;
 	#TAB 1 FUNCTIONS
 	#need to create function that sends signal to grant to stop updating when user is typing,the updated info needs to be sent to Grant to update
+	def handle_click(self,event):
+		self.PAUSE_BEACON= 1;
+	def Update_SA(self):
+		self.PAUSE_BEACON=0;
+		self.NEW_DATA_BEACON=1;
+		self.U_S=int(self.sp.get());
+		self.U_A=int(self.aut.get());
+		self.U_Occ=self.Trains_current[self.Options.index(self.tkvarq.get())-1][2];
+	def LOWER_DATA_BEACON(self):
+		self.NEW_DATA_BEACON=0;
 	def GO(self):
 		
 	
-		print("6")
+		
 		delete_later=list() 
 		
 		row_indexer=["Train 1","Train 2","Train 3","Train 4","Train 5","Train 6","Train 7","Train 8","Train 9","Train 10"]
@@ -322,12 +341,13 @@ class CTCOFFICE:
 		#remove items that have reached their destination	
 		for q in range(0,len(delete_later)):
 				del self.CurrentTravel[delete_later[q]]
-			
-		self.Disp()
-	
-		#repeat every second add a condition so it checks if the text box still matches	the text file	
-		if(self.end==0):
-			threading.Timer(2.0, self.GO).start()
+		if(self.PAUSE_BEACON==0):
+			self.Disp();
+		
+		#Check for AUTODISPATCH
+		if(self.autodisp.get()==1):
+			self.Auto();
+		
 		return		
 	def Disp(self):
 		for i in range (0,len(self.Options)):
@@ -343,35 +363,59 @@ class CTCOFFICE:
 	#TAB 2 FUNCTIONS
 	def Mode(self):
 		if(self.MM.get()==0):
-			#send a signal to grant that maintenance mode is on
+			
 			self.plus.config(state=DISABLED)
 			self.minus.config(state=DISABLED)
 			self.togg.config(state=DISABLED)
+			self.MM_BEACON=0;
 		else:
 			self.plus.config(state=NORMAL)
 			self.minus.config(state=NORMAL)
 			self.togg.config(state=NORMAL)
+			self.MM_BEACON=1;
 		return
 	def AddC(self):
 		#need to convert this info to binary and send to Grant
+		self.CLOSURE_BEACON=1;
 		t=self.l6.get(0,"end")
 		test=self.list_to_string(self.closure)
 		if((self.closure.get() in t) or test==""):
 			return
 		else:
+			
 			self.l6.insert(self.l6.size()+1,self.closure.get())
+			temp=self.closure.get();
+			parsed=temp.split(" - ");
+			if("Green" in parsed[0].strip()){
+				self.CLOSURE_LINE=1;
+			}
+			else{
+				self.CLOSURE_LINE=0;
+			}
+			self.CLOSURE_BLOCK= int(parsed[1]);
 			self.closure.set("")
 		return	
 	def CancelC(self):
+		
+		
 		x=self.l6.curselection()
 		if(x != tuple()):
+			self.REMOVE_CLOSURE_BEACON=1;
+			self.REMOVE_INDEX = int(x);
 			self.l6.delete(x)
+		
 		return 
+	def LOWER_CLOSURE_BEACON(self):
+		self.CLOSURE_BEACON=0;
+	def LOWER_REMOVE_CLOSURE_BEACON(self):
+		self.REMOVE_CLOSURE_BEACON=0;
 	def TOGGLE(self):
-		#need to look at positions set by grant and constantly update array
+		
 		#send a signal to grant
 		x=self.l7.curselection()
 		if(x !=tuple() and len(self.switches)>0):
+			self.TOGGLE_BEACON=1;
+			self.TOGGLE_INDEX= x[0];
 			if(self.switches[x[0]] == "OFF"):
 				self.switches[x[0]] ="ON"
 				
@@ -389,6 +433,8 @@ class CTCOFFICE:
 		'''
 		os.system(command)
 		return
+	def LOWER_TOGGLE_BEACON(self):
+		self.TOGGLE_BEACON=0;
 	def list_to_string(self,s):
 		z=list(s.get())
 		for b in range(0,len(z)):
@@ -473,6 +519,19 @@ class CTCOFFICE:
 		if(self.autodisp.get()==1):
 			#look at position of train at top of schedule if it reaches that block wait some time then dispatch it
 			self.disp.config(state=DISABLED)
+			temp=self.l2.get(0);
+			parse= temp.split("->");
+			start= parse[0].strip();
+			start_block= -1;
+			ID=self.l.get(0);
+			for i in range (2,self.sc_rows):
+				if(start in str(self.sc2.cell(i,7).value)):
+					start_block=int(self.sc2.cell(i,3).value);
+					break;
+			Curr_block= self.Trains_current[self.Options.index(ID.strip())-1][2];
+			if(Curr_block==start_block):
+				self.GetDispatchInfo();
+			
 		else:
 			self.disp.config(state=NORMAL)
 		return
@@ -681,10 +740,10 @@ class CTCOFFICE:
 			self.SentSuggestedAuth.append(format(0,"08b"))
 			self.SentSuggestedSpeed.append(format(int(self.l4.get(0)),"08b"))
 			
-			'''print(self.SentRouteSections)
-			print(self.SentRouteLines)
-			print(self.SentSuggestedSpeed)
-			print(self.SentSuggestedAuth)'''
+			#print(self.SentRouteSections)
+			#print(self.SentRouteLines)
+			#print(self.SentSuggestedSpeed)
+			#print(self.SentSuggestedAuth)
 			temp_list= self.routes[0]
 			temp_list= np.append(temp_list,self.l.get(0))
 			self.CurrentTravel.append(temp_list)
