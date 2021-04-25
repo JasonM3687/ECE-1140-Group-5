@@ -503,15 +503,15 @@ class CTCOFFICE:
 			if(self.sc2.cell(i,7).value is not None and stations[1].strip() in self.sc2.cell(i,7).value):
 				begin_adding=0;
 				
-		#if the number in the speed place is greater than 0 and below the speed limit for first block on route{
-		self.routes.append(generated_route);
-		#print("GENERATED ROUTE IS: "+str(generated_route))
-		self.T.set("")
-		self.D.set("")
-		self.ti.set("")
-		self.a.set("")
-		self.s.set("")
-		#} (closing partentsis of if statment comment line 457)
+		#if the number in the speed place is greater than 0 and below the speed limit for first block on route
+		if(int(self.s.get()) <= generated_line_speed[0] and int(self.s.get())>0):
+			self.routes.append(generated_route);
+			#print("GENERATED ROUTE IS: "+str(generated_route))
+			self.T.set("")
+			self.D.set("")
+			self.ti.set("")
+			self.a.set("")
+			self.s.set("")
 		return	
 	def Auto(self):
 		if(self.autodisp.get()==1):
