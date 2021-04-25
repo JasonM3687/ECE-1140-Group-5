@@ -30,6 +30,8 @@ class TrainClass():
         externalStatus = False
         externalStatusTrack = False
         emergency = False
+        emergencyPass = False
+        emergencyFail = False
         service = False
         brakeFailure = False
         engineFailure = False
@@ -144,9 +146,14 @@ class TrainClass():
         def mpsTOkm(self,b):
                 return b*3.6
 
-        def eBrakePressed(self):
+        def eBrakePressed(self,num):
                 self.maxAcceleration = -2.73
-                self.emergency = 1
+                if num == 0:
+                        self.emergencyPass = 1
+                elif num == 1:
+                        self.emergency = 1
+                elif num == 2:
+                        self.emergencyFail = 1
 
         def serviceBrake(self):
                 self.maxAcceleration = -1.2
@@ -156,6 +163,8 @@ class TrainClass():
                 self.maxAcceleration = 0.5
                 self.emergency = 0
                 self.service = 0
+                self.emergencyPass = 0
+                self.emergencyFail = 0
 
         def openDoors(self):
                 if (self.doorStatus == 0 and self.stationDoors != -1):

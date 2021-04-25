@@ -788,7 +788,7 @@ class Ui_MainWindow(object):
 
                 # button events and where to go
                 self.trainSelect.currentIndexChanged.connect(self.TrainWindow)
-                self.eBrake.clicked.connect(self.eBrakePressed)
+                self.eBrake.clicked.connect(self.eBrakePressed(0))
                 self.setTemp_1.valueChanged.connect(lambda: self.changeTemp(self.currentTrainDisplay,0))
                 self.setTemp_2.valueChanged.connect(lambda: self.changeTemp(self.currentTrainDisplay,1))
                 self.setTemp_3.valueChanged.connect(lambda: self.changeTemp(self.currentTrainDisplay,2))
@@ -800,7 +800,7 @@ class Ui_MainWindow(object):
                 self.failureFixed.clicked.connect(self.failFix)
 
         def TrainWindow(self):
-                self.currentTrainDisplay = self.trainSelect.currentIndex() - 1
+                self.currentTrainDisplay = self.trainSelect.currentIndex() # indexed at 0 so 0 = 1 and 1 =2
                 self.updateTrainDisplay(self.currentTrainDisplay)
 
         def updateTrainDisplay(self,trainNum):
@@ -869,19 +869,24 @@ class Ui_MainWindow(object):
                 self.crewCount_6.display(self.trains[trainNum].crew)
 
         def updateEverything(self):
-                for i in range(1): 
-                        self.getValuesFromTrackModel(i+1)
-                        self.getValuesFromTrainController(i+1)
+                for i in range(10): 
+                        self.getValuesFromTrackModel(i)
+                        self.getValuesFromTrainController(i)
                         
-        def eBrakePressed(self):
-                self.currentTrainDisplay = self.trainSelect.currentIndex() - 1
-                self.trains[self.currentTrainDisplay].eBrakePressed()
+        def eBrakePressed(self,whichOne):
+                if whichOne == 0:
+                        self.trains[self.currentTrainDisplay].emergencyPass = 1
+                elif whichOne == 1:
+                        self.trains[self.currentTrainDisplay].emergency = 1
+                elif whichOne == 2:
+                        self.trains[self.currentTrainDisplay].emergencyFail = 1
+                self.trains[self.currentTrainDisplay].eBrakePressed(whichOne)
                 self.updateEverything()
 
         def changeTemp(self,trainID,carNum):
-                self.trains[trainID-1].temperature = self.setTemps[carNum].value()
+                self.trains[trainID].temperature = self.setTemps[carNum].value()
                 for x in range(5):
-                        self.currTemps[x].display(self.trains[trainID-1].temperature)
+                        self.currTemps[x].display(self.trains[trainID].temperature)
 
         def eFail(self):
                 self.trains[self.currentTrainDisplay].engineFailure = True
@@ -889,15 +894,17 @@ class Ui_MainWindow(object):
 
                 self.failureOutput.setText("Engine Failure")
                 self.engineFailure.setStyleSheet("background-color: rgb(255, 0, 0);")
-                self.eBrakePressed()
+                self.eBrakePressed(2)
 
         def sFail(self):
                 self.trains[self.currentTrainDisplay].signalFailure = True
                 self.trains[self.currentTrainDisplay].faults = 2
 
+                self.trains[self.currentTrainDisplay].authority = 0
+
                 self.failureOutput.setText("Signal Pickup Failure")
                 self.signalFailure.setStyleSheet("background-color: rgb(255, 0, 0);")
-                self.eBrakePressed()
+                self.eBrakePressed(2)
 
         def bFail(self):
                 self.trains[self.currentTrainDisplay].brakeFailure = True
@@ -973,26 +980,28 @@ class Ui_MainWindow(object):
                 return self.trains[trainID-1].faults
 
         def getValuesFromTrainController(self,trainID):
-                emerTemp = self.trains[trainID-1].emergency
-                serviceTemp = self.trains[trainID-1].service
-                self.trains[trainID-1].power = 10*self.trainController.getPower()
-                self.trains[trainID-1].externalStatus = self.trainController.getHeadlightStatus()
-                self.trains[trainID-1].internalStatus = self.trainController.getCabinLightStatus()
-                self.trains[trainID-1].doorStatus = self.trainController.getDoorStatus()
-                self.trains[trainID-1].emergency = self.trainController.getEBrake()
-                self.trains[trainID-1].service = self.trainController.getServiceBrake()
-                self.trains[trainID-1].announcement = self.trainController.getAnnouncement()
-                self.trains[trainID-1].set_speed = self.trainController.getSetSpeed()
+                emerTemp = self.trains[trainID].emergency
+                serviceTemp = self.trains[trainID].service
+                self.trains[trainID].power = self.trainController.getPower(trainID+1)
+                self.trains[trainID].externalStatus = self.trainController.getHeadlightStatus(trainID+1)
+                self.trains[trainID].internalStatus = self.trainController.getCabinLightStatus(trainID+1)
+                self.trains[trainID].doorStatus = self.trainController.getDoorStatus(trainID+1)
+                self.trains[trainID].emergency = self.trainController.getEBrake(trainID+1)
+                self.trains[trainID].service = self.trainController.getServiceBrake(trainID+1)
+                self.trains[trainID].announcement = self.trainController.getAnnouncement(trainID+1)
+                self.trains[trainID].set_speed = self.trainController.getSetSpeed(trainID+1)
 
-                if (self.trains[trainID-1].doorStatus == 1):
-                        self.trains[trainID-1].openDoors()
+                if (self.trains[trainID].doorStatus == 1):
+                        self.trains[trainID].openDoors()
 
-                if self.trains[trainID-1].emergency != emerTemp and self.trains[trainID-1].emergency == 1:
-                        self.trains[trainID-1].eBrakePressed()
-                elif (self.trains[trainID-1].service != serviceTemp) and (self.trains[trainID-1].service == 0):
-                        self.trains[trainID-1].brakesDone()
-                elif (self.trains[trainID-1].service != serviceTemp) and (self.trains[trainID-1].service == 1) and (self.trains[trainID-1].emergency != 1):
-                        self.trains[trainID-1].serviceBrake()
+                if self.trains[trainID].emergencyPass == 1:
+                        pass
+                elif self.trains[trainID].emergency != emerTemp and self.trains[trainID].emergency == 1:
+                        self.trains[trainID].eBrakePressed(1)
+                elif (self.trains[trainID].service != serviceTemp) and (self.trains[trainID].service == 0):
+                        self.trains[trainID].brakesDone()
+                elif (self.trains[trainID].service != serviceTemp) and (self.trains[trainID].service == 1) and (self.trains[trainID].emergency != 1):
+                        self.trains[trainID].serviceBrake()
 
                 self.trains[trainID-1].calculateVelocity()
 
@@ -1001,31 +1010,34 @@ class Ui_MainWindow(object):
 
         ################ track model functions ##################
         def getValuesFromTrackModel(self,trainID):
-                tempAuth = self.trains[trainID-1].authority
-                self.trains[trainID-1].authority = self.trackModel.getAuth(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                self.trains[trainID-1].commSpeed, self.trains[trainID-1].speed_limit = self.trackModel.getSpeed(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                tempBeacon = self.trackModel.getBeacon(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
+                tempAuth = self.trains[trainID].authority
+                self.trains[trainID].authority = self.trackModel.getAuth(self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trains[trainID].commSpeed, self.trains[trainID].speed_limit = self.trackModel.getSpeed(self.trains[trainID].line,self.trains[trainID].blockNum)
+                tempBeacon = self.trackModel.getBeacon(self.trains[trainID].line,self.trains[trainID].blockNum)
                 if(tempBeacon!="None"):
-                        self.trains[trainID-1].beacon=tempBeacon
-                self.trains[trainID-1].externalStatusTrack = self.trackModel.getLight(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                self.trains[trainID-1].stationDoors = self.trackModel.getStationSide(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                self.trains[trainID-1].openDoors()
-                self.trains[trainID-1].blockGrade, self.trains[trainID-1].elevation, self.trains[trainID-1].cElevation, self.trains[trainID-1].blockLength = self.trackModel.getBlockGrade(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                self.trains[trainID-1].boarding = self.trackModel.getBoarding(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                self.trains[trainID-1].calculatePassengers()
-                self.trains[trainID-1].base, self.trains[trainID-1].switchBlock = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                self.trains[trainID-1].signal = self.trackModel.getSwitch(self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
+                        self.trains[trainID].beacon=tempBeacon
+                self.trains[trainID].externalStatusTrack = self.trackModel.getLight(self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trains[trainID].stationDoors = self.trackModel.getStationSide(self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trains[trainID].openDoors()
+                self.trains[trainID].blockGrade, self.trains[trainID].elevation, self.trains[trainID].cElevation, self.trains[trainID].blockLength = self.trackModel.getBlockGrade(self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trains[trainID].boarding = self.trackModel.getBoarding(self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trains[trainID].calculatePassengers()
+                self.trains[trainID].base, self.trains[trainID].switchBlock = self.trackModel.getSwitch(self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trains[trainID].signal = self.trackModel.getSwitch(self.trains[trainID].line,self.trains[trainID].blockNum)
 
-                self.trackModel.setTrainPos(trainID,self.trains[trainID-1].line,self.trains[trainID-1].blockNum)
-                self.trackModel.setTrainFault(trainID, self.trains[trainID-1].faults)
+                self.trackModel.setTrainPos(self.trains[trainID].ID,self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trackModel.setTrainFault(trainID, self.trains[trainID].faults)
 
-                if self.trains[trainID-1].authority <= 0 and tempAuth != 0:
+                if self.trains[trainID].signalFailure == True:
+                        self.trains[trainID].authority = 0
+                        self.trainController.serviceBrakeControl()
+                elif self.trains[trainID].authority <= 0 and tempAuth != 0:
                         self.trainController.serviceBrakeControl()
 
                 
 
                 if (trainID) == self.currentTrainDisplay:
-                        self.updateTrainDisplay(trainID-1)
+                        self.updateTrainDisplay(trainID)
 
 if __name__ == "__main__":
         import sys

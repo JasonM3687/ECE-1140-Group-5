@@ -124,9 +124,9 @@ class CTCOFFICE:
 		self.im = Image.open("Track.png")
 		self.im= self.im.resize((275,350),Image.ANTIALIAS)
 		self.img = ImageTk.PhotoImage(self.im)
-		self.MM_BEACON=0;
-		self.REMOVE_CLOSURE_BEACON=0;
-		self.CLOSURE_BEACON=0;
+		self.MM_BEACON=0
+		self.REMOVE_CLOSURE_BEACON=0
+		self.CLOSURE_BEACON=0
 		
 		#Create Labels + ListBoxes + Buttons
 		self.V1 =ttk.Label(tab2, text="TRACK STATUS",font=('Helvetica',19,'bold'),foreground='blue').place(x=35,y=65)
@@ -367,16 +367,16 @@ class CTCOFFICE:
 			self.plus.config(state=DISABLED)
 			self.minus.config(state=DISABLED)
 			self.togg.config(state=DISABLED)
-			self.MM_BEACON=0;
+			self.MM_BEACON=0
 		else:
 			self.plus.config(state=NORMAL)
 			self.minus.config(state=NORMAL)
 			self.togg.config(state=NORMAL)
-			self.MM_BEACON=1;
+			self.MM_BEACON=1
 		return
 	def AddC(self):
 		#need to convert this info to binary and send to Grant
-		self.CLOSURE_BEACON=1;
+		self.CLOSURE_BEACON=1
 		t=self.l6.get(0,"end")
 		test=self.list_to_string(self.closure)
 		if((self.closure.get() in t) or test==""):
@@ -384,15 +384,13 @@ class CTCOFFICE:
 		else:
 			
 			self.l6.insert(self.l6.size()+1,self.closure.get())
-			temp=self.closure.get();
-			parsed=temp.split(" - ");
-			if("Green" in parsed[0].strip()){
-				self.CLOSURE_LINE=1;
-			}
-			else{
-				self.CLOSURE_LINE=0;
-			}
-			self.CLOSURE_BLOCK= int(parsed[1]);
+			temp=self.closure.get()
+			parsed=temp.split(" - ")
+			if("Green" in parsed[0].strip()):
+				self.CLOSURE_LINE=1
+			else:
+				self.CLOSURE_LINE=0
+			self.CLOSURE_BLOCK= int(parsed[1])
 			self.closure.set("")
 		return	
 	def CancelC(self):
@@ -400,22 +398,22 @@ class CTCOFFICE:
 		
 		x=self.l6.curselection()
 		if(x != tuple()):
-			self.REMOVE_CLOSURE_BEACON=1;
-			self.REMOVE_INDEX = int(x);
+			self.REMOVE_CLOSURE_BEACON=1
+			self.REMOVE_INDEX = int(x)
 			self.l6.delete(x)
 		
 		return 
 	def LOWER_CLOSURE_BEACON(self):
-		self.CLOSURE_BEACON=0;
+		self.CLOSURE_BEACON=0
 	def LOWER_REMOVE_CLOSURE_BEACON(self):
-		self.REMOVE_CLOSURE_BEACON=0;
+		self.REMOVE_CLOSURE_BEACON=0
 	def TOGGLE(self):
 		
 		#send a signal to grant
 		x=self.l7.curselection()
 		if(x !=tuple() and len(self.switches)>0):
-			self.TOGGLE_BEACON=1;
-			self.TOGGLE_INDEX= x[0];
+			self.TOGGLE_BEACON=1
+			self.TOGGLE_INDEX= x[0]
 			if(self.switches[x[0]] == "OFF"):
 				self.switches[x[0]] ="ON"
 				
@@ -434,7 +432,7 @@ class CTCOFFICE:
 		os.system(command)
 		return
 	def LOWER_TOGGLE_BEACON(self):
-		self.TOGGLE_BEACON=0;
+		self.TOGGLE_BEACON=0
 	def list_to_string(self,s):
 		z=list(s.get())
 		for b in range(0,len(z)):
