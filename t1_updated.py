@@ -399,8 +399,15 @@ class CTCOFFICE:
 		
 		x=self.l6.curselection()
 		if(x != tuple()):
+			temp= self.l6.get(x);
+			parse= temp.split(" - ");
+			
 			self.REMOVE_CLOSURE_BEACON=1
-			self.REMOVE_INDEX = int(x)
+			if("Green" in parse[0]):
+				self.REMOVE_CLOSURE_LINE=1;
+			else:
+				self.REMOVE_CLOSURE_LINE=0;
+			self.REMOVE_CLOSURE_BLOCK=int(parse[1]);
 			self.l6.delete(x)
 		
 		return 
@@ -415,11 +422,11 @@ class CTCOFFICE:
 		if(x !=tuple() and len(self.switches)>0):
 			self.TOGGLE_BEACON=1
 			self.TOGGLE_INDEX= x[0]
-			if(self.switches[x[0]] == "OFF"):
-				self.switches[x[0]] ="ON"
+			if(self.switches[x[0]] == 0):
+				self.switches[x[0]]=1
 				
 			else:
-				self.switches[x[0]]="OFF"
+				self.switches[x[0]]=0
 				
 		import os
 		title= "TRACK UPDATE"
@@ -696,7 +703,7 @@ class CTCOFFICE:
 		self.switches.clear()
 		for i in range (0,len(Track_Switches)):
 			self.l7.insert(i,Track_Switches[i])
-			self.switches.insert(i,"OFF")
+			self.switches.insert(i,0)
 		#USER FEEDBACK
 		import os
 		
@@ -748,7 +755,7 @@ class CTCOFFICE:
 			self.CurrentTravel.append(temp_list)
 			self.CurrentTravel_line_speed.append(self.SentRouteLines[0])
 			self.CurrentTravel_line_speed.append(int(self.l4.get(0)))
-			self.TID=Options.index(self.l.get(0));
+			self.TID=self.Options.index(self.l.get(0));
 			self.Remove()
 			
 		
