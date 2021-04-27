@@ -69,6 +69,7 @@ class CTCOFFICE:
 		self.Trains_current= [[0 for x in range (6)]for y in range (10)]
 		self.PAUSE_BEACON=0;
 		self.NEW_DATA_BEACON=0;
+		self.TID=0;
 		
 		#Set string variables for entry boxes
 		self.sp=StringVar(tab1)
@@ -747,6 +748,7 @@ class CTCOFFICE:
 			self.CurrentTravel.append(temp_list)
 			self.CurrentTravel_line_speed.append(self.SentRouteLines[0])
 			self.CurrentTravel_line_speed.append(int(self.l4.get(0)))
+			self.TID=Options.index(self.l.get(0));
 			self.Remove()
 			
 		
