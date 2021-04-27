@@ -4,16 +4,20 @@ class Block():
         113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,
         9,8,7,6,5,4,3,2,1,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57]
 
-        self.initialize()
+        self.redLineRoute = [9,8,7,6,5,4,3,2,1,16,17,18,19,20,21,22,23]
 
     redLine = []
     greenLine = []
     
 
-    def initialize(self):
-        self.greenLine = self.greenLineRoute
+    def initialize(self,line):
+        if line == "green":
+            self.greenLine = self.greenLineRoute
+        elif line == "red":
+            self.redLine = self.redLineRoute
 
     def greenSwitchYard(self,base,switchBlock):
+        #goes into yard
         if base == 57 and switchBlock == 0:
             self.greenLine.append(0)
         elif base == 57 and switchBlock == 58:
@@ -22,4 +26,9 @@ class Block():
             self.greenLine.append(60) 
             self.greenLine.append(61) 
             self.greenLine.append(62)
-            self.greenLine.append(self.greenLineRoute)      
+            self.greenLine.append(self.greenLineRoute) 
+
+    def redSwitchYard(self,base,switchBlock):
+        #check switch between section H and T
+        #if base == and switchBlock ==   
+        pass

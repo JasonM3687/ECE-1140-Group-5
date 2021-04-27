@@ -6,6 +6,7 @@ class TrainClass():
                 self.ID = trainID
                 self.blocks = Block()
 
+        dispatched = False
         authority = 0
         beacon = "Not In Service"
         announcement = " "
@@ -29,9 +30,9 @@ class TrainClass():
         internalStatus = False
         externalStatus = False
         externalStatusTrack = False
-        emergency = False
-        emergencyPass = False
-        emergencyFail = False
+        emergency = True
+        emergencyPass = True
+        emergencyFail = True
         service = False
         brakeFailure = False
         engineFailure = False
@@ -40,10 +41,10 @@ class TrainClass():
         prevblock=0
         blockNum = 0
         nextblock = 0
-        line = "Green"
+        line = "None"
         headlightCommand = False
         stationDoors = 0
-        maxAcceleration = 0.5       #mps^2
+        maxAcceleration = 0       #mps^2
         maxSpeed = 70            #km/hr
         minSpeed = 0
         prevPosition = 0
@@ -76,7 +77,7 @@ class TrainClass():
                 self.calculateMass()
         
                 force = self.power / self.prevVel
-                if (force != 0):
+                if (force != 0 and self.blockNum != 0):
                         
                         self.acceleration = force / self.mass
 
@@ -181,3 +182,6 @@ class TrainClass():
                 if self.passenger > 250:
                         self.passenger = 250
                 self.prevblock=self.blockNum
+
+        def setLine(self,line):
+                self.blocks.initialize(line)
