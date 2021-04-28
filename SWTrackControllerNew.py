@@ -17,8 +17,8 @@ from TestCases import Ui_AnotherWindow
 from waysideController import waysideController
 import os
 import trackModel
-import t1_1
-from t1_1 import CTCOFFICE
+import t1_updated
+from t1_updated import CTCOFFICE
 import sys
 from tkinter import *
 
@@ -30,11 +30,12 @@ class Ui_MainWindow(object):
     auth=0
     redStarts=[1,4,7,10,13,16,21,24,46,49,55,58,61,64,67,68,71,72,73,76]
     greenStarts=[1,4,7,13,17,21,29,33,36,58,63,69,74,77,86,89,98,101,102,105,110,117,122,144,147,150]
-    waysideControllers=[waysideController("Red",redStarts,76),waysideController("Green",greenStarts,150)]
+    waysideControllers=[waysideController("Red1",redStarts,76),waysideController("Green1",greenStarts,150), waysideController("Red2",redStarts,76),waysideController("Green2",greenStarts,150)]
     redBlockNum=[]
     greenBlockNum=[]
     prevRoutedBlocks=[]
     prevRoutedLines=[]
+    prevTrainID = 0
     routedBlockEqual=True
     redStations=["Shadyside","Herron Ave","Swissville","Penn Station","Steel Plaza","First Ave","Station Square","South Hills Junction"]
     grnStations=["Pioneer","Edgebrook","Station","Whited","South Bank","Central","Inglewood","Overbrook","Glenbury","Dormont","Mt. Lebanon","Poplar","Castle Shannon"]
@@ -45,6 +46,12 @@ class Ui_MainWindow(object):
     prevRedLightIndex=0
     prevGreenSecIndex=0
     prevRedSecIndex=0
+    GrnRoutes=[[0]*10]*150
+    RedRoutes=[[0]*10]*76
+    closedGrnBlocks=[0]*150
+    closedRedBlocks=[0]*76
+    grnCurSwitches=[0]*6
+    redCurSwitches=[0]*7
     
     def trackModelInput(self, obj):
         self.trackModelDatabase=obj
@@ -165,6 +172,9 @@ class Ui_MainWindow(object):
         self.Q_HLabel = QtWidgets.QLabel(self.frame_7)
         self.Q_HLabel.setGeometry(QtCore.QRect(290, 410, 81, 21))
         self.Q_HLabel.setObjectName("Q_HLabel")
+        self.RedCrossLabel = QtWidgets.QLabel(self.frame_7)
+        self.RedCrossLabel.setGeometry(QtCore.QRect(280, 550, 71, 21))
+        self.RedCrossLabel.setObjectName("RedCrossLabel")
         self.O_HLabel = QtWidgets.QLabel(self.frame_7)
         self.O_HLabel.setGeometry(QtCore.QRect(290, 480, 81, 21))
         self.O_HLabel.setObjectName("O_HLabel")
@@ -195,9 +205,18 @@ class Ui_MainWindow(object):
         self.RedSwitchDirLabel = QtWidgets.QLabel(self.frame)
         self.RedSwitchDirLabel.setGeometry(QtCore.QRect(160, 200, 111, 41))
         self.RedSwitchDirLabel.setObjectName("RedSwitchDirLabel")
+        self.RedCrossStatLabel = QtWidgets.QLabel(self.frame)
+        self.RedCrossStatLabel.setGeometry(QtCore.QRect(270, 410, 111, 41))
+        self.RedCrossStatLabel.setObjectName("RedCrossStatLabel")
         self.label_835 = QtWidgets.QLabel(self.frame)
         self.label_835.setGeometry(QtCore.QRect(20, 200, 121, 41))
         self.label_835.setObjectName("label_835")
+        self.redCrossTitle = QtWidgets.QLabel(self.frame)
+        self.redCrossTitle.setGeometry(QtCore.QRect(20, 350, 181, 41))
+        self.redCrossTitle.setObjectName("redCrossTitle")
+        self.redCrossPosTitle = QtWidgets.QLabel(self.frame)
+        self.redCrossPosTitle.setGeometry(QtCore.QRect(20, 410, 241, 41))
+        self.redCrossPosTitle.setObjectName("redCrossPosTitle")
         self.frame_2 = QtWidgets.QFrame(self.tab_9)
         self.frame_2.setGeometry(QtCore.QRect(20, 10, 561, 741))
         self.frame_2.setStyleSheet("background:rgb(182, 182, 182)")
@@ -504,6 +523,9 @@ class Ui_MainWindow(object):
         self.D_ACLabel = QtWidgets.QLabel(self.frame_17)
         self.D_ACLabel.setGeometry(QtCore.QRect(270, 20, 71, 21))
         self.D_ACLabel.setObjectName("D_ACLabel")
+        self.GrnCrossLabel = QtWidgets.QLabel(self.frame_17)
+        self.GrnCrossLabel.setGeometry(QtCore.QRect(90, 50, 71, 21))
+        self.GrnCrossLabel.setObjectName("GrnCrossLabel")
         self.Z_FGLabel = QtWidgets.QLabel(self.frame_17)
         self.Z_FGLabel.setGeometry(QtCore.QRect(110, 200, 81, 21))
         self.Z_FGLabel.setObjectName("Z_FGLabel")
@@ -534,6 +556,9 @@ class Ui_MainWindow(object):
         self.GrnSwitchDirLabel = QtWidgets.QLabel(self.frame_29)
         self.GrnSwitchDirLabel.setGeometry(QtCore.QRect(160, 200, 150, 41))
         self.GrnSwitchDirLabel.setObjectName("GrnSwitchDirLabel")
+        self.GrnCrossStatLabel = QtWidgets.QLabel(self.frame_29)
+        self.GrnCrossStatLabel.setGeometry(QtCore.QRect(270, 410, 111, 41))
+        self.GrnCrossStatLabel.setObjectName("GrnCrossStatLabel")
         self.GrnSwitchSelBox = QtWidgets.QComboBox(self.frame_29)
         self.GrnSwitchSelBox.setGeometry(QtCore.QRect(20, 70, 241, 31))
         self.GrnSwitchSelBox.setStyleSheet("background:rgb(182, 182, 182)")
@@ -543,6 +568,12 @@ class Ui_MainWindow(object):
         self.label_839 = QtWidgets.QLabel(self.frame_29)
         self.label_839.setGeometry(QtCore.QRect(20, 200, 121, 41))
         self.label_839.setObjectName("label_839")
+        self.GrnCrossTitle = QtWidgets.QLabel(self.frame_29)
+        self.GrnCrossTitle.setGeometry(QtCore.QRect(20, 350, 181, 41))
+        self.GrnCrossTitle.setObjectName("GrnCrossTitle")
+        self.GrnCrossPosTitle = QtWidgets.QLabel(self.frame_29)
+        self.GrnCrossPosTitle.setGeometry(QtCore.QRect(20, 410, 241, 41))
+        self.GrnCrossPosTitle.setObjectName("GrnCrossPosTitle")
         self.label_840 = QtWidgets.QLabel(self.frame_29)
         self.label_840.setGeometry(QtCore.QRect(20, 20, 231, 41))
         self.label_840.setObjectName("label_840")
@@ -849,14 +880,18 @@ class Ui_MainWindow(object):
         self.T_HLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">27-28; 27-76</span></p></body></html>"))
         self.R_HLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">32-33; 33-72</span></p></body></html>"))
         self.Q_HLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">38-39; 38-71</span></p></body></html>"))
+        self.RedCrossLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">Crossing</span></p></body></html>"))
         self.O_HLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">43-44; 44-67</span></p></body></html>"))
         self.I_JNLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">52-53; 52-66</span></p></body></html>"))
         self.label_831.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Switch Selection</span></p></body></html>"))
         self.RedSwitchPosLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxxx</span></p></body></html>"))
         self.label_833.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Switch Position:</span></p></body></html>"))
         self.RedSwitchDirLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxx</span></p></body></html>"))
+        self.RedCrossStatLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxx</span></p></body></html>"))
         self.label_835.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Towards:</span></p></body></html>"))
-        self.MainTabsRed.setTabText(self.MainTabsRed.indexOf(self.tab_9), _translate("MainWindow", "Switches"))
+        self.redCrossTitle.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Crossing</span></p></body></html>"))
+        self.redCrossPosTitle.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Crossing Position:</span></p></body></html>"))
+        self.MainTabsRed.setTabText(self.MainTabsRed.indexOf(self.tab_9), _translate("MainWindow", "Switches/Crossing"))
         self.label_11.setText(_translate("MainWindow", "<html><head/><body><p><img src=\"Red Line.jpg\"/></p></body></html>"))
         self.label_830.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Section Selection</span></p></body></html>"))
         self.label_846.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Light Selection</span></p></body></html>"))
@@ -922,6 +957,7 @@ class Ui_MainWindow(object):
         self.MainTabsGrn.setTabText(self.MainTabsGrn.indexOf(self.tab_16), _translate("MainWindow", "Stations"))
         self.label_19.setText(_translate("MainWindow", "<html><head/><body><p><img src=\"Green Line.jpg\"/></p></body></html>"))
         self.D_ACLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">12-13; 1-13</span></p></body></html>"))
+        self.GrnCrossLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">Crossing</span></p></body></html>"))
         self.Z_FGLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">29-30; 29-150</span></p></body></html>"))
         self.I_JYrdLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">Yard-57</span></p></body></html>"))
         self.Yrd_JKLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">Yard-63</span></p></body></html>"))
@@ -930,9 +966,12 @@ class Ui_MainWindow(object):
         self.label_841.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Switch Position:</span></p></body></html>"))
         self.GrnSwitchPosLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxxx</span></p></body></html>"))
         self.GrnSwitchDirLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxx</span></p></body></html>"))
+        self.GrnCrossStatLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt;\">xxxxxx</span></p></body></html>"))
         self.label_839.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Towards:</span></p></body></html>"))
+        self.GrnCrossTitle.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Crossing</span></p></body></html>"))
+        self.GrnCrossPosTitle.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Crossing Position:</span></p></body></html>"))
         self.label_840.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Switch Selection</span></p></body></html>"))
-        self.MainTabsGrn.setTabText(self.MainTabsGrn.indexOf(self.tab_17), _translate("MainWindow", "Switches"))
+        self.MainTabsGrn.setTabText(self.MainTabsGrn.indexOf(self.tab_17), _translate("MainWindow", "Switches/Crossing"))
         self.label_22.setText(_translate("MainWindow", "<html><head/><body><p><img src=\"Green Line.jpg\"/></p></body></html>"))
         self.label_829.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Light Selection</span></p></body></html>"))
         self.label_845.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:22pt; text-decoration: underline;\">Section Selection</span></p></body></html>"))
@@ -1064,11 +1103,24 @@ class Ui_MainWindow(object):
             self.LoadConfLabel.setGeometry(QtCore.QRect(0, 0, 0, 0))
 
     def UpdatePLC(self):
+
+            #time display
             _translate = QtCore.QCoreApplication.translate
             self.TimeLabel.setText(_translate("MainWindow", QDate.currentDate().toString(Qt.ISODate)+"   "+QTime.currentTime().toString(Qt.DefaultLocaleLongDate)))
             self.TimeLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
             "font-weight: bold")
             self.TimeLabel.setAlignment(QtCore.Qt.AlignRight)
+
+
+
+
+
+            #   #   ###   ####   ## ##  ##     #####    #####  #   #  #####  ## ##  #####   ###
+            ## ##  #   #  ##  #  ## ##  ##     ##         #    ##  #  ##  #  ## ##    #    #
+            # # #  #   #  ##  #  ## ##  ##     ####       #    # # #  #####  ## ##    #     ###
+            #   #  #   #  ##  #  ## ##  ##     ##         #    #  ##  ##     ## ##    #        #
+            #   #   ###   ####    ###   #####  #####    #####  #   #  ##      ###     #     ###
+            #__________________________________________________________________________________#
 
             #CTC Inputs
             self.routedBlocks=self.CTC.SentRouteBlocks
@@ -1076,6 +1128,22 @@ class Ui_MainWindow(object):
             self.routedLines=self.CTC.SentRouteLines
             self.routeSugSpeed=self.CTC.SentSuggestedSpeed
             self.routedAuth=self.CTC.SentSuggestedAuth
+            self.manualAuth=self.CTC.U_A
+            self.manualSpeed=self.CTC.U_S
+            self.manualBlock=self.CTC.U_Occ
+            self.TrainID=self.CTC.TID
+            
+            #If Brian selects a UI update, update his UI
+            if self.CTC.PAUSE_BEACON == False:
+                self.CTC.UPDATE()
+
+            #if there is a request to manually change a blocks speed/auth change it and acknowledge change made
+            if self.CTC.NEW_DATA_BEACON == True:
+                self.waysideControllers[self.CTC.BrianLineVar].setBlockAuthorities(self.manualBlock, self.manualAuth)
+                self.waysideControllers[self.CTC.BrianLineVar].setRoutedSpeeds(self.manualBlock, self.manualSpeed)
+                self.CTC.LOWER_DATA_BEACON()
+
+            
             #print(self.routedAuth)
 
             self.routedBlockEqual=True
@@ -1084,23 +1152,55 @@ class Ui_MainWindow(object):
                     if self.prevRoutedBlocks[i]!=self.routedBlocks[i]:
                         self.routedBlockEqual=False
             
-            if self.routedBlockEqual==False:
-                for i in range(len(self.routedBlocks)):
-                    self.waysideControllers[self.prevRoutedLines[i]].clearRoutedBlocks(self.prevRoutedBlocks)
-                    self.waysideControllers[self.prevRoutedLines[i]].clearBlockAuthorities(self.prevRoutedBlocks)
-                    self.waysideControllers[self.prevRoutedLines[i]].clearRoutedSpeeds(self.prevRoutedBlocks)
+            # if a new route is sent store it to inspect later
+            if self.routedBlockEqual==False or self.TrainID != self.prevTrainID:
 
+                #Call the funtion to spawn a train if the first block on a route is 63 (green) or 9 (red)
+                if self.routedBlocks[0]==63:
+                    self.trackModelDatabase.dispatchTrain(self.TrainID, 1)
+                elif self.routedBlocks[0]==9:
+                    self.trackModelDatabase.dispatchTrain(self.TrainID, 0)
+
+                if self.routedLines[0] == 1:
+                    for i in range(10):
+                        if self.GrnRoutes[i][1] == 0:
+                            for j in range(len(self.routedBlocks)):
+                                self.GrnRoutes[i][j] = int(self.routedBlocks[j],2)
+                            break
+                        else:
+                            continue
+                else:
+                    for i in range(10):
+                        if self.RedRoutes[i][1] == 0:
+                            for j in range(len(self.routedBlocks)):
+                                self.RedRoutes[i][j] = int(self.routedBlocks[j],2)
+                            break
+                        else:
+                            continue
+
+                
             self.prevRoutedBlocks=list(self.routedBlocks)
             self.prevRoutedLines=list(self.routedLines)
 
+
             #Track Model Inputs
-            
             self.redBlocks=self.trackModelDatabase.getRedBlocks()
             self.greenBlocks=self.trackModelDatabase.getGreenBlocks()
 
             self.greenTicketSales=self.trackModelDatabase.getGreenSales()
             self.redTicketSales=self.trackModelDatabase.getRedSales()
             
+
+
+
+
+            ##         ##  #####  #   #   ###   #####  ####   #####     ###   #####  #####  ## ##  #####
+            ##   ###   ##  #   #   # #   #        #    ##  #  ##       #      ##       #    ## ##  ##  #
+            ##  ## ##  ##  #####    #     ###     #    ##  #  ####      ###   ####     #    ## ##  #####
+            ##  ## ##  ##  #   #    #        #    #    ##  #  ##           #  ##       #    ## ##  ##
+              ####   ####  #   #    #     ###   #####  ####   #####     ###   #####    #     ###   ##
+            #__________________________________________________________________________________________#
+
             #input Block Occupancies
             self.tempRedOcc=[]
             for i in range(len(self.redBlocks)):
@@ -1135,51 +1235,354 @@ class Ui_MainWindow(object):
             for i in range(len(self.routedBlocks)):
                 self.waysideControllers[self.routedLines[i]].setRoutedSpeeds(int(self.routedBlocks[i],2), int(self.routeSugSpeed[i],2))
 
+
+            #Add a track closure to the list at the specified block and line if one the closure beacon is high
+            if self.CTC.CLOSURE_BEACON == True:
+                if self.CTC.CLOSURE_LINE == 0:
+                    self.closedRedBlocks[self.CTC.CLOSURE_BLOCK-1]=1
+                elif self.CTC.CLOSURE_LINE == 1:
+                    self.closedGrnBlocks[self.CTC.CLOSURE_BLOCK-1]=1
+                self.CTC.LOWER_CLOSURE_BEACON()
+            
+            #Remove a track closure to the list at the specified block and line if one the remove beacon is high
+            if self.CTC.REMOVE_CLOSURE_BEACON == True:
+                if self.CTC.REMOVE_CLOSURE_LINE == 0:
+                    self.closedRedBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=0
+                elif self.CTC.CLOSURE_LINE == 1:
+                    self.closedGrnBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=0
+                self.CTC.LOWER_REMOVE_CLOSURE_BEACON()
+
             #input Fault Statuses
+            #if a block is closed, give it its own fault status
             self.tempRedFault=[]
             for i in range(len(self.redBlocks)):
-                self.tempRedFault.append(self.redBlocks[i].fail)
+                if self.closedRedBlocks[i] > 0:
+                    self.tempRedFault.append(4)
+                else:
+                    self.tempRedFault.append(self.redBlocks[i].fail)
 
             self.waysideControllers[0].setFaultStatuses(self.tempRedFault)
-
+            
+            #if a block is closed, give it its own fault status
             self.tempGreenFault=[]
             for i in range(len(self.greenBlocks)):
-                self.tempGreenFault.append(self.greenBlocks[i].fail)
+                if self.closedGrnBlocks[i] > 0:
+                    self.tempGreenFault.append(4)
+                else:
+                    self.tempGreenFault.append(self.greenBlocks[i].fail)
+
 
             self.waysideControllers[1].setFaultStatuses(self.tempGreenFault)
 
+            #SETTING TRAIN ROUTES
+            #Check if any train has completed its route and take it out if it has (red line)
+            #If there are two of the same route, keep the authority, speed, and route just delete the one
+            for i in range(10):
+                lastBlock=0
+                if self.RedRoutes[i][0] == 0:
+                    continue
+                else:
+                    while self.RedRoutes[i][lastBlock+1] != 0:
+                        lastBlock+=1
+                    if self.waysideControllers[0].getBlockOccupancies()[self.RedRoutes[i][lastBlock]] == 1:
+                        self.routeMatchR = False
+                        for k in range(10):
+                            if k == i:
+                                continue
+                            elif self.RedRoutes[k][0]==self.RedRoutes[i][0]:
+                                self.routeMatchR = True
+                        if self.routeMatchR == True:
+                            for j in range(lastBlock+1):
+                                self.RedRoutes[i][j] = 0
+                        else:
+                            for j in range(lastBlock+1):
+                                self.waysideControllers[0].setBlockAuthorities(self.RedRoutes[i][j],0)
+                                self.waysideControllers[0].setRoutedSpeeds(self.RedRoutes[i][j],0)
+                                self.waysideControllers[0].clearRoutedBlocks(self.RedRoutes[i][j])
+                                self.RedRoutes[i][j] = 0
+                if self.routeMatchR == True:
+                    self.routeMatchR = False
+                    break
+
+            #Check if any train has completed its route and take it out if it has (green line)
+            #If there are two of the same route, keep the authority, speed, and route just delete the one
+            for i in range(10):
+                lastBlock=0
+                if self.GrnRoutes[i][0] == 0:
+                    continue
+                else:
+                    while self.GrnRoutes[i][lastBlock+1] != 0:
+                        lastBlock+=1
+                    if self.waysideControllers[1].getBlockOccupancies()[self.GrnRoutes[i][lastBlock]] == 1:
+                        self.routeMatchG = False
+                        for k in range(10):
+                            if k == i:
+                                continue
+                            elif self.GrnRoutes[k][0]==self.GrnRoutes[i][0]:
+                                self.routeMatchG = True
+                        if self.routeMatchG == True:
+                            for j in range(lastBlock+1):
+                                self.GrnRoutes[i][j] = 0
+                        else:
+                            for j in range(lastBlock+1):
+                                self.waysideControllers[1].setBlockAuthorities(self.GrnRoutes[i][j],0)
+                                self.waysideControllers[1].setRoutedSpeeds(self.GrnRoutes[i][j],0)
+                                self.waysideControllers[1].clearRoutedBlocks(self.GrnRoutes[i][j])
+                                self.GrnRoutes[i][j] = 0
+                if self.routeMatchG == True:
+                    self.routeMatchG = False
+                    break
+
             #input routed Blocks
-            for i in range(len(self.routedBlocks)):
-                self.waysideControllers[self.routedLines[i]].setRoutedBlocks(int(self.routedBlocks[i],2))
+            for i in range(10):
+                for j in range(76):
+                    if self.RedRoutes[i][j] > 0:
+                        self.waysideControllers[0].setRoutedBlocks(self.RedRoutes[i][j])
+
+            for i in range(10):
+                for j in range(150):
+                    if self.GrnRoutes[i][j] > 0:
+                        self.waysideControllers[0].setRoutedBlocks(self.GrnRoutes[i][j])
+
+
+
+            
+
+            ##         ##  #####  #   #   ###   #####  ####   #####    #####  ## ##  #   #
+            ##   ###   ##  #   #   # #   #        #    ##  #  ##       ##  #  ## ##  ##  #
+            ##  ## ##  ##  #####    #     ###     #    ##  #  ####     #####  ## ##  # # #
+            ##  ## ##  ##  #   #    #        #    #    ##  #  ##       ## #   ## ##  #  ##
+              ####   ####  #   #    #     ###   #####  ####   #####    ##  #   ###   #   #
+            #_____________________________________________________________________________#
+
+
+
+            #Switch case to handle any toggled switches
+            #SWITCH TOGGLE SIGNAL TOGGLE_BEACON, TOGGLE_INDEX, MANUAL
+            #^Special Function after RUN PLC to change switch states v. fast
+
+
+            #If CTC in manual switch mode set it so PLC will not run for switches
+            if self.CTC.MANUAL:
+                with open('PLC_IO.txt','r') as file:
+                    Content=file.readlines()
+                file.close()
+
+                Content[53] = "Manual=1"
+
+                with open('PLC_IO.txt','w') as file:
+                    file.writelines(Content)
+                file.close
+
+                #if a switch is to be toggled, get the current switches toggle the desired one, and store it back on the PLC_IO
+                if self.CTC.TOGGLE_BEACON:
+                    self.grnCurSwitches=self.waysideControllers[1].getSwitchPositions()
+                    self.redCurSwitches=self.waysideControllers[0].getSwitchPositions()
+                    if self.CTC.TOGGLE_INDEX > 5:
+                        self.redCurSwitches[self.CTC.TOGGLE_INDEX-6]=not(self.redCurSwitches[self.CTC.TOGGLE_INDEX-6])
+                    else:
+                        self.grnCurSwitches[self.CTC.TOGGLE_INDEX]=not(self.grnCurSwitches[self.CTC.TOGGLE_INDEX])
+
+                    redSWString=""
+                    for i in range(len(self.redCurSwitches)):
+                        redSWString=redSWString+str(self.redCurSwitches[i])+","
+                        redSWString=redSWString[:-1]
+                    redSWString="SwitchPos="+redSWString+"\n"
+
+                    grnSWString=""
+                    for i in range(len(self.grnCurSwitches)):
+                        grnSWString=grnSWString+str(self.grnCurSwitches[i])+","
+                        grnSWString=grnSWString[:-1]
+                    grnSWString="SwitchPos="+grnSWString+"\n"
+                    
+                    Content[14]=redSWString
+                    Content[30]=redSWString
+                    Content[22]=grnSWString
+                    Content[38]=grnSWString
+
+                    with open('PLC_IO.txt','w') as file:
+                        file.writelines(Content)
+                    file.close
+
+                    self.CTC.LOWER_TOGGLE_BEACON()
+            else:
+                #If it is not in manual allow PLC to run for switches
+                with open('PLC_IO.txt','r') as file:
+                    Content=file.readlines()
+                file.close()
+
+                Content[53] = "Manual=0"
+
+                with open('PLC_IO.txt','w') as file:
+                    file.writelines(Content)
+                file.close
+
+            #Run the PLC for the First Red controller
+            contentRed=[]
+            contentRed.append("CurrentWaysideLine=Red1"+"\n")
+            with open('CurrentWayside.txt','w') as file:
+                file.writelines(contentRed) 
+            file.close()
+            self.waysideControllers[0].runPLC(self.PLCFile)
+
+
+            #Run the PLC for the first green controller
+            contentGreen=[]
+            contentGreen.append("CurrentWaysideLine=Green1"+"\n")
+            with open('CurrentWayside.txt','w') as file:
+                file.writelines(contentGreen) 
+            file.close()
+            self.waysideControllers[1].runPLC(self.PLCFile)     
+
+            #Run the PLC for the second Red controller
+            contentRed2=[]
+            contentRed2.append("CurrentWaysideLine=Red2"+"\n")
+            with open('CurrentWayside.txt','w') as file:
+                file.writelines(contentRed2) 
+            file.close()
+            self.waysideControllers[2].runPLC(self.PLCFile)
+
+            #Run the PLC for the first green controller
+            contentGreen2=[]
+            contentGreen2.append("CurrentWaysideLine=Green2"+"\n")
+            with open('CurrentWayside.txt','w') as file:
+                file.writelines(contentGreen2) 
+            file.close()
+            self.waysideControllers[3].runPLC(self.PLCFile) 
+
+
             
             
-            for i in range(20):
-                contentRed=[]
-                contentRed.append("CurrentWaysideLine=Red"+"\n")
-                with open('CurrentWayside.txt','w') as file:
-                    file.writelines(contentRed) 
-                self.waysideControllers[0].runPLC(self.PLCFile)
 
 
-            for i in range(26):
-                contentGreen=[]
-                contentGreen.append("CurrentWaysideLine=Green"+"\n")
-                with open('CurrentWayside.txt','w') as file:
-                    file.writelines(contentGreen) 
-                self.waysideControllers[1].runPLC(self.PLCFile)     
 
-            with open('HWTrackControllerInputs.txt','r') as file:
-                HWContent=file.readlines()
-            HWContent[2]=str(self.waysideControllers[1].getRoutedBlocks())+'\n'
-            HWContent[4]=str(self.waysideControllers[1].getRoutedAuth())+'\n'
-            HWContent[6]=str(self.waysideControllers[1].getRoutedSpeeds())+'\n'
-            HWContent[8]=str(self.waysideControllers[1].getBlockOccupancies())+'\n'
-            HWContent[10]=str(self.waysideControllers[1].getFaultStatuses())+'\n'
-            HWContent[12]=str(self.waysideControllers[1].getUnderground())+'\n'
 
-            with open('HWTrackControllerInputs.txt','w') as file:
-                file.writelines(HWContent)
+            ## ##  #####  #####  #####  ##     #####  #####  #   #     ####  ##  ##  #####   ####  ##  #
+            ## ##    #      #    #   #  ##       #      #     # #     ##     ##  ##  ##     ##     ## #
+            ## ##    #      #    #####  ##       #      #      #      ##     ######  ####   ##     ##
+            ## ##    #      #    #   #  ##       #      #      #      ##     ##  ##  ##     ##     ## #
+             ###   #####    #    #   #  #####  #####    #      #       ####  ##  ##  #####   ####  ##  #
+            #____________________________________________________________________________________________#
 
+            self.waysideFaultG = False
+            self.waysideFaultR = False
+
+            #Vitality through ANDing outputs of two wayside controllers that calculate the same thing
+            #Red1 Outputs
+            self.Red1SW = self.waysideControllers[0].getSwitchPositions()
+            self.Red1TrafficL = self.waysideControllers[0].getTrafficLightStatus()
+            self.Red1TrainL = self.waysideControllers[0].getTrainLightSignals()
+            self.Red1Auth = self.waysideControllers[0].getBlockAuth()
+            self.Red1Cross = self.waysideControllers[0].getCrossingStatus()
+            #Red2 Outputs
+            self.Red2SW = self.waysideControllers[2].getSwitchPositions()
+            self.Red2TrafficL = self.waysideControllers[2].getTrafficLightStatus()
+            self.Red2TrainL = self.waysideControllers[2].getTrainLightSignals()
+            self.Red2Auth = self.waysideControllers[2].getBlockAuth()
+            self.Red2Cross = self.waysideControllers[2].getCrossingStatus()
+            #Green1 Outputs
+            self.Green1SW = self.waysideControllers[1].getSwitchPositions()
+            self.Green1TrafficL = self.waysideControllers[1].getTrafficLightStatus()
+            self.Green1TrainL = self.waysideControllers[1].getTrainLightSignals()
+            self.Green1Auth = self.waysideControllers[1].getBlockAuth()
+            self.Green1Cross = self.waysideControllers[1].getCrossingStatus()
+            #Green2 Outputs
+            self.Green2SW = self.waysideControllers[1].getSwitchPositions()
+            self.Green2TrafficL = self.waysideControllers[1].getTrafficLightStatus()
+            self.Green2TrainL = self.waysideControllers[1].getTrainLightSignals()
+            self.Green2Auth = self.waysideControllers[1].getBlockAuth()
+            self.Green2Cross = self.waysideControllers[1].getCrossingStatus()
+
+            #Red Controller Output Checks
+            #Switches
+            for i in range(len(self.Red1SW)):
+                if self.Red1SW[i] and self.Red2SW[i]:
+                    continue
+                else:
+                    self.waysideFaultR = True
+            #Traffic Lights
+            for i in range(len(self.Red1TrafficL)):
+                if self.Red1TrafficL[i] and self.Red2TrafficL[i]:
+                    continue
+                else:
+                    self.waysideFaultR = True
+            #Train Lights
+            for i in range(len(self.Red1TrainL)):
+                if self.Red1TrainL[i] and self.Red2TrainL[i]:
+                    continue
+                else:
+                    self.waysideFaultR = True
+            #Authority
+            for i in range(len(self.Red1Auth)):
+                if self.Red1Auth[i] == self.Red2Auth[i]:
+                    continue
+                else:
+                    self.waysideFaultR = True
+            #Crossing
+            if not(self.Red1Cross and self.Red2Cross):
+                self.waysideFaultR = True
+
+
+            #Green Controller Output Checks
+            #Switches
+            for i in range(len(self.Green1SW)):
+                if self.Green1SW[i] and self.Green2SW[i]:
+                    continue
+                else:
+                    self.waysideFaultG = True
+            #Traffic Lights
+            for i in range(len(self.Green1TrafficL)):
+                if self.Green1TrafficL[i] and self.Green2TrafficL[i]:
+                    continue
+                else:
+                    self.waysideFaultG = True
+            #Train Lights
+            for i in range(len(self.Green1TrainL)):
+                if self.Green1TrainL[i] and self.Green2TrainL[i]:
+                    continue
+                else:
+                    self.waysideFaultG = True
+            #Authority
+            for i in range(len(self.Green1Auth)):
+                if self.Green1Auth[i] == self.Green2Auth[i]:
+                    continue
+                else:
+                    self.waysideFaultG = True
+            #Crossing
+            if not(self.Green1Cross and self.Green2Cross):
+                self.waysideFaultG = True
+
+
+            #Stop all trains in area wayside controller controls and display failure to user
+            if self.waysideFaultR:
+                for i in range(76):
+                    self.waysideControllers[0].setBlockAuthorities(i+1, 0)
+                self.LoadedPLCLabel.setText(_translate("MainWindow","Wayside Red Failure!"))
+                self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
+                "font-weight: bold")
+                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+
+            if self.waysideFaultG:
+                for i in range(150):
+                    self.waysideControllers[1].setBlockAuthorities(i+1, 0)
+                self.LoadedPLCLabel.setText(_translate("MainWindow","Wayside Grn Failure!"))
+                self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
+                "font-weight: bold")
+                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+
+
+
+
+
+            ##   ##  #####        ####   #####   ###   #####  ##     #####  #   #
+            ##   ##    #          ##  #    #    #      ##  #  ##     #   #   # #
+            ##   ##    #          ##  #    #     ###   #####  ##     #####    #
+            ##   ##    #          ##  #    #        #  ##     ##     #   #    #
+              ###    #####        ####   #####   ###   ##     #####  #   #    #
+            #____________________________________________________________________#
+
+
+            #update block/light selection box based on what section is selected
             self.grnLightSecIndex=self.GrnLightSecSelBox.currentIndex()
             self.redLightSecIndex=self.RedLightSecSelBox.currentIndex()
             self.grnSecIndex=self.GrnSecSelBox.currentIndex()
@@ -1385,6 +1788,108 @@ class Ui_MainWindow(object):
                     self.CastleShannonLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
                 "background-color: rgb(255, 0, 0);")
 
+
+            #Red Station Display
+            redStationIndex=self.RedStationSelBox.currentIndex()
+            if redStationIndex == 0:
+                self.RedStationOccLabel.setText(str(self.redBlocks[6].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[0]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")  
+            elif redStationIndex == 1:
+                self.RedStationOccLabel.setText(str(self.redBlocks[15].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[1]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redStationIndex == 2:
+                self.RedStationOccLabel.setText(str(self.redBlocks[20].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[2]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redStationIndex == 3:
+                self.RedStationOccLabel.setText(str(self.redBlocks[24].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[3]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redStationIndex == 4:
+                self.RedStationOccLabel.setText(str(self.redBlocks[34].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[4]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redStationIndex == 5:
+                self.RedStationOccLabel.setText(str(self.redBlocks[44].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[5]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redStationIndex == 6:
+                self.RedStationOccLabel.setText(str(self.redBlocks[47].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[6]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redStationIndex == 7:
+                self.RedStationOccLabel.setText(str(self.redBlocks[59].occ))
+                self.RedStationOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                self.RedStationTixLabel.setText(str(self.redTicketSales[7]))
+                self.RedStationTixLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                
+
+            if self.redBlocks[6].occ == 1:
+                    self.ShadysideLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.ShadysideLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if self.redBlocks[15].occ == 1:
+                    self.HerronLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.HerronLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if self.redBlocks[20].occ == 1:
+                    self.SwissvilleLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.SwissvilleLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if self.redBlocks[24].occ == 1:
+                    self.PennStationLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.PennStationLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if self.redBlocks[34].occ == 1:
+                    self.SteelPlazaLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.SteelPlazaLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if self.redBlocks[44].occ == 1:
+                    self.FirstAveLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.FirstAveLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if self.redBlocks[47].occ == 1:
+                    self.StationSquareLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.StationSquareLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if self.redBlocks[59].occ == 1:
+                    self.SHJunctionLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.SHJunctionLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+          
             #Green Switch Display
             grnSwitchIndex=self.GrnSwitchSelBox.currentIndex()
             grnDispSwitches=self.waysideControllers[1].getSwitchPositions()
@@ -1491,6 +1996,157 @@ class Ui_MainWindow(object):
                     self.N_OQLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
                 "background-color: rgb(255, 0, 0);")
 
+
+            #Red Switch Display
+            redSwitchIndex=self.RedSwitchSelBox.currentIndex()
+            redDispSwitches=self.waysideControllers[0].getSwitchPositions()
+            if redSwitchIndex == 0:
+                Towards=""
+                self.RedSwitchPosLabel.setText(str(redDispSwitches[0]))
+                self.RedSwitchPosLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                if redDispSwitches[0]==1:
+                    Towards="Block 9"
+                else:
+                    Towards="Yard"
+                self.RedSwitchDirLabel.setText(Towards)
+                self.RedSwitchDirLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")  
+            elif redSwitchIndex == 1:
+                Towards=""
+                self.RedSwitchPosLabel.setText(str(redDispSwitches[1]))
+                self.RedSwitchPosLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                if redDispSwitches[1]==1:
+                    Towards="Block 1"
+                else:
+                    Towards="Block 15"
+                self.RedSwitchDirLabel.setText(Towards)
+                self.RedSwitchDirLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")  
+            elif redSwitchIndex == 2:
+                Towards=""
+                self.RedSwitchPosLabel.setText(str(redDispSwitches[2]))
+                self.RedSwitchPosLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                if redDispSwitches[2]==1:
+                    Towards="Block 28"
+                else:
+                    Towards="Block 76"
+                self.RedSwitchDirLabel.setText(Towards)
+                self.RedSwitchDirLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"") 
+            elif redSwitchIndex == 3:
+                Towards=""
+                self.RedSwitchPosLabel.setText(str(redDispSwitches[3]))
+                self.RedSwitchPosLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                if redDispSwitches[3]==1:
+                    Towards="Block 32"
+                else:
+                    Towards="Block 72"
+                self.RedSwitchDirLabel.setText(Towards)
+                self.RedSwitchDirLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redSwitchIndex == 4:
+                Towards=""
+                self.RedSwitchPosLabel.setText(str(redDispSwitches[4]))
+                self.RedSwitchPosLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                if redDispSwitches[4]==1:
+                    Towards="Block 39"
+                else:
+                    Towards="Block 71"
+                self.RedSwitchDirLabel.setText(Towards)
+                self.RedSwitchDirLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redSwitchIndex == 5:
+                Towards=""
+                self.RedSwitchPosLabel.setText(str(redDispSwitches[5]))
+                self.RedSwitchPosLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                if redDispSwitches[5]==1:
+                    Towards="Block 43"
+                else:
+                    Towards="Block 67"
+                self.RedSwitchDirLabel.setText(Towards)
+                self.RedSwitchDirLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+            elif redSwitchIndex == 6:
+                Towards=""
+                self.RedSwitchPosLabel.setText(str(redDispSwitches[6]))
+                self.RedSwitchPosLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                if redDispSwitches[6]==1:
+                    Towards="Block 53"
+                else:
+                    Towards="Block 66"
+                self.RedSwitchDirLabel.setText(Towards)
+                self.RedSwitchDirLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")              
+
+            if redDispSwitches[0] == 1:
+                    self.Yrd_CDLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.Yrd_CDLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if redDispSwitches[1] == 1:
+                    self.F_AELabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.F_AELabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if redDispSwitches[2] == 1:
+                    self.T_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.T_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if redDispSwitches[3] == 1:
+                    self.R_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.R_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if redDispSwitches[4] == 1:
+                    self.Q_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.Q_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if redDispSwitches[5] == 1:
+                    self.O_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.O_HLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            if redDispSwitches[6] == 1:
+                    self.I_JNLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                    self.I_JNLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+
+
+            #Green Crossing Status Display
+            if self.waysideControllers[1].getCrossingStatus() == 1:
+                self.GrnCrossLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+                self.GrnCrossStatLabel.setText("Closed")
+                self.GrnCrossStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")  
+            else:
+                self.GrnCrossLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+                self.GrnCrossStatLabel.setText("Open")
+                self.GrnCrossStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")  
+
+            #Red Crossing Status Display
+            if self.waysideControllers[0].getCrossingStatus() == 1:
+                self.RedCrossLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+                self.RedCrossStatLabel.setText("Closed")
+                self.RedCrossStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")  
+            else:
+                self.RedCrossLabel.setStyleSheet("font: 8pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+                self.RedCrossStatLabel.setText("Open")
+                self.RedCrossStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")  
+
+
+            #set block information labels green
             for i in range(len(self.greenBlocks)):
                 grnSugSpeeds=self.waysideControllers[1].getRoutedSpeeds()
                 grnAuth=self.waysideControllers[1].getBlockAuth()
@@ -1520,7 +2176,11 @@ class Ui_MainWindow(object):
                     elif grnFault==3:
                         self.GrnFaultTypeLabel.setText("Power Failure")
                         self.GrnFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    elif grnFault==4:
+                        self.GrnFaultTypeLabel.setText("Block Closure")
+                        self.GrnFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
 
+            #Traffic Light Display Green
             for i in range(len(self.greenBlocks)):
                 grnLightStates=self.waysideControllers[1].getTrafficLightStatus()
                 if int(self.GrnBlockSelBox.currentText()) == i+1:
@@ -1539,6 +2199,7 @@ class Ui_MainWindow(object):
                         self.GrnLightStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\";\n"
                     "background-color: rgb(255, 0, 0);")
             
+            #Fault Display Green
             faultSections=[0]*26
             sectionOcc=[0]*26
             for i in range(len(self.greenBlocks)):
@@ -2063,15 +2724,486 @@ class Ui_MainWindow(object):
                 self.ZLabelG.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
                 "background-color: rgb(255, 0, 0);")
 
-            redStationIndex=self.RedStationSelBox.currentIndex()
 
+            #set block information labels red
+            for i in range(len(self.redBlocks)):
+                redSugSpeeds=self.waysideControllers[0].getRoutedSpeeds()
+                redAuth=self.waysideControllers[0].getBlockAuth()
+                redFault=self.redBlocks[i].fail
+                if int(self.RedBlockSelBox.currentText()) == i+1:
+                    if self.redBlocks[i].occ == 0:
+                        self.RedBlockOccLabel.setText("Not Occupied")
+                        self.RedBlockOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    else:
+                        self.RedBlockOccLabel.setText("Occupied")
+                        self.RedBlockOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    self.RedSugSpeedLabel.setText(str(redSugSpeeds[i])+" MPH")
+                    self.RedSugSpeedLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    self.RedAuthLabel.setText(str(redAuth[i])+" Blocks")
+                    self.RedAuthLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    self.RedFaultStatLabel.setText(str(redFault))
+                    self.RedFaultStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    if redFault==0:
+                        self.RedFaultTypeLabel.setText("None")
+                        self.RedFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    elif redFault==1:
+                        self.RedFaultTypeLabel.setText("Broken Rail")
+                        self.RedFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    elif redFault==2:
+                        self.RedFaultTypeLabel.setText("Circuit Failure")
+                        self.RedFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    elif redFault==3:
+                        self.RedFaultTypeLabel.setText("Power Failure")
+                        self.RedFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    elif redFault==4:
+                        self.RedFaultTypeLabel.setText("Block Closure")
+                        self.RedFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+
+            for i in range(len(self.redBlocks)):
+                redLightStates=self.waysideControllers[0].getTrafficLightStatus()
+                if int(self.RedBlockSelBox.currentText()) == i+1:
+                    if self.redBlocks[i].occ == 0:
+                        self.RedLightOccLabel.setText("Not Occupied")
+                        self.RedLightOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    else:
+                        self.RedLightOccLabel.setText("Occupied")
+                        self.RedLightOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                    if redLightStates[i] == 0:
+                        self.RedLightStatLabel.setText(str(redLightStates[i])+": Green")
+                        self.RedLightStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\";\n"
+                    "background-color: rgb(170, 255, 0);")
+                    else:
+                        self.RedLightStatLabel.setText(str(redLightStates[i])+": Red")
+                        self.RedLightStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\";\n"
+                    "background-color: rgb(255, 0, 0);")
+            
+            faultSectionsRed=[0]*20
+            sectionOccRed=[0]*20
+            for i in range(len(self.redBlocks)):
+                if self.redBlocks[i].section == 'A':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[0]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[0]=1
+                if self.redBlocks[i].section == 'B':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[1]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[1]=1
+                if self.redBlocks[i].section == 'C':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[2]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[2]=1
+                if self.redBlocks[i].section == 'D':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[3]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[3]=1
+                if self.redBlocks[i].section == 'E':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[4]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[4]=1
+                if self.redBlocks[i].section == 'F':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[5]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[5]=1
+                if self.redBlocks[i].section == 'G':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[6]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[6]=1 
+                if self.redBlocks[i].section == 'H':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[7]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[7]=1
+                if self.redBlocks[i].section == 'I':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[8]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[8]=1
+                if self.redBlocks[i].section == 'J':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[9]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[9]=1
+                if self.redBlocks[i].section == 'K':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[10]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[10]=1
+                if self.redBlocks[i].section == 'L':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[11]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[11]=1
+                if self.redBlocks[i].section == 'M':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[12]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[12]=1
+                if self.redBlocks[i].section == 'N':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[13]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[13]=1
+                if self.redBlocks[i].section == 'O':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[14]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[14]=1   
+                if self.redBlocks[i].section == 'P':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[15]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[15]=1
+                if self.redBlocks[i].section == 'Q':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[16]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[16]=1
+                if self.redBlocks[i].section == 'R':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[17]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[17]=1 
+                if self.redBlocks[i].section == 'S':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[18]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[18]=1
+                if self.redBlocks[i].section == 'T':
+                    if self.redBlocks[i].fail > 0:
+                        faultSectionsRed[19]=1
+                    if self.redBlocks[i].occ == 1:
+                        sectionOccRed[19]=1
+                
+            if faultSectionsRed[0]==1:
+                self.ALabelR.setText("!")
+                self.ALabelR.setStyleSheet("font: 75 12pt \"MS Shell Dlg 2\"")
+                self.ALabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.ALabelR.setText("A")
+                self.ALabelR.setStyleSheet("font: 75 12pt \"MS Shell Dlg 2\"")
+                self.ALabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[0]==1:
+                self.ALabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.ALabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[1]==1:
+                self.BLabelR.setText("!")
+                self.BLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.BLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.BLabelR.setText("B")
+                self.BLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.BLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[1]==1:
+                self.BLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.BLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[2]==1:
+                self.CLabelR.setText("!")
+                self.CLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.CLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.CLabelR.setText("C")
+                self.CLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.CLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[2]==1:
+                self.CLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.CLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[3]==1:
+                self.DLabelR.setText("!")
+                self.DLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.DLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.DLabelR.setText("D")
+                self.DLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.DLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[3]==1:
+                self.DLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.DLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[4]==1:
+                self.ELabelR.setText("!")
+                self.BLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.ELabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.ELabelR.setText("E")
+                self.ELabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.ELabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[4]==1:
+                self.ELabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.ELabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[5]==1:
+                self.FLabelR.setText("!")
+                self.FLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.FLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.FLabelR.setText("F")
+                self.FLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.FLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[5]==1:
+                self.FLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.FLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[6]==1:
+                self.GLabelR.setText("!")
+                self.GLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.GLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.GLabelR.setText("G")
+                self.GLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.GLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[6]==1:
+                self.GLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.GLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[7]==1:
+                self.HLabelR.setText("!")
+                self.HLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.HLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.HLabelR.setText("H")
+                self.HLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.HLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[7]==1:
+                self.HLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.HLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[8]==1:
+                self.ILabelR.setText("!")
+                self.ILabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.ILabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.ILabelR.setText("I")
+                self.ILabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.ILabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[8]==1:
+                self.ILabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.ILabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[9]==1:
+                self.JLabelR.setText("!")
+                self.JLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.JLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.JLabelR.setText("J")
+                self.JLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.JLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[9]==1:
+                self.JLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.JLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[10]==1:
+                self.KLabelR.setText("!")
+                self.KLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.KLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.KLabelR.setText("K")
+                self.KLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.KLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[10]==1:
+                self.KLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.KLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[11]==1:
+                self.LLabelR.setText("!")
+                self.LLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.LLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.LLabelR.setText("L")
+                self.LLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.LLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[11]==1:
+                self.LLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.LLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[12]==1:
+                self.MLabelR.setText("!")
+                self.MLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.MLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.MLabelR.setText("M")
+                self.MLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.MLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[12]==1:
+                self.MLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.MLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[13]==1:
+                self.NLabelR.setText("!")
+                self.NLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.NLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.NLabelR.setText("N")
+                self.NLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.NLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[13]==1:
+                self.NLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.NLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[14]==1:
+                self.OLabelR.setText("!")
+                self.OLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.OLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.OLabelR.setText("O")
+                self.OLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.OLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[14]==1:
+                self.OLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.OLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[15]==1:
+                self.PLabelR.setText("!")
+                self.PLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.PLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.PLabelR.setText("P")
+                self.PLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.PLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[15]==1:
+                self.PLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.PLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+            if faultSectionsRed[16]==1:
+                self.QLabelR.setText("!")
+                self.QLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.QLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.QLabelR.setText("Q")
+                self.QLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.QLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[16]==1:
+                self.QLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.QLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[17]==1:
+                self.RLabelR.setText("!")
+                self.RLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+                self.RLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+            else:
+                self.RLabelR.setText("R")
+                self.RLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.RLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[17]==1:
+                self.RLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.RLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[18]==1:
+                self.SLabelR.setText("!")
+                self.SLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.SLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.SLabelR.setText("S")
+                self.SLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.SLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[18]==1:
+                self.SLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.SLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+
+            if faultSectionsRed[19]==1:
+                self.TLabelR.setText("!")
+                self.TLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.TLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            else:
+                self.TLabelR.setText("T")
+                self.TLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\"")
+                self.TLabelR.setAlignment(QtCore.Qt.AlignHCenter)
+            if sectionOccRed[19]==1:
+                self.TLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(170, 255, 0);")
+            else:
+                self.TLabelR.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";\n"
+                "background-color: rgb(255, 0, 0);")
+            
+      
             self.prevGreenLightIndex=self.grnLightSecIndex
             self.prevRedLightIndex=self.redLightSecIndex
             self.prevGreenSecIndex=self.grnSecIndex
             self.prevRedSecIndex=self.redSecIndex
 
+
+
+
+             ####   ###   #   #  #   #  ## ##  #   #  #####   ####  #####  #####  #####   ###   #   #
+            ##     #   #  ## ##  ## ##  ## ##  ##  #    #    ##     #   #    #      #    #   #  ##  #
+            ##     #   #  # # #  # # #  ## ##  # # #    #    ##     #####    #      #    #   #  # # #
+            ##     #   #  #   #  #   #  ## ##  #  ##    #    ##     #   #    #      #    #   #  #  ##
+             ####   ###   #   #  #   #   ###   #   #  #####   ####  #   #    #    #####   ###   #   #
+
+            #####  ## ##  #   #   ####  #####  #####   ###   #   #   ###
+            ##     ## ##  ##  #  ##       #      #    #   #  ##  #  #
+            ####   ## ##  # # #  ##       #      #    #   #  # # #   ###
+            ##     ## ##  #  ##  ##       #      #    #   #  #  ##      #
+            ##      ###   #   #   ####    #    #####   ###   #   #   ###
+            #__________________________________________________________________________________________#
+
             #TrackModel set Functions
-    
             self.trackModelDatabase.setGreenAuth(self.waysideControllers[1].getBlockAuth())
 
             self.trackModelDatabase.setRedAuth(self.waysideControllers[0].getBlockAuth())
@@ -2091,7 +3223,19 @@ class Ui_MainWindow(object):
             self.trackModelDatabase.setGreenLight(self.waysideControllers[1].getTrafficLightStatus())
 
             self.trackModelDatabase.setRedSpeed(self.waysideControllers[0].getTrafficLightStatus())
-            
+
+
+            self.tempReds=self.waysideControllers[0].getSwitchPositions()
+            self.tempGrns=self.waysideControllers[1].getSwitchPositions()
+            for i in range(len(self.CTC.switches)):
+                if i < 6:
+                    self.CTC.switches[i]=self.tempGrns[i]
+                else:
+                    self.CTC.switches[i]=self.tempReds[i-6]
+
+
+            #SET self.CTC.switches (green first in index array)
+                        
     #CTC get functions
     #Get Block Occupancies
     def getRedBlockOcc(self):
@@ -2146,15 +3290,14 @@ if __name__ == "__main__":
     
     trackApp=QtWidgets.QApplication(sys.argv)
     trackWindow=QtWidgets.QMainWindow()
-    trackModelDatabase=track()
-    trackModelDatabase.setupUi(trackWindow)
-    trackModelDatabase.importTrack()
-    ui.trackModelInput(trackModelDatabase)
+    #trackModelDatabase=track()
+    #trackModelDatabase.setupUi(trackWindow)
+    #trackModelDatabase.importTrack()
+    #ui.trackModelInput(trackModelDatabase)
     window=root
-    CTC=CTCOFFICE(window)
-    ui.CTCInput(CTC)
+    #CTC=CTCOFFICE(window)
+    #ui.CTCInput(CTC)
     #window.mainloop()
     sys.exit(app.exec_())
     
     
-
