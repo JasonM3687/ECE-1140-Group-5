@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
+import trainModel
 
 
 class trackModel(object):
@@ -1124,6 +1125,8 @@ class trackModel(object):
         self.beaconBlock.activated.connect(self.beaconBlockUpdate)
         self.env_temp.valueChanged.connect(self.update)
         
+    def setTrainModel(self, x):
+        self.trainModel=x
         
     def importTrack(self):
         import trackImport
@@ -1587,6 +1590,9 @@ class trackModel(object):
             if(i.line==line and i.bNum==block):
                 return i
             
+    def trainDispatched(self,num,line):
+        self.trainModel.dispatched(num,line)
+        
     class Train():
         cSpeed=0
         auth=0
