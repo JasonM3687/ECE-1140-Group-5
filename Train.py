@@ -41,7 +41,7 @@ class TrainClass():
         prevblock=0
         blockNum = 0
         nextblock = 0
-        line = "None"
+        line = 0
         headlightCommand = False
         stationDoors = 0
         maxAcceleration = 0       #mps^2
