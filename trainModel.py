@@ -790,7 +790,7 @@ class Ui_MainWindow(object):
 
                 # button events and where to go
                 self.trainSelect.currentIndexChanged.connect(self.TrainWindow)
-                self.eBrake.clicked.connect(self.eBrakePressed(0))
+                self.eBrake.clicked.connect(lambda: self.eBrakePressed(0))
                 self.setTemp_1.valueChanged.connect(lambda: self.changeTemp(self.currentTrainDisplay,0))
                 self.setTemp_2.valueChanged.connect(lambda: self.changeTemp(self.currentTrainDisplay,1))
                 self.setTemp_3.valueChanged.connect(lambda: self.changeTemp(self.currentTrainDisplay,2))
@@ -1007,15 +1007,22 @@ class Ui_MainWindow(object):
                         self.trainController.serviceBrakeControl()
 
         # when a train is dispatch
-        def dispatched(self,trainID,line):
-                
-                self.trains[trainID].dispatched = True
-                self.trains[trainID].line = line
+        def dispatched(self,trainID,temp):
 
-                #set line in block class for correct route
-                self.trains[trainID].setLine(line)
+                self.trains[trainID].dispatched = True
+
+                if temp == "Green":
+                        self.trains[trainID].line = 1
+                        self.trains[trainID].setLine(1)
+                        self.trains[trainID].blockNum = 63
+                else:
+                        self.trains[trainID].line = 0
+                        self.trains[trainID].setLine(0)
+                        self.trains[trainID].blockNum = 9
+
                 #since dispatched, take off emergency brakes
                 self.trains[trainID].brakesDone()
+                self.getValuesFromTrackModel(trainID)
 
 
 if __name__ == "__main__":

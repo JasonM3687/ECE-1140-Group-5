@@ -1222,7 +1222,6 @@ class trackModel(object):
                     i.fail=3
                     self.stat_label.setText("Power Failure")
                 i.checkFail()
-                print(i.occ)
                 self.unBlock()
                 self.refresh()
                 break
@@ -1255,7 +1254,6 @@ class trackModel(object):
             self.beaconBlock.addItems(["6","7","8","9","15","16","17","20","21","22","24","25","26","34","35","36","44","45","46","47","48","49","59","60","61"])
         elif(self.beaconLine.currentText()=="Green"):
             self.beaconBlock.clear()
-            print("yea")
             self.beaconBlock.addItems(["1","2","7","8","15","16","17","21","22","23","31","32","39","40","48","49","57","58","62","63","65","66","73","74","77","78","88","89","96","97","100","101","105","106","114","115","123","124","132","133","141","142"])
         
     def beaconBlockUpdate(self):
@@ -1495,14 +1493,22 @@ class trackModel(object):
                 j=j+1
         self.refresh()
     
-    def getAuth(self,line,block):
+    def getAuth(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         self.update()
         for i in self.signals:
             if(i.line==line and i.bNum==block):
                 return i.auth
         return 0
             
-    def getSpeed(self,line,block):
+    def getSpeed(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         self.update()
         cspeed=0
         slimit=0
@@ -1514,38 +1520,56 @@ class trackModel(object):
                 slimit=i.sLimit       
         return cspeed, slimit/1.609
             
-    def getBeacon(self,line,block):
+    def getBeacon(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         for i in self.beacons:
             if(i.line==line and i.block==block):
                 return i.readBeacon()
         return "None"
     
-    def setTrainPos(self,train,line,block):
-        self.trains[train-1].posLine=line
-        self.trains[train-1].posBlock=block
+    def setTrainPos(self,train,num,block):
+        if (block == 0):
+            return
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
+        self.trains[train].posLine=line
+        self.trains[train].posBlock=block
         self.getBlock(line,block).occ=1
-        self.getBlock(self.trains[train-1].posLine,self.trains[train-1].prevBlock).occ=0
+        if(self.trains[train].prevBlock != 0):
+            self.getBlock(line,self.trains[train].prevBlock).occ=0
         for i in self.stations:
             if(i.posLine==line and i.posBlock==block):
-                if(self.trains[train-1].posBlock!=self.trains[train-1].prevBlock):
+                if(self.trains[train].posBlock!=self.trains[train].prevBlock):
                     for j in self.signals:
-                        if(j.posBlock==block and j.posLine==line and j.auth==0):
+                        if(j.bNum==block and j.line==line and j.auth==0):
                             i.addSales(100)
-                            print(str(self.trains[train-1].posBlock)+" "+str(self.trains[train-1].prevBlock))
-        self.trains[train-1].prevBlock=self.trains[train-1].posBlock
+        self.trains[train].prevBlock=self.trains[train].posBlock
         self.refresh()
         
     def setTrainFault(self,train,fault):
-        self.trains[train-1].status=fault
+        self.trains[train].status=fault
         self.refresh()
         
-    def getLight(self,line,block):
+    def getLight(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         self.update()
         for i in self.tracks:
             if(i.line==line and i.bNum==block):
                 return i.light
         
-    def getStationSide(self,line,block):
+    def getStationSide(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         for i in self.tracks:
             if(i.line==line, i.bNum==block):
                 if(i.station=="Left"):
@@ -1556,22 +1580,34 @@ class trackModel(object):
                     return 2
         return -1
         
-    def getBlockGrade(self,line,block):
+    def getBlockGrade(self,num,block):
         self.update()
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         for i in self.tracks:
             if(i.line==line and i.bNum==block):
                 return i.bGrade, i.elev, i.cElev, i.bLength
             if(i.line==line and block==0):
                 return self.tracks[0].bGrade,self.tracks[0].elev,self.tracks[0].cElev,self.tracks[0].bLength
     
-    def getBoarding(self,line,block):
+    def getBoarding(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         for i in self.stations:
             if(i.posLine==line and i.posBlock==block):
                 i.board=0
                 return 100
         return 0
         
-    def getSwitch(self,line,block):
+    def getSwitch(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         for i in self.switches:
             if(i.line==line and (i.base==block or i.branch1==block or i.branch2==block)):
                 if(i.state==0):
@@ -1580,7 +1616,11 @@ class trackModel(object):
                     return i.base, i.branch2
         return block, block
             
-    def getSignal(self,line,block):
+    def getSignal(self,num,block):
+        if(num==0):
+            line="Red"
+        else:
+            line="Green"
         for i in self.signals:
             if(i.line==line and i.block==block):
                 return i.state

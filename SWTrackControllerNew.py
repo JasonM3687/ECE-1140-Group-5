@@ -35,7 +35,7 @@ class Ui_MainWindow(object):
     greenBlockNum=[]
     prevRoutedBlocks=[]
     prevRoutedLines=[]
-    prevTrainID = 0
+    prevTrainID = 10
     routedBlockEqual=True
     redStations=["Shadyside","Herron Ave","Swissville","Penn Station","Steel Plaza","First Ave","Station Square","South Hills Junction"]
     grnStations=["Pioneer","Edgebrook","Station","Whited","South Bank","Central","Inglewood","Overbrook","Glenbury","Dormont","Mt. Lebanon","Poplar","Castle Shannon"]
@@ -46,12 +46,16 @@ class Ui_MainWindow(object):
     prevRedLightIndex=0
     prevGreenSecIndex=0
     prevRedSecIndex=0
-    GrnRoutes=[[0]*10]*150
-    RedRoutes=[[0]*10]*76
+    GrnRoutes=[[0]*150]*10
+    RedRoutes=[[0]*76]*10
     closedGrnBlocks=[0]*150
     closedRedBlocks=[0]*76
     grnCurSwitches=[0]*6
     redCurSwitches=[0]*7
+    routeMatchG = False
+    routeMatchR = False
+    redTicketSales = []
+    greenTicketSales = []
     
     def trackModelInput(self, obj):
         self.trackModelDatabase=obj
@@ -1136,7 +1140,7 @@ class Ui_MainWindow(object):
             
             #If Brian selects a UI update, update his UI
             if self.CTC.PAUSE_BEACON == False:
-                self.CTC.UPDATE()
+                self.CTC.GO()
 
             #if there is a request to manually change a blocks speed/auth change it and acknowledge change made
             if self.CTC.NEW_DATA_BEACON == True:
@@ -1155,9 +1159,11 @@ class Ui_MainWindow(object):
             
             # if a new route is sent store it to inspect later
             if self.routedBlockEqual==False or self.TrainID != self.prevTrainID:
+                print(str(int(self.routedBlocks[0],2)))
 
                 #Call the funtion to spawn a train if the first block on a route is 63 (green) or 9 (red)
                 if int(self.routedBlocks[0],2)==63:
+                    print("Spawn")
                     self.trackModelDatabase.trainDispatched(self.TrainID, 1)
                 elif (self.routedBlocks[0],2)==9:
                     self.trackModelDatabase.trainDispatched(self.TrainID, 0)
@@ -1180,8 +1186,9 @@ class Ui_MainWindow(object):
                             continue
 
                 
-            self.prevRoutedBlocks=list(int(self.routedBlocks,2))
-            self.prevRoutedLines=list(self.routedLines)
+            self.prevRoutedBlocks=self.routedBlocks
+            self.prevRoutedLines=self.routedLines
+            self.prevTrainID=self.TrainID
 
 
             #Track Model Inputs
@@ -1272,6 +1279,8 @@ class Ui_MainWindow(object):
                 else:
                     self.tempGreenFault.append(self.greenBlocks[i].fail)
 
+            #print(self.tempGreenFault)
+
 
             self.waysideControllers[1].setFaultStatuses(self.tempGreenFault)
 
@@ -1343,7 +1352,7 @@ class Ui_MainWindow(object):
             for i in range(10):
                 for j in range(150):
                     if self.GrnRoutes[i][j] > 0:
-                        self.waysideControllers[0].setRoutedBlocks(self.GrnRoutes[i][j])
+                        self.waysideControllers[1].setRoutedBlocks(self.GrnRoutes[i][j])
 
 
 
@@ -1365,18 +1374,20 @@ class Ui_MainWindow(object):
 
             #If CTC in manual switch mode set it so PLC will not run for switches
             if self.CTC.MM_BEACON == True:
+                print("Beacon High")
                 with open('PLC_IO.txt','r') as file:
                     Content=file.readlines()
                 file.close()
 
-                Content[53] = "Manual=1"
+                Content[45] = "Manual=1"
 
                 with open('PLC_IO.txt','w') as file:
                     file.writelines(Content)
                 file.close
 
                 #if a switch is to be toggled, get the current switches toggle the desired one, and store it back on the PLC_IO
-                if self.CTC.TOGGLE_BEACON:
+                if self.CTC.TOGGLE_BEACON == True:
+                    print("Toggle")
                     self.grnCurSwitches=self.waysideControllers[1].getSwitchPositions()
                     self.redCurSwitches=self.waysideControllers[0].getSwitchPositions()
                     if self.CTC.TOGGLE_INDEX > 5:
@@ -1411,8 +1422,7 @@ class Ui_MainWindow(object):
                 with open('PLC_IO.txt','r') as file:
                     Content=file.readlines()
                 file.close()
-
-                Content[53] = "Manual=0"
+                Content[45] = "Manual=0"
 
                 with open('PLC_IO.txt','w') as file:
                     file.writelines(Content)
@@ -1469,7 +1479,7 @@ class Ui_MainWindow(object):
             self.waysideFaultR = False
 
             #Vitality through ANDing outputs of two wayside controllers that calculate the same thing
-            #Red1 Outputs
+            '''#Red1 Outputs
             self.Red1SW = self.waysideControllers[0].getSwitchPositions()
             self.Red1TrafficL = self.waysideControllers[0].getTrafficLightStatus()
             self.Red1TrainL = self.waysideControllers[0].getTrainLightSignals()
@@ -1569,7 +1579,7 @@ class Ui_MainWindow(object):
                 self.LoadedPLCLabel.setText(_translate("MainWindow","Wayside Grn Failure!"))
                 self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
                 "font-weight: bold")
-                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)'''
 
 
 
@@ -2151,7 +2161,7 @@ class Ui_MainWindow(object):
             for i in range(len(self.greenBlocks)):
                 grnSugSpeeds=self.waysideControllers[1].getRoutedSpeeds()
                 grnAuth=self.waysideControllers[1].getBlockAuth()
-                grnFault=self.greenBlocks[i].fail
+                grnFault=self.tempGreenFault[i]
                 if int(self.GrnBlockSelBox.currentText()) == i+1:
                     if self.greenBlocks[i].occ == 0:
                         self.GrnBlockOccLabel.setText("Not Occupied")
@@ -2730,7 +2740,7 @@ class Ui_MainWindow(object):
             for i in range(len(self.redBlocks)):
                 redSugSpeeds=self.waysideControllers[0].getRoutedSpeeds()
                 redAuth=self.waysideControllers[0].getBlockAuth()
-                redFault=self.redBlocks[i].fail
+                redFault=self.tempRedFault[i]
                 if int(self.RedBlockSelBox.currentText()) == i+1:
                     if self.redBlocks[i].occ == 0:
                         self.RedBlockOccLabel.setText("Not Occupied")
@@ -3300,3 +3310,6 @@ if __name__ == "__main__":
     #ui.CTCInput(CTC)
     #window.mainloop()
     sys.exit(app.exec_())
+    
+ 
+

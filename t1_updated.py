@@ -39,7 +39,11 @@ class CTCOFFICE:
 	
 	def __init__(self):		
 		#create Tab Window
-		
+		self.U_A = 0
+		self.U_S = 0
+		self.U_Occ = 0
+		self.Options2=["Train 1","Train 2","Train 3","Train 4","Train 5","Train 6","Train 7","Train 8","Train 9","Train 10"]
+
 		self.master=Tk()
 		self.tabControl = ttk.Notebook(self.master)
 		tab1 = ttk.Frame(self.tabControl,width=700,height=400) 
@@ -68,9 +72,9 @@ class CTCOFFICE:
 		self.C=["60","75","STATION 12","STATION 1","291","100"]
 		
 		self.Trains_current= [[0 for x in range (6)]for y in range (10)]
-		self.PAUSE_BEACON=0;
-		self.NEW_DATA_BEACON=0;
-		self.TID=0;
+		self.PAUSE_BEACON=0
+		self.NEW_DATA_BEACON=0
+		self.TID=10
 		
 		#Set string variables for entry boxes
 		self.sp=StringVar(tab1)
@@ -93,8 +97,8 @@ class CTCOFFICE:
 		self.E2= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.pos,foreground='blue').place(x=255,y=305)
 		self.E3= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.des,foreground='blue').place(x=255,y=360)
 		#self.E4= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.occ,foreground='blue').place(x=255,y=415)
-		self.E5= ttk.Entry(tab1,width=15,state=DISABLED,textvariable=self.tp,foreground='green').place(x=240,y=495)
-		self.E5= ttk.Entry(tab1,width=15,state=DISABLED,textvariable=self.tpred,foreground='red').place(x=240,y=445)
+		self.E5= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.tp,foreground='green').place(x=160,y=495)
+		self.E5= ttk.Entry(tab1,width=35,state=DISABLED,textvariable=self.tpred,foreground='red').place(x=160,y=445)
 		
 		#Create Option Menu
 		self.Options = ["--Select--","TRAIN 1","TRAIN 2","TRAIN 3","TRAIN 4","TRAIN 5","TRAIN 6","TRAIN 7","TRAIN 8","TRAIN 9","TRAIN 10"]
@@ -114,8 +118,8 @@ class CTCOFFICE:
 		self.B6 = ttk.Label(tab1, text="POSITION").place(x=135,y=305)
 		self.B7 = ttk.Label(tab1, text="DESTINATION").place(x=135,y=360)
 		#self.B8 = ttk.Label(tab1, text="OCCUPANCY").place(x=135,y=415)
-		self.B9 = ttk.Label(tab1, text="THROUGHPUT GREEN(Tickets/Hour)",font=('Helvetica',12,'bold')).place(x=35,y=500)
-		self.Thru2 = ttk.Label(tab1, text="THROUGHPUT RED(Tickets/Hour)",font=('Helvetica',12,'bold')).place(x=35,y=450)
+		self.B9 = ttk.Label(tab1, text="TPG",font=('Helvetica',12,'bold')).place(x=35,y=500)
+		self.Thru2 = ttk.Label(tab1, text="TPR",font=('Helvetica',12,'bold')).place(x=35,y=450)
 		
 		#----------------------- TAB 2 ----------------------------
 		
@@ -129,6 +133,7 @@ class CTCOFFICE:
 		self.MM_BEACON=0
 		self.REMOVE_CLOSURE_BEACON=0
 		self.CLOSURE_BEACON=0
+		self.TOGGLE_BEACON = 0
 		
 		#Create Labels + ListBoxes + Buttons
 		self.V1 =ttk.Label(tab2, text="TRACK STATUS",font=('Helvetica',19,'bold'),foreground='blue').place(x=35,y=65)
@@ -283,6 +288,7 @@ class CTCOFFICE:
 	def GO(self):
 		
 	
+		#print("GO")
 		
 		delete_later=list() 
 		
@@ -296,14 +302,15 @@ class CTCOFFICE:
 			print("5")
 			temp2=self.CurrentTravel_line_speed[indexing]
 			temp3=self.CurrentTravel_line_speed[indexing+1]
+			print("Temp2=" +str(temp2))
 			
 			#Determine if train is on red line or green line load the correct Occupancy and Authority 
 			if(temp2==1):
 				#print("GREEN LINE FUNCTION")
 				self.GLOBAL_LINE=1;
 				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies()
-				print(BlockOccupancy)
-				print("0")
+				#print(BlockOccupancy)
+				#print("0")
 				#print("GREEN LINE AUTHORITY")
 				BlockAuthority=self.TrainControl.getGreenAuth() #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
 				#print("CALL THROUGHPUT FUNCTIONS")
@@ -339,8 +346,9 @@ class CTCOFFICE:
 					self.Trains_current[write_row][3]= temp[len(temp)-2] #destination block
 					self.Trains_current[write_row][4]= str(Throughput)
 					self.Trains_current[write_row][5]= str(Throughput_red)		
-				if(z+1==int(temp[len(temp)-2])):
-					delete_later.append(i)
+					if(z+1==int(path[len(path) -1])):
+						#print("Delet later")
+						delete_later.append(i)
 		
 		#remove items that have reached their destination	
 		for q in range(0,len(delete_later)):
@@ -360,8 +368,12 @@ class CTCOFFICE:
 				self.aut.set(self.Trains_current[i-1][1])
 				self.pos.set(self.Trains_current[i-1][2])
 				self.des.set(self.Trains_current[i-1][3])
-				self.tp.set(self.Trains_current[i-1][4])
-				self.tpred.set(self.Trains_current[i-1][5])	
+				self.tp.set(str(self.TrainControl.getGreenTickets()))
+				self.tpred.set(str(self.TrainControl.getRedTickets()))
+				print(str(self.TrainControl.getGreenTickets()))
+				print(str(self.TrainControl.getRedTickets()))
+				
+
 			
 		
 	#TAB 2 FUNCTIONS
@@ -753,13 +765,16 @@ class CTCOFFICE:
 			#print(self.SentRouteLines)
 			#print(self.SentSuggestedSpeed)
 			#print(self.SentSuggestedAuth)
+			print(self.SentRouteBlocks)
 			temp_list= self.routes[0]
 			temp_list= np.append(temp_list,self.l.get(0))
 			self.CurrentTravel.append(temp_list)
 			self.CurrentTravel_line_speed.append(self.SentRouteLines[0])
 			self.CurrentTravel_line_speed.append(int(self.l4.get(0)))
-			self.TID=self.Options.index(self.l.get(0));
+			temp = self.l.get(0).split(" ")
+			self.TID=int(temp[1])-1
 			self.Remove()
+			return
 			
 		
 	#TAB 4 FUNCTIONS

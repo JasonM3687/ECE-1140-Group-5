@@ -16,7 +16,7 @@ GreenFaults = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[8])]
 GreenRoute = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[9])]
 GreenUnderground = [bool(int(s)) for s in re.findall(r'\b\d+\b', Content[10])]
 
-ManualSW = Content[53].strip()[-1]
+ManualSW = int(Content[45].strip()[-1])
 
 
 GreenSWOut=[0]*6
@@ -31,6 +31,8 @@ RedAuthChange=[0]*76
 RedLightStatuses=[0]*76
 RedCrossStatus=0
 
+#print("Manual =" + str(ManualSW))
+
 #Green Logic
 #switch Logic
 if(ManualSW == 0):
@@ -38,9 +40,8 @@ if(ManualSW == 0):
     GreenSWOut[1]=GreenRoute[28] and GreenRoute[29] and not(GreenBlockOcc[28]) and not(GreenBlockOcc[29]) and not(GreenBlockOcc[149])
     GreenSWOut[2]=GreenRoute[56] and GreenRoute[57] and not(GreenBlockOcc[56]) and not(GreenBlockOcc[57])
     GreenSWOut[3]=GreenRoute[62] and GreenRoute[61] and not(GreenBlockOcc[61]) and not(GreenBlockOcc[62])
-    GreenSWOut[4]=GreenRoute[76] and GreenRoute[75] and not(GreenBlockOcc[75]) and not(GreenBlockOcc[76]) and not(GreenBlockOcc[100])
+    GreenSWOut[4]=GreenRoute[76] and GreenRoute[75] #and not(GreenBlockOcc[75]) and not(GreenBlockOcc[76]) and not(GreenBlockOcc[100])
     GreenSWOut[5]=GreenRoute[84] and GreenRoute[85] and not(GreenBlockOcc[84]) and not(GreenBlockOcc[85]) and not(GreenBlockOcc[99])
-
 #crossing logic
 GreenCrossStatus = GreenBlockOcc[17] or GreenBlockOcc[19]
 
@@ -115,19 +116,24 @@ with open('PLC_IO.txt','r') as file:
     Content=file.readlines()
 file.close()
 
+
 #figure out what wayside is currently running the PLC
 with open('CurrentWayside.txt','r') as file:
     CurrentWayside=file.readlines()
 file.close()
-CurrentWayside[0]=CurrentWayside[0][19:]
+CurrentWayside=CurrentWayside[0][19:].strip()
+print("!"+ CurrentWayside + "!")
 
 #Write the output to the green 1 output section
 if CurrentWayside == "Green1":
-    tempstringSW=""
-    for i in range(len(GreenSWOut)):
-        tempstringSW=tempstringSW+str(int(GreenSWOut[i]))+","
-    tempstringSW=tempstringSW[:-1]
-    Content[22]="SwitchPos="+tempstringSW+"\n"
+    print("Inside Wayside")
+    if ManualSW == 0:
+        tempstringSW=""
+        print("Green Switch Out = " + str(GreenSWOut[4]))
+        for i in range(len(GreenSWOut)):
+            tempstringSW=tempstringSW+str(int(GreenSWOut[i]))+","
+        tempstringSW=tempstringSW[:-1]
+        Content[22]="SwitchPos="+tempstringSW+"\n"
 
     tempstringTrainL=""
     for i in range(len(GreenTrainLightSigs)):
@@ -151,11 +157,12 @@ if CurrentWayside == "Green1":
     Content[27]="CrossStatus="+tempstringCross+"\n"
 
 elif CurrentWayside == "Green2":
-    tempstringSW=""
-    for i in range(len(GreenSWOut)):
-        tempstringSW=tempstringSW+str(int(GreenSWOut[i]))+","
-    tempstringSW=tempstringSW[:-1]
-    Content[38]="SwitchPos="+tempstringSW+"\n"
+    if ManualSW == 0:
+        tempstringSW=""
+        for i in range(len(GreenSWOut)):
+            tempstringSW=tempstringSW+str(int(GreenSWOut[i]))+","
+        tempstringSW=tempstringSW[:-1]
+        Content[38]="SwitchPos="+tempstringSW+"\n"
 
     tempstringTrainL=""
     for i in range(len(GreenTrainLightSigs)):
@@ -179,11 +186,12 @@ elif CurrentWayside == "Green2":
     Content[43]="CrossStatus="+tempstringCross+"\n"
 
 elif CurrentWayside == "Red1":
-    tempstringSW=""
-    for i in range(len(RedSWOut)):
-        tempstringSW=tempstringSW+str(int(RedSWOut[i]))+","
-    tempstringSW=tempstringSW[:-1]
-    Content[14]="SwitchPos="+tempstringSW+"\n"
+    if ManualSW == 0:
+        tempstringSW=""
+        for i in range(len(RedSWOut)):
+            tempstringSW=tempstringSW+str(int(RedSWOut[i]))+","
+        tempstringSW=tempstringSW[:-1]
+        Content[14]="SwitchPos="+tempstringSW+"\n"
 
     tempstringTrainL=""
     for i in range(len(RedTrainLightSigs)):
@@ -207,11 +215,12 @@ elif CurrentWayside == "Red1":
     Content[19]="CrossStatus="+tempstringCross+"\n"
 
 elif CurrentWayside == "Red2":
-    tempstringSW=""
-    for i in range(len(RedSWOut)):
-        tempstringSW=tempstringSW+str(int(RedSWOut[i]))+","
-    tempstringSW=tempstringSW[:-1]
-    Content[30]="SwitchPos="+tempstringSW+"\n"
+    if ManualSW == 0:
+        tempstringSW=""
+        for i in range(len(RedSWOut)):
+            tempstringSW=tempstringSW+str(int(RedSWOut[i]))+","
+        tempstringSW=tempstringSW[:-1]
+        Content[30]="SwitchPos="+tempstringSW+"\n"
 
     tempstringTrainL=""
     for i in range(len(RedTrainLightSigs)):

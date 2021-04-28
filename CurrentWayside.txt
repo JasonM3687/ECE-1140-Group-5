@@ -1,1 +1,1 @@
-CurrentWaysideLine=Red1
+CurrentWaysideLine=Green2

@@ -22,6 +22,7 @@ if __name__=='__main__':
     trainApp=QtWidgets.QApplication(sys.argv)
     trainWindow=QtWidgets.QMainWindow()
     train=trainModel.Ui_MainWindow()
+    track.setTrainModel(train)
     train.trackModelInstance(track)
     train.trainControllerInstance(trainC) 
     train.setupUi(trainWindow)
