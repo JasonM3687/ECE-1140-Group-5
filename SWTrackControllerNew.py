@@ -1132,6 +1132,7 @@ class Ui_MainWindow(object):
             self.manualSpeed=self.CTC.U_S
             self.manualBlock=self.CTC.U_Occ
             self.TrainID=self.CTC.TID
+            self.manualLine=self.CTC.GLOBAL_LINE
             
             #If Brian selects a UI update, update his UI
             if self.CTC.PAUSE_BEACON == False:
@@ -1139,8 +1140,8 @@ class Ui_MainWindow(object):
 
             #if there is a request to manually change a blocks speed/auth change it and acknowledge change made
             if self.CTC.NEW_DATA_BEACON == True:
-                self.waysideControllers[self.CTC.BrianLineVar].setBlockAuthorities(self.manualBlock, self.manualAuth)
-                self.waysideControllers[self.CTC.BrianLineVar].setRoutedSpeeds(self.manualBlock, self.manualSpeed)
+                self.waysideControllers[self.CTC.manualLine].setBlockAuthorities(self.manualBlock, self.manualAuth)
+                self.waysideControllers[self.CTC.manualLine].setRoutedSpeeds(self.manualBlock, self.manualSpeed)
                 self.CTC.LOWER_DATA_BEACON()
 
             
@@ -1363,7 +1364,7 @@ class Ui_MainWindow(object):
 
 
             #If CTC in manual switch mode set it so PLC will not run for switches
-            if self.CTC.MANUAL:
+            if self.CTC.MM_BEACON == True:
                 with open('PLC_IO.txt','r') as file:
                     Content=file.readlines()
                 file.close()
@@ -3299,6 +3300,6 @@ if __name__ == "__main__":
     #ui.CTCInput(CTC)
     #window.mainloop()
     sys.exit(app.exec_())
-
-   
+    
+    
 
