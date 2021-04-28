@@ -1591,7 +1591,10 @@ class trackModel(object):
                 return i
             
     def trainDispatched(self,num,line):
-        self.trainModel.dispatched(num,line)
+        if(line==0):
+            self.trainModel.dispatched(num,"Red")
+        elif(line==1):
+            self.trainModel.dispatched(num,"Green")
         
     class Train():
         cSpeed=0
