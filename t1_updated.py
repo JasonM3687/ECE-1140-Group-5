@@ -52,6 +52,7 @@ class CTCOFFICE:
 		self.tabControl.add(tab3, text ='SCHEDULE') 
 		self.tabControl.add(tab4, text ='DEBUG') 
 		self.tabControl.pack(expand = 1, fill ="both")
+		self.GLOBAL_LINE=1;
 		self.end=0
 	
 		
@@ -299,6 +300,7 @@ class CTCOFFICE:
 			#Determine if train is on red line or green line load the correct Occupancy and Authority 
 			if(temp2==1):
 				#print("GREEN LINE FUNCTION")
+				self.GLOBAL_LINE=1;
 				BlockOccupancy=self.TrainControl.getGreenBlockOccpancies()
 				print(BlockOccupancy)
 				print("0")
@@ -309,6 +311,7 @@ class CTCOFFICE:
 				Throughput_red=self.TrainControl.getRedTickets()
 			else:
 				#print("RED LINE FUNCTION")
+				self.GLOBAL_LINE=0;
 				BlockOccupancy=self.TrainControl.getRedBlockOcc()
 				#print("RED LINE AUTHORITY")
 				BlockAuthority=[0,0,0,0,0,0,0,0,0,0] #TEST VALUES WAITING FOR GRANT TO IMPLEMENT
