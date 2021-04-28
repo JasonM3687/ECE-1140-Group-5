@@ -776,8 +776,8 @@ class Ui_MainWindow(object):
                 
 
                 #creating arrays for lights, doors
-                self.cabinLights = [self.internal_1,self.internal_2,self.internal_3,self.internal_4,self.internal_5]
-                self.externalLights = [self.external_1,self.external_2,self.external_3,self.external_4,self.external_5]
+                self.externalLights = [self.internal_1,self.internal_2,self.internal_3,self.internal_4,self.internal_5]
+                self.cabinLights = [self.external_1,self.external_2,self.external_3,self.external_4,self.external_5]
                 self.doors = [self.doors_1,self.doors_2,self.doors_3,self.doors_4,self.doors_5]
                 self.setTemps = [self.setTemp_1,self.setTemp_2,self.setTemp_3,self.setTemp_4,self.setTemp_5]
                 self.currTemps = [self.currTemp_1,self.currTemp_2,self.currTemp_3,self.currTemp_4,self.currTemp_5]
@@ -786,6 +786,7 @@ class Ui_MainWindow(object):
                 self.timer.timeout.connect(self.updateEverything)
                 self.timer.start(100)
                 
+                self.currentTrainDisplay = self.trainSelect.currentIndex()
 
                 # button events and where to go
                 self.trainSelect.currentIndexChanged.connect(self.TrainWindow)
@@ -801,7 +802,7 @@ class Ui_MainWindow(object):
                 self.failureFixed.clicked.connect(self.failFix)
 
         def TrainWindow(self):
-                self.currentTrainDisplay = self.trainSelect.currentIndex() # indexed at 0 so 0 = 1 and 1 =2
+                self.currentTrainDisplay = self.trainSelect.currentIndex() # indexed at 0 
                 self.updateTrainDisplay(self.currentTrainDisplay)
 
         def updateTrainDisplay(self,trainNum):
@@ -834,14 +835,14 @@ class Ui_MainWindow(object):
                                 self.doors[x].setText("Open")
                                 self.doors[x].setStyleSheet("background-color: rgb(57, 255, 35)")
                         
-                        if self.trains[trainNum].externalStatus == False:
+                        if self.trains[trainNum].internalStatus == False:
                                 self.cabinLights[x].setText("Off")
                                 self.cabinLights[x].setStyleSheet("background-color: rgb(234, 234, 234)")
                         else:
                                 self.cabinLights[x].setText("On")
                                 self.cabinLights[x].setStyleSheet("background-color: rgb(57, 255, 35)")
 
-                        if self.trains[trainNum].internalStatus == False and self.trains[trainNum].externalStatusTrack == 0:
+                        if self.trains[trainNum].externalStatus == False and self.trains[trainNum].externalStatusTrack == 0:
                                 self.externalLights[x].setText("Off")
                                 self.externalLights[x].setStyleSheet("background-color: rgb(234, 234, 234)")
                         elif self.trains[trainNum].internalStatus == True or self.trains[trainNum].externalStatusTrack == True:
@@ -927,60 +928,29 @@ class Ui_MainWindow(object):
                 self.failureOutput.setText("No failures")
                 self.trains[self.currentTrainDisplay].brakesDone()
                 self.updateEverything()
-                
-        beans=0
-        lastTime = 0.0
-        timeChange = 0.0
-        errSum = 0.0
-        errSum2 = 0.0
-        error = 0.0
-        error2 = 0.0
-        maxPower = 150000
-        currentVelocity=0
-        startTime=0
-        kp=0
-        ki=0
-        speed=0
-        power=0
-                
-        def calcTrainPower(self):
-                #time since last calculation
-                self.currentTime = time.time()
-                self.timeChange = self.currentTime - self.startTime
-
-                #Compute working error variables
-                self.error = self.speed - self.currentVelocity
-                if self.power < self.maxPower:
-                        self.errSum = self.errSum2 + (self.timeChange/2)*(self.error + self.error2)
-                else:
-                        self.errSum = self.errSum2
-
-                #Compute PID power output
-                self.power = (self.kp * self.error) + (self.ki * self.errSum)
-
-                self.startTime = self.currentTime
-                self.error2 = self.error
-                self.errSum2 = self.errSum
 
 
         ################ train controller functions ###################
         def getVelocity(self,trainID):
-                return self.trains[trainID-1].velocityKM
+                return self.trains[trainID].velocityKM
 
         def getSpeedLimit(self,trainID):
-                return self.trains[trainID-1].speed_limit
+                return self.trains[trainID].speed_limit
 
         def getCommanded(self,trainID):
-                return self.trains[trainID-1].commSpeed
+                return self.trains[trainID].commSpeed
 
         def getAuthority(self,trainID):
-                return self.trains[trainID-1].authority
+                return self.trains[trainID].authority
 
         def getBeacon(self,trainID):
-                return self.trains[trainID-1].beacon
+                return self.trains[trainID].beacon
 
         def getTrainFaults(self,trainID):
-                return self.trains[trainID-1].faults
+                return self.trains[trainID].faults
+
+        def getDispatched(self):
+                return [self.trains[0].dispatched,self.trains[1].dispatched,self.trains[2].dispatched,self.trains[3].dispatched,self.trains[4].dispatched,self.trains[5].dispatched,self.trains[6].dispatched,self.trains[7].dispatched,self.trains[8].dispatched,self.trains[9].dispatched]
 
         def getValuesFromTrainController(self,trainID):
                 emerTemp = self.trains[trainID].emergency
@@ -1006,7 +976,7 @@ class Ui_MainWindow(object):
                 elif (self.trains[trainID].service != serviceTemp) and (self.trains[trainID].service == 1) and (self.trains[trainID].emergency != 1):
                         self.trains[trainID].serviceBrake()
 
-                self.trains[trainID-1].calculateVelocity()
+                self.trains[trainID].calculateVelocity()
 
         ################ track model functions ##################
         def getValuesFromTrackModel(self,trainID):
@@ -1025,6 +995,8 @@ class Ui_MainWindow(object):
                 self.trains[trainID].base, self.trains[trainID].switchBlock = self.trackModel.getSwitch(self.trains[trainID].line,self.trains[trainID].blockNum)
                 self.trains[trainID].signal = self.trackModel.getSwitch(self.trains[trainID].line,self.trains[trainID].blockNum)
 
+                self.trains[trainID].switches()
+
                 self.trackModel.setTrainPos(self.trains[trainID].ID,self.trains[trainID].line,self.trains[trainID].blockNum)
                 self.trackModel.setTrainFault(trainID, self.trains[trainID].faults)
 
@@ -1036,15 +1008,14 @@ class Ui_MainWindow(object):
 
         # when a train is dispatch
         def dispatched(self,trainID,line):
-                # call train controller dispatch function
                 
                 self.trains[trainID].dispatched = True
                 self.trains[trainID].line = line
+
                 #set line in block class for correct route
                 self.trains[trainID].setLine(line)
                 #since dispatched, take off emergency brakes
                 self.trains[trainID].brakesDone()
-
 
 
 if __name__ == "__main__":

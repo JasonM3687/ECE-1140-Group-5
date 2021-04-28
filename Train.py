@@ -51,6 +51,8 @@ class TrainClass():
         currPos = 0
         position=0
 
+        wait = 0
+
         #block grades and elevations
         blockGrade = 0
         elevation = 0
@@ -75,6 +77,15 @@ class TrainClass():
                 self.timeChange = self.currTime - self.startTime
 
                 self.calculateMass()
+
+                if (self.blocks.yard == True):
+                        self.dispatched = False
+
+                #do not calculate anything if true
+                if (self.blocks.yard == True or self.dispatched == False):
+                        self.acceleration = 0
+                        self.velocity = 0
+                        return
         
                 force = self.power / self.prevVel
                 if (force != 0 and self.blockNum != 0):
@@ -114,10 +125,14 @@ class TrainClass():
 
                 #calculate position
                 self.position += self.timeChange * self.velocity
-                
-                if (self.position > self.blockLength):
-                        self.blocks.greenLine.pop(0)            #removes firt element
-                        self.blockNum = self.blocks.greenLine[0]
+
+                if self.blockNum == 0 and self.blocks.yard == False:
+                        self.blocks.lineRoute.pop(0)
+                        self.blockNum = self.blocks.lineRoute[0]
+                        self.position=0
+                elif (self.position > self.blockLength):
+                        self.blocks.lineRoute.pop(0)            #removes firt element
+                        self.blockNum = self.blocks.lineRoute[0]
                         self.currPos = self.position - self.blockLength
                         self.position=0
                 else:
@@ -184,4 +199,13 @@ class TrainClass():
                 self.prevblock=self.blockNum
 
         def setLine(self,line):
-                self.blocks.initialize(line)
+                if line == 0:
+                        self.blocks.initialize("red")
+                elif line == 1:
+                        self.blocks.initialize("green")
+                
+        def switches(self):
+                if self.line == 0:
+                        self.blocks.redSwitchYard(self.base,self.switchBlock)
+                elif self.line == 1:
+                        self.blocks.greenSwitchYard(self.base,self.switchBlock)
