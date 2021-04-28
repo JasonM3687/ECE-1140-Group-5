@@ -3300,6 +3300,3 @@ if __name__ == "__main__":
     #ui.CTCInput(CTC)
     #window.mainloop()
     sys.exit(app.exec_())
-    
- 
-
