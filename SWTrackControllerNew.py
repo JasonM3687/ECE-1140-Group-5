@@ -1156,9 +1156,9 @@ class Ui_MainWindow(object):
             if self.routedBlockEqual==False or self.TrainID != self.prevTrainID:
 
                 #Call the funtion to spawn a train if the first block on a route is 63 (green) or 9 (red)
-                if self.routedBlocks[0]==63:
+                if int(self.routedBlocks[0],2)==63:
                     self.trackModelDatabase.dispatchTrain(self.TrainID, 1)
-                elif self.routedBlocks[0]==9:
+                elif (self.routedBlocks[0],2)==9:
                     self.trackModelDatabase.dispatchTrain(self.TrainID, 0)
 
                 if self.routedLines[0] == 1:
@@ -1179,7 +1179,7 @@ class Ui_MainWindow(object):
                             continue
 
                 
-            self.prevRoutedBlocks=list(self.routedBlocks)
+            self.prevRoutedBlocks=list(int(self.routedBlocks,2))
             self.prevRoutedLines=list(self.routedLines)
 
 
@@ -1247,9 +1247,9 @@ class Ui_MainWindow(object):
             #Remove a track closure to the list at the specified block and line if one the remove beacon is high
             if self.CTC.REMOVE_CLOSURE_BEACON == True:
                 if self.CTC.REMOVE_CLOSURE_LINE == 0:
-                    self.closedRedBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=0
+                    self.closedRedBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=1
                 elif self.CTC.CLOSURE_LINE == 1:
-                    self.closedGrnBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=0
+                    self.closedGrnBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=1
                 self.CTC.LOWER_REMOVE_CLOSURE_BEACON()
 
             #input Fault Statuses
@@ -3299,5 +3299,6 @@ if __name__ == "__main__":
     #ui.CTCInput(CTC)
     #window.mainloop()
     sys.exit(app.exec_())
-    
-    
+
+   
+
