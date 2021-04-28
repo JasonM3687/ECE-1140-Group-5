@@ -1158,9 +1158,9 @@ class Ui_MainWindow(object):
 
                 #Call the funtion to spawn a train if the first block on a route is 63 (green) or 9 (red)
                 if int(self.routedBlocks[0],2)==63:
-                    self.trackModelDatabase.dispatchTrain(self.TrainID, 1)
+                    self.trackModelDatabase.trainDispatched(self.TrainID, 1)
                 elif (self.routedBlocks[0],2)==9:
-                    self.trackModelDatabase.dispatchTrain(self.TrainID, 0)
+                    self.trackModelDatabase.trainDispatched(self.TrainID, 0)
 
                 if self.routedLines[0] == 1:
                     for i in range(10):
@@ -3301,5 +3301,5 @@ if __name__ == "__main__":
     #window.mainloop()
     sys.exit(app.exec_())
     
-    
+ 
 
