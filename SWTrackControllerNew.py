@@ -56,6 +56,7 @@ class Ui_MainWindow(object):
     routeMatchR = False
     redTicketSales = []
     greenTicketSales = []
+    file_path = ""
     
     def trackModelInput(self, obj):
         self.trackModelDatabase=obj
@@ -63,7 +64,14 @@ class Ui_MainWindow(object):
     def CTCInput(self,obj):
         self.CTC=obj
         
-        
+    ## ##  #####     ###   #####  #####  ## ##  #####
+    ## ##    #      #      ##       #    ## ##  ##  #
+    ## ##    #       ###   ####     #    ## ##  #####
+    ## ##    #          #  ##       #    ## ##  ##
+     ###   #####     ###   #####    #     ###   ## 
+    #___________________________________________________________________________________________________________________#
+
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1383, 963)
@@ -261,7 +269,7 @@ class Ui_MainWindow(object):
         self.label_846.setGeometry(QtCore.QRect(280, 20, 231, 41))
         self.label_846.setObjectName("label_846")
         self.RedLightOccLabel = QtWidgets.QLabel(self.frame_23)
-        self.RedLightOccLabel.setGeometry(QtCore.QRect(190, 130, 111, 41))
+        self.RedLightOccLabel.setGeometry(QtCore.QRect(190, 130, 231, 41))
         self.RedLightOccLabel.setObjectName("RedLightOccLabel")
         self.label_832 = QtWidgets.QLabel(self.frame_23)
         self.label_832.setGeometry(QtCore.QRect(20, 200, 171, 41))
@@ -1042,22 +1050,28 @@ class Ui_MainWindow(object):
         
     def realTime(self):
         _translate = QtCore.QCoreApplication.translate
+        #have user load initial PLC file so system can function
         print("Load Your Initial PLC File:")
         global root
         root=tk.Tk()
         root.withdraw()
-        file_path = filedialog.askopenfilename()
-        self.PLCFile=file_path
-        if file_path.partition(".")[2] != "py":
+        #ask for a file from a dialog box
+        self.file_path = filedialog.askopenfilename()
+        self.PLCFile=self.file_path
+        #check if valid plc and set PLCFile name if so
+        if self.file_path.partition(".")[2] != "py":
               print("ERROR! Incorrect/Invalid PLC File")
               sys.exit()
-        self.LoadedPLCLabel.setText(_translate("MainWindow","Currently Loaded PLC:   "+os.path.basename(file_path)))
+        self.LoadedPLCLabel.setText(_translate("MainWindow","Currently Loaded PLC:   "+os.path.basename(self.file_path)))
         self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
         "font-weight: bold")
         self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+
+
         self.grnRouteTemp=[0]*150
         self.redRouteTemp=[0]*76
 
+        #Everytime program is run, Reset routes and authority
         with open('PLC_IO.txt','r') as file:
             Content=file.readlines()
         file.close()
@@ -1083,10 +1097,12 @@ class Ui_MainWindow(object):
             file.writelines(Content)
         file.close()
 
+        #monitor button clickage
         self.LoadPLCButton.clicked.connect(self.clickedLF)
         self.RunButton.clicked.connect(self.clickedCommand)
         #self.LogoutButton.clicked.connect(self.clickedLogout)
-       
+
+        #constantly run PLC
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.UpdatePLC)
         self.timer.start(200)
@@ -1094,19 +1110,22 @@ class Ui_MainWindow(object):
     #def clickedLogout(self):
         #sys.exit()
 
+    #I literally do not use this anymore
     def clickedCommand(self):
         if self.CommandEntryLabel.toPlainText() == "diagnosticFunction()":
                 return
         else:
                 print("Command Run Failed: Unknown Function")
 
-
+    #Function for if load filr is clicked
     def clickedLF(self):
         root=tk.Tk()
         root.withdraw()
-        file_path = filedialog.askopenfilename()
+        #ask for file from dialog box, and check if it is a valid PLC
+        self.file_path = filedialog.askopenfilename()
         _translate = QtCore.QCoreApplication.translate
-        if file_path.partition(".")[2] != "py":
+        #if it isn't keep the old file path as the PLC and print to user that file upload failed
+        if self.file_path.partition(".")[2] != "py":
 
                 self.LoadConfLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">File Load Failed</span></p></body></html>" )) 
                 self.LoadConfLabel.setGeometry(QtCore.QRect(10, 900, 181, 21))
@@ -1118,17 +1137,19 @@ class Ui_MainWindow(object):
                 self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
 
                 QtCore.QTimer.singleShot(3000, self.checkFailPassLabel)
+        #else, set new file path for PLC and let user know file successfully uploaded
         else:
                 self.LoadConfLabel.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">File Load Successful</span></p></body></html>")) 
                 self.LoadConfLabel.setGeometry(QtCore.QRect(10, 900, 181, 21))
                 self.LoadConfLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
                 "background-color: rgb(170, 255, 0);")
-                self.PLCFile=file_path
-                self.LoadedPLCLabel.setText(_translate("MainWindow","Currently Loaded PLC:   "+os.path.basename(file_path)))
+                self.PLCFile=self.file_path
+                self.LoadedPLCLabel.setText(_translate("MainWindow","Currently Loaded PLC:   "+os.path.basename(self.file_path)))
                 QtCore.QTimer.singleShot(3000, self.checkFailPassLabel)
                 
                 
     def checkFailPassLabel(self):
+            #hide file confirmation label
             _translate = QtCore.QCoreApplication.translate
             self.LoadConfLabel.setText(_translate("MainWindow", "")) 
             self.LoadConfLabel.setGeometry(QtCore.QRect(0, 0, 0, 0))
@@ -1165,7 +1186,6 @@ class Ui_MainWindow(object):
             self.TrainID=self.CTC.TID
             self.manualLine=self.CTC.GLOBAL_LINE
             self.dispatchSig = self.CTC.dispatchBeacon
-            print(self.routedBlocks)
             
             #If Brian selects a UI update, update his UI
             if self.CTC.PAUSE_BEACON == False:
@@ -1191,7 +1211,6 @@ class Ui_MainWindow(object):
             
             # if a new route is sent store it to inspect later
             if self.dispatchSig == 1:
-                print("Dispatch")
 
                 #Call the funtion to spawn a train if the first block on a route is 63 (green) or 9 (red)
                 if int(self.routedBlocks[0],2)==63:
@@ -1222,7 +1241,6 @@ class Ui_MainWindow(object):
                                 break
                             else:
                                 continue
-                print(self.GrnRoutes)
                 self.CTC.lowerDispatchBeacon()
 
                 
@@ -1278,6 +1296,10 @@ class Ui_MainWindow(object):
             #input Authority
             for i in range(len(self.routedBlocks)):
                 self.waysideControllers[self.routedLines[i]].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
+                if self.routedLines[i] == 0:
+                    self.waysideControllers[2].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
+                if self.routedLines[i] == 1:
+                    self.waysideControllers[3].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
 
             #input Suggested Speeds
             for i in range(len(self.routedBlocks)):
@@ -1295,9 +1317,9 @@ class Ui_MainWindow(object):
             #Remove a track closure to the list at the specified block and line if one the remove beacon is high
             if self.CTC.REMOVE_CLOSURE_BEACON == True:
                 if self.CTC.REMOVE_CLOSURE_LINE == 0:
-                    self.closedRedBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=1
+                    self.closedRedBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=0
                 elif self.CTC.CLOSURE_LINE == 1:
-                    self.closedGrnBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=1
+                    self.closedGrnBlocks[self.CTC.REMOVE_CLOSURE_BLOCK-1]=0
                 self.CTC.LOWER_REMOVE_CLOSURE_BEACON()
 
             #input Fault Statuses
@@ -1371,8 +1393,6 @@ class Ui_MainWindow(object):
                             if k == i:
                                 continue
                             elif self.GrnRoutes[k][0]==self.GrnRoutes[i][0]:
-                                print(GrnRoutes[k][0])
-                                print(GrnRoutes[i][0])
                                 self.routeMatchG = True
                         if self.routeMatchG == True:
                             for j in range(lastBlock+1):
@@ -1418,7 +1438,6 @@ class Ui_MainWindow(object):
 
             #If CTC in manual switch mode set it so PLC will not run for switches
             if self.CTC.MM_BEACON == True:
-                print("Beacon High")
                 with open('PLC_IO.txt','r') as file:
                     Content=file.readlines()
                 file.close()
@@ -1431,24 +1450,24 @@ class Ui_MainWindow(object):
 
                 #if a switch is to be toggled, get the current switches toggle the desired one, and store it back on the PLC_IO
                 if self.CTC.TOGGLE_BEACON == True:
-                    print("Toggle")
                     self.grnCurSwitches=self.waysideControllers[1].getSwitchPositions()
                     self.redCurSwitches=self.waysideControllers[0].getSwitchPositions()
                     if self.CTC.TOGGLE_INDEX > 5:
-                        self.redCurSwitches[self.CTC.TOGGLE_INDEX-6]=not(self.redCurSwitches[self.CTC.TOGGLE_INDEX-6])
+                        self.redCurSwitches[self.CTC.TOGGLE_INDEX-6]=int(not(self.redCurSwitches[self.CTC.TOGGLE_INDEX-6]))
                     else:
-                        self.grnCurSwitches[self.CTC.TOGGLE_INDEX]=not(self.grnCurSwitches[self.CTC.TOGGLE_INDEX])
+                        self.grnCurSwitches[self.CTC.TOGGLE_INDEX]=int(not(self.grnCurSwitches[self.CTC.TOGGLE_INDEX]))
+
 
                     redSWString=""
                     for i in range(len(self.redCurSwitches)):
                         redSWString=redSWString+str(self.redCurSwitches[i])+","
-                        redSWString=redSWString[:-1]
+                    redSWString=redSWString[:-1]
                     redSWString="SwitchPos="+redSWString+"\n"
 
                     grnSWString=""
                     for i in range(len(self.grnCurSwitches)):
                         grnSWString=grnSWString+str(self.grnCurSwitches[i])+","
-                        grnSWString=grnSWString[:-1]
+                    grnSWString=grnSWString[:-1]
                     grnSWString="SwitchPos="+grnSWString+"\n"
                     
                     Content[14]=redSWString
@@ -1523,7 +1542,7 @@ class Ui_MainWindow(object):
             self.waysideFaultR = False
 
             #Vitality through ANDing outputs of two wayside controllers that calculate the same thing
-            '''#Red1 Outputs
+            #Red1 Outputs
             self.Red1SW = self.waysideControllers[0].getSwitchPositions()
             self.Red1TrafficL = self.waysideControllers[0].getTrafficLightStatus()
             self.Red1TrainL = self.waysideControllers[0].getTrainLightSignals()
@@ -1542,69 +1561,45 @@ class Ui_MainWindow(object):
             self.Green1Auth = self.waysideControllers[1].getBlockAuth()
             self.Green1Cross = self.waysideControllers[1].getCrossingStatus()
             #Green2 Outputs
-            self.Green2SW = self.waysideControllers[1].getSwitchPositions()
-            self.Green2TrafficL = self.waysideControllers[1].getTrafficLightStatus()
-            self.Green2TrainL = self.waysideControllers[1].getTrainLightSignals()
-            self.Green2Auth = self.waysideControllers[1].getBlockAuth()
-            self.Green2Cross = self.waysideControllers[1].getCrossingStatus()
+            self.Green2SW = self.waysideControllers[3].getSwitchPositions()
+            self.Green2TrafficL = self.waysideControllers[3].getTrafficLightStatus()
+            self.Green2TrainL = self.waysideControllers[3].getTrainLightSignals()
+            self.Green2Auth = self.waysideControllers[3].getBlockAuth()
+            self.Green2Cross = self.waysideControllers[3].getCrossingStatus()
 
             #Red Controller Output Checks
             #Switches
-            for i in range(len(self.Red1SW)):
-                if self.Red1SW[i] and self.Red2SW[i]:
-                    continue
-                else:
-                    self.waysideFaultR = True
+            if self.Red1SW != self.Red2SW:
+                self.waysideFaultR = True
             #Traffic Lights
-            for i in range(len(self.Red1TrafficL)):
-                if self.Red1TrafficL[i] and self.Red2TrafficL[i]:
-                    continue
-                else:
-                    self.waysideFaultR = True
+            if self.Red1TrafficL != self.Red2TrafficL:
+                self.waysideFaultR = True
             #Train Lights
-            for i in range(len(self.Red1TrainL)):
-                if self.Red1TrainL[i] and self.Red2TrainL[i]:
-                    continue
-                else:
-                    self.waysideFaultR = True
+            if self.Red1TrainL != self.Red2TrainL:
+                self.waysideFaultR = True
             #Authority
-            for i in range(len(self.Red1Auth)):
-                if self.Red1Auth[i] == self.Red2Auth[i]:
-                    continue
-                else:
-                    self.waysideFaultR = True
+            if self.Red1Auth != self.Red2Auth:
+                self.waysideFaultR = True
             #Crossing
-            if not(self.Red1Cross and self.Red2Cross):
+            if self.Red1Cross != self.Red2Cross:
                 self.waysideFaultR = True
 
 
             #Green Controller Output Checks
             #Switches
-            for i in range(len(self.Green1SW)):
-                if self.Green1SW[i] and self.Green2SW[i]:
-                    continue
-                else:
-                    self.waysideFaultG = True
+            if self.Green1SW != self.Green2SW:
+                self.waysideFaultG = True
             #Traffic Lights
-            for i in range(len(self.Green1TrafficL)):
-                if self.Green1TrafficL[i] and self.Green2TrafficL[i]:
-                    continue
-                else:
-                    self.waysideFaultG = True
+            if self.Green1TrafficL != self.Green2TrafficL:
+                self.waysideFaultG = True
             #Train Lights
-            for i in range(len(self.Green1TrainL)):
-                if self.Green1TrainL[i] and self.Green2TrainL[i]:
-                    continue
-                else:
-                    self.waysideFaultG = True
+            if self.Green1TrainL != self.Green2TrainL:
+                self.waysideFaultG = True
             #Authority
-            for i in range(len(self.Green1Auth)):
-                if self.Green1Auth[i] == self.Green2Auth[i]:
-                    continue
-                else:
-                    self.waysideFaultG = True
+            if self.Green1Auth != self.Green2Auth:
+                self.waysideFaultG = True
             #Crossing
-            if not(self.Green1Cross and self.Green2Cross):
+            if self.Green1Cross != self.Green2Cross:
                 self.waysideFaultG = True
 
 
@@ -1616,14 +1611,24 @@ class Ui_MainWindow(object):
                 self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
                 "font-weight: bold")
                 self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
-
+            else:
+                self.LoadedPLCLabel.setText(_translate("MainWindow","Currently Loaded PLC:   "+os.path.basename(self.PLCFile)))
+                self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
+                "font-weight: bold")
+                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+            
             if self.waysideFaultG:
                 for i in range(150):
                     self.waysideControllers[1].setBlockAuthorities(i+1, 0)
                 self.LoadedPLCLabel.setText(_translate("MainWindow","Wayside Grn Failure!"))
                 self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
                 "font-weight: bold")
-                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)'''
+                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+            else:
+                self.LoadedPLCLabel.setText(_translate("MainWindow","Currently Loaded PLC:   "+os.path.basename(self.PLCFile)))
+                self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
+                "font-weight: bold")
+                self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
 
 
 
@@ -2235,24 +2240,27 @@ class Ui_MainWindow(object):
                         self.GrnFaultTypeLabel.setText("Block Closure")
                         self.GrnFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
 
+
             #Traffic Light Display Green
             for i in range(len(self.greenBlocks)):
                 grnLightStates=self.waysideControllers[1].getTrafficLightStatus()
-                if int(self.GrnBlockSelBox.currentText()) == i+1:
+                if int(self.GrnLightSelBox.currentText()) == i+1:
                     if self.greenBlocks[i].occ == 0:
                         self.GrnLightOccLabel.setText("Not Occupied")
                         self.GrnLightOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
                     else:
                         self.GrnLightOccLabel.setText("Occupied")
                         self.GrnLightOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
+                        print("2")
                     if grnLightStates[i] == 0:
                         self.GrnLightStatLabel.setText(str(grnLightStates[i])+": Green")
                         self.GrnLightStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\";\n"
-                    "background-color: rgb(170, 255, 0);")
+                        "background-color: rgb(170, 255, 0);")
                     else:
+                        print("4")
                         self.GrnLightStatLabel.setText(str(grnLightStates[i])+": Red")
                         self.GrnLightStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\";\n"
-                    "background-color: rgb(255, 0, 0);")
+                        "background-color: rgb(255, 0, 0);")
             
             #Fault Display Green
             faultSections=[0]*26
@@ -2814,9 +2822,11 @@ class Ui_MainWindow(object):
                         self.RedFaultTypeLabel.setText("Block Closure")
                         self.RedFaultTypeLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
 
+            
+            #Set red light statuses
             for i in range(len(self.redBlocks)):
                 redLightStates=self.waysideControllers[0].getTrafficLightStatus()
-                if int(self.RedBlockSelBox.currentText()) == i+1:
+                if int(self.RedLightSelBox.currentText()) == i+1:
                     if self.redBlocks[i].occ == 0:
                         self.RedLightOccLabel.setText("Not Occupied")
                         self.RedLightOccLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\"")
@@ -2832,6 +2842,7 @@ class Ui_MainWindow(object):
                         self.RedLightStatLabel.setStyleSheet("font: 22pt \"MS Shell Dlg 2\";\n"
                     "background-color: rgb(255, 0, 0);")
             
+            #set red faults
             faultSectionsRed=[0]*20
             sectionOccRed=[0]*20
             for i in range(len(self.redBlocks)):
@@ -3355,5 +3366,3 @@ if __name__ == "__main__":
     #window.mainloop()
     sys.exit(app.exec_())
     
- 
-
