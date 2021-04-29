@@ -1295,10 +1295,12 @@ class Ui_MainWindow(object):
 
             #input Authority
             for i in range(len(self.routedBlocks)):
-                self.waysideControllers[self.routedLines[i]].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
+                #self.waysideControllers[self.routedLines[i]].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
                 if self.routedLines[i] == 0:
+                    self.waysideControllers[0].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
                     self.waysideControllers[2].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
                 if self.routedLines[i] == 1:
+                    self.waysideControllers[1].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
                     self.waysideControllers[3].setBlockAuthorities(int(self.routedBlocks[i],2),int(self.routedAuth[i],2))
 
             #input Suggested Speeds
@@ -1372,6 +1374,9 @@ class Ui_MainWindow(object):
                                 self.waysideControllers[0].setBlockAuthorities(self.RedRoutes[i][j],0)
                                 self.waysideControllers[0].setRoutedSpeeds(self.RedRoutes[i][j],0)
                                 self.waysideControllers[0].clearRoutedBlocks(self.RedRoutes[i][j])
+                                self.waysideControllers[2].setBlockAuthorities(self.RedRoutes[i][j],0)
+                                self.waysideControllers[2].setRoutedSpeeds(self.RedRoutes[i][j],0)
+                                self.waysideControllers[2].clearRoutedBlocks(self.RedRoutes[i][j])
                                 self.RedRoutes[i][j] = 0
                 if self.routeMatchR == True:
                     self.routeMatchR = False
@@ -1402,6 +1407,9 @@ class Ui_MainWindow(object):
                                 self.waysideControllers[1].setBlockAuthorities(self.GrnRoutes[i][j],0)
                                 self.waysideControllers[1].setRoutedSpeeds(self.GrnRoutes[i][j],0)
                                 self.waysideControllers[1].clearRoutedBlocks(self.GrnRoutes[i][j])
+                                self.waysideControllers[3].setBlockAuthorities(self.GrnRoutes[i][j],0)
+                                self.waysideControllers[3].setRoutedSpeeds(self.GrnRoutes[i][j],0)
+                                self.waysideControllers[3].clearRoutedBlocks(self.GrnRoutes[i][j])
                                 self.GrnRoutes[i][j] = 0
             
                 
