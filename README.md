@@ -26,4 +26,10 @@ SW Train Controller (Zach Kubitz):
   EngineerControl.py - Engineer UI
   TrainDisplay.py - Train Controller UI
   TestUI.py - Test UI
+  
+CTC Office (Brian Arrington): 
+  t1_updated.py
+  SPOILER_IT3-Schedule.xlsx
+  IT3-Schedule.xlsx
+  GreenSchedule.xlsx
 
