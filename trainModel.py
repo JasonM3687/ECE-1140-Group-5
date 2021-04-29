@@ -1003,8 +1003,27 @@ class Ui_MainWindow(object):
                 if self.trains[trainID].signalFailure == True:
                         self.trains[trainID].authority = 0
                         self.trainController.serviceBrakeControl()
-                elif self.trains[trainID].authority <= 0 and tempAuth != 0:
-                        self.trainController.serviceBrakeControl()
+                elif int(self.trains[trainID].authority) <= 0 and tempAuth != 0:
+                        if trainID == 0:
+                                self.trainController.serviceBrakeControl()
+                        elif trainID == 1:
+                                self.trainController.serviceBrakeControl1()
+                        elif trainID == 2:
+                                self.trainController.serviceBrakeControl2()
+                        elif trainID == 3:
+                                self.trainController.serviceBrakeControl3()
+                        elif trainID == 4:
+                                self.trainController.serviceBrakeControl4()
+                        elif trainID == 5:
+                                self.trainController.serviceBrakeControl5()
+                        elif trainID == 6:
+                                self.trainController.serviceBrakeControl6()
+                        elif trainID == 7:
+                                self.trainController.serviceBrakeControl7()
+                        elif trainID == 8:
+                                self.trainController.serviceBrakeControl8()
+                        elif trainID == 9:
+                                self.trainController.serviceBrakeControl9()
 
         # when a train is dispatch
         def dispatched(self,trainID,temp):

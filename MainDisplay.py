@@ -247,7 +247,7 @@ class Ui_LoginWindow(object):
     def calcPower2(self):
         #time since last calculation
         self.currentTime2 = time.time()
-        self.timeChange2 = self.currentTime2 - self.startTime2
+        self.timeChange2 = self.currentTime2 - self.startTime
 
         #Compute working error variables
         self.error02 = self.speed[2] - self.currentVelocity[2]
@@ -1009,8 +1009,8 @@ class Ui_LoginWindow(object):
             self.autoMode[1] = True
             self.modeStatus[1] = "AUTOMATIC"
             self.displayUI1.modeOutput.setText(self.modeStatus[1])
-            if self.CTCVelocity[1] <= self.speedLimit[1]:
-                self.speed[1] = self.CTCVelocity[1]
+            if self.commanded[1] <= self.speedLimit[1]:
+                self.speed[1] = self.commanded[1]
                 self.displayUI1.speedInput.setValue(self.speed[1])
                 self.calcPower1()
             else:
@@ -1031,8 +1031,8 @@ class Ui_LoginWindow(object):
             self.autoMode[2] = True
             self.modeStatus[2] = "AUTOMATIC"
             self.displayUI2.modeOutput.setText(self.modeStatus[2])
-            if self.CTCVelocity[2] <= self.speedLimit[2]:
-                self.speed[2] = self.CTCVelocity[2]
+            if self.commanded[2] <= self.speedLimit[2]:
+                self.speed[2] = self.commanded[2]
                 self.displayUI2.speedInput.setValue(self.speed[2])
                 self.calcPower2()
             else:
@@ -1388,6 +1388,8 @@ class Ui_LoginWindow(object):
     def speedControl(self):
         if self.autoMode[0] == False:
             self.speed[0] = self.displayUI.speedInput.value()
+            if self.authority[0] == 0:
+                self.serviceBrakeControl()
             if self.speed[0] >= self.commanded[0]:
                 self.speed[0] = self.commanded[0]
                 self.displayUI.speedInput.setValue(self.speed[0])

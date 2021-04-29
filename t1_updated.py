@@ -58,6 +58,7 @@ class CTCOFFICE:
 		self.tabControl.pack(expand = 1, fill ="both")
 		self.GLOBAL_LINE=1;
 		self.end=0
+		self.dispatchBeacon = 0
 	
 		
 		
@@ -299,10 +300,8 @@ class CTCOFFICE:
 			write_row=0
 			
 			indexing=i*2
-			print("5")
 			temp2=self.CurrentTravel_line_speed[indexing]
 			temp3=self.CurrentTravel_line_speed[indexing+1]
-			print("Temp2=" +str(temp2))
 			
 			#Determine if train is on red line or green line load the correct Occupancy and Authority 
 			if(temp2==1):
@@ -351,8 +350,8 @@ class CTCOFFICE:
 						delete_later.append(i)
 		
 		#remove items that have reached their destination	
-		for q in range(0,len(delete_later)):
-				del self.CurrentTravel[delete_later[q]]
+		#for q in range(0,len(delete_later)):
+				#del self.CurrentTravel[delete_later[q]]
 		if(self.PAUSE_BEACON==0):
 			self.Disp();
 		
@@ -370,8 +369,6 @@ class CTCOFFICE:
 				self.des.set(self.Trains_current[i-1][3])
 				self.tp.set(str(self.TrainControl.getGreenTickets()))
 				self.tpred.set(str(self.TrainControl.getRedTickets()))
-				print(str(self.TrainControl.getGreenTickets()))
-				print(str(self.TrainControl.getRedTickets()))
 				
 
 			
@@ -549,7 +546,9 @@ class CTCOFFICE:
 				if(start in str(self.sc2.cell(i,7).value)):
 					start_block=int(self.sc2.cell(i,3).value);
 					break;
-			Curr_block= self.Trains_current[self.Options.index(ID.strip())-1][2];
+			t = ID.split(" ")
+
+			Curr_block= self.Trains_current[int(t[1]) - 1][2];
 			if(Curr_block==start_block):
 				self.GetDispatchInfo();
 			
@@ -597,10 +596,11 @@ class CTCOFFICE:
 							slowest=S_perBlock[t]
 					S_real.append(slowest)
 					S_perBlock.clear()
-					
+					print(Block_route)
 					self.routes.append(np.array(Block_route))
-					
+					t1 = Block_route.pop()
 					Block_route.clear()
+					Block_route.append(t1)
 					
 					
 				holder.append(sc.cell(i,32).value)
@@ -630,32 +630,32 @@ class CTCOFFICE:
 		stop=len(D)-1
 		holdval= S_real
 		
-#		for i in range (2,11):
-#			if(i>2):
-#				initial=checkpoint
-#			checkpoint= len(holder)
-#			S_real=S_real+holdval
+		for i in range (2,11):
+			if(i>2):
+				initial=checkpoint
+			checkpoint= len(holder)
+			S_real=S_real+holdval
 			#calculate all of the time value
-#			for z in range(initial,checkpoint):
-#				Train_Num.append("Train "+str(i))
-#				holder.append((datetime.combine(now.date(),holder[z])+timedelta(minutes=sc.cell(1,43).value.minute, hours=sc.cell(1,43).value.hour)).time())
+			for z in range(initial,checkpoint):
+				Train_Num.append("Train "+str(i))
+				holder.append((datetime.combine(now.date(),holder[z])+timedelta(minutes=sc.cell(1,43).value.minute, hours=sc.cell(1,43).value.hour)).time())
 	
 	#ONLY UPLOAD SCHEDULE FOR 1 TRAIN
-		for i in range (0,len(D)-1):
+		'''for i in range (0,len(D)-1):
 			
 			recieved_Route.append(str(D[i])+" -> "+str(D[i+1]))
-		recieved_AUTH= recieved_AUTH+far
-#		for i in range (0,10):
-#			for i in range (0,len(D)-1):
-#				recieved_Route.append(str(D[i])+" -> "+str(D[i+1]))	
-#			recieved_AUTH= recieved_AUTH+far
+		recieved_AUTH= recieved_AUTH+far'''
+		for i in range (0,10):
+			for i in range (0,len(D)-1):
+				recieved_Route.append(str(D[i])+" -> "+str(D[i+1]))	
+			recieved_AUTH= recieved_AUTH+far
 		
 		#repeat the block # routes for all trains
-#		rep_len= len(self.routes)	
+		rep_len= len(self.routes)	
 		
-#		for i in range (0,9):
-#			for z in range(0,rep_len):
-#				self.routes.append(self.routes[z])
+		for i in range (0,9):
+			for z in range(0,rep_len):
+				self.routes.append(self.routes[z])
 					
 		
 		#SORTING BY TIME
@@ -741,6 +741,7 @@ class CTCOFFICE:
 		self.SentRouteLines.clear()
 		self.SentSuggestedSpeed.clear()
 		self.SentSuggestedAuth.clear()
+		self.dispatchBeacon = 1
 		
 		if(len(self.routes)>0):
 			temp = self.routes[0]
@@ -775,6 +776,9 @@ class CTCOFFICE:
 			self.TID=int(temp[1])-1
 			self.Remove()
 			return
+
+	def lowerDispatchBeacon(self):
+		self.dispatchBeacon = 0
 			
 		
 	#TAB 4 FUNCTIONS

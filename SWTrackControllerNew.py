@@ -46,8 +46,8 @@ class Ui_MainWindow(object):
     prevRedLightIndex=0
     prevGreenSecIndex=0
     prevRedSecIndex=0
-    GrnRoutes=[[0]*150]*10
-    RedRoutes=[[0]*76]*10
+    GrnRoutes=[[0 for i in range(150)] for j in range(10)]
+    RedRoutes=[[0 for i in range(76)] for j in range(10)]
     closedGrnBlocks=[0]*150
     closedRedBlocks=[0]*76
     grnCurSwitches=[0]*6
@@ -1055,6 +1055,33 @@ class Ui_MainWindow(object):
         self.LoadedPLCLabel.setStyleSheet("font: 14pt \"MS Shell Dlg 2\";\n"
         "font-weight: bold")
         self.LoadedPLCLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.grnRouteTemp=[0]*150
+        self.redRouteTemp=[0]*76
+
+        with open('PLC_IO.txt','r') as file:
+            Content=file.readlines()
+        file.close()
+
+        tempstringG=""
+        tempstringR=""
+        for i in range(len(self.grnRouteTemp)):
+            tempstringG=tempstringG+str(self.grnRouteTemp[i])+","
+        tempstringG=tempstringG[:-1]
+
+        for i in range(len(self.redRouteTemp)):
+            tempstringR=tempstringR+str(self.redRouteTemp[i])+","
+        tempstringR=tempstringR[:-1]
+
+        Content[3]="RoutedBlocks="+tempstringR+"\n"
+        Content[18]="BlockAuth="+tempstringR+"\n"
+        Content[34]="BlockAuth="+tempstringR+"\n"
+        Content[9]="RoutedBlocks="+tempstringG+"\n"
+        Content[26]="BlockAuth="+tempstringG+"\n"
+        Content[42]="BlockAuth="+tempstringG+"\n"
+
+        with open('PLC_IO.txt','w') as file:
+            file.writelines(Content)
+        file.close()
 
         self.LoadPLCButton.clicked.connect(self.clickedLF)
         self.RunButton.clicked.connect(self.clickedCommand)
@@ -1137,6 +1164,8 @@ class Ui_MainWindow(object):
             self.manualBlock=self.CTC.U_Occ
             self.TrainID=self.CTC.TID
             self.manualLine=self.CTC.GLOBAL_LINE
+            self.dispatchSig = self.CTC.dispatchBeacon
+            print(self.routedBlocks)
             
             #If Brian selects a UI update, update his UI
             if self.CTC.PAUSE_BEACON == False:
@@ -1151,44 +1180,55 @@ class Ui_MainWindow(object):
             
             #print(self.routedAuth)
 
-            self.routedBlockEqual=True
+            '''self.routedBlockEqual=True
             if len(self.prevRoutedBlocks)!=0:
                 for i in range(len(self.routedBlocks)):
                     if self.prevRoutedBlocks[i]!=self.routedBlocks[i]:
-                        self.routedBlockEqual=False
+                        self.routedBlockEqual=False'''
+
+
+
             
             # if a new route is sent store it to inspect later
-            if self.routedBlockEqual==False or self.TrainID != self.prevTrainID:
-                print(str(int(self.routedBlocks[0],2)))
+            if self.dispatchSig == 1:
+                print("Dispatch")
 
                 #Call the funtion to spawn a train if the first block on a route is 63 (green) or 9 (red)
                 if int(self.routedBlocks[0],2)==63:
-                    print("Spawn")
                     self.trackModelDatabase.trainDispatched(self.TrainID, 1)
                 elif (self.routedBlocks[0],2)==9:
                     self.trackModelDatabase.trainDispatched(self.TrainID, 0)
 
                 if self.routedLines[0] == 1:
+                    routeSetG = False
                     for i in range(10):
-                        if self.GrnRoutes[i][1] == 0:
-                            for j in range(len(self.routedBlocks)):
-                                self.GrnRoutes[i][j] = int(self.routedBlocks[j],2)
-                            break
-                        else:
-                            continue
+                        if routeSetG == False:
+                            if self.GrnRoutes[i][0] == 0:
+                                for j in range(len(self.routedBlocks)):
+                                    self.GrnRoutes[i][j] = int(self.routedBlocks[j],2)
+                                    routeSetG == True
+                                break
+
+                            else:
+                                continue
                 else:
+                    routeSetR = False
                     for i in range(10):
-                        if self.RedRoutes[i][1] == 0:
-                            for j in range(len(self.routedBlocks)):
-                                self.RedRoutes[i][j] = int(self.routedBlocks[j],2)
-                            break
-                        else:
-                            continue
+                        if self.RedRoutes[i][0] == 0:
+                            if routeSetR == False:
+                                for j in range(len(self.routedBlocks)):
+                                    self.RedRoutes[i][j] = int(self.routedBlocks[j],2)
+                                    routeSetR = True
+                                break
+                            else:
+                                continue
+                print(self.GrnRoutes)
+                self.CTC.lowerDispatchBeacon()
 
                 
-            self.prevRoutedBlocks=self.routedBlocks
+            '''self.prevRoutedBlocks=self.routedBlocks
             self.prevRoutedLines=self.routedLines
-            self.prevTrainID=self.TrainID
+            self.prevTrainID=self.TrainID'''
 
 
             #Track Model Inputs
@@ -1294,7 +1334,8 @@ class Ui_MainWindow(object):
                 else:
                     while self.RedRoutes[i][lastBlock+1] != 0:
                         lastBlock+=1
-                    if self.waysideControllers[0].getBlockOccupancies()[self.RedRoutes[i][lastBlock]] == 1:
+                    tempRedOcc = self.waysideControllers[0].getBlockOccupancies()
+                    if  tempRedOcc[self.RedRoutes[i][lastBlock] - 1] == 1:
                         self.routeMatchR = False
                         for k in range(10):
                             if k == i:
@@ -1323,12 +1364,15 @@ class Ui_MainWindow(object):
                 else:
                     while self.GrnRoutes[i][lastBlock+1] != 0:
                         lastBlock+=1
-                    if self.waysideControllers[1].getBlockOccupancies()[self.GrnRoutes[i][lastBlock]] == 1:
+                    tempGrnOcc = self.waysideControllers[1].getBlockOccupancies()
+                    if tempGrnOcc[self.GrnRoutes[i][lastBlock] - 1] == 1:
                         self.routeMatchG = False
                         for k in range(10):
                             if k == i:
                                 continue
                             elif self.GrnRoutes[k][0]==self.GrnRoutes[i][0]:
+                                print(GrnRoutes[k][0])
+                                print(GrnRoutes[i][0])
                                 self.routeMatchG = True
                         if self.routeMatchG == True:
                             for j in range(lastBlock+1):
@@ -1339,9 +1383,9 @@ class Ui_MainWindow(object):
                                 self.waysideControllers[1].setRoutedSpeeds(self.GrnRoutes[i][j],0)
                                 self.waysideControllers[1].clearRoutedBlocks(self.GrnRoutes[i][j])
                                 self.GrnRoutes[i][j] = 0
-                if self.routeMatchG == True:
-                    self.routeMatchG = False
-                    break
+            
+                
+                   
 
             #input routed Blocks
             for i in range(10):

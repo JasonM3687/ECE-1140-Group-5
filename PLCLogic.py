@@ -40,7 +40,7 @@ if(ManualSW == 0):
     GreenSWOut[1]=GreenRoute[28] and GreenRoute[29] and not(GreenBlockOcc[28]) and not(GreenBlockOcc[29]) and not(GreenBlockOcc[149])
     GreenSWOut[2]=GreenRoute[56] and GreenRoute[57] and not(GreenBlockOcc[56]) and not(GreenBlockOcc[57])
     GreenSWOut[3]=GreenRoute[62] and GreenRoute[61] and not(GreenBlockOcc[61]) and not(GreenBlockOcc[62])
-    GreenSWOut[4]=GreenRoute[76] and GreenRoute[75] #and not(GreenBlockOcc[75]) and not(GreenBlockOcc[76]) and not(GreenBlockOcc[100])
+    GreenSWOut[4]=GreenRoute[76] and GreenRoute[75] and not(GreenBlockOcc[75]) and not(GreenBlockOcc[76]) and not(GreenBlockOcc[100])
     GreenSWOut[5]=GreenRoute[84] and GreenRoute[85] and not(GreenBlockOcc[84]) and not(GreenBlockOcc[85]) and not(GreenBlockOcc[99])
 #crossing logic
 GreenCrossStatus = GreenBlockOcc[17] or GreenBlockOcc[19]
@@ -64,9 +64,9 @@ for i in range(len(GreenBlockOcc)):
         GreenLightStatuses[99] = GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
         GreenAuthChange[99]= GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
     else:
-        GreenLightStatuses[i] = GreenBlockOcc[i+1] or GreenBlockOcc[i-1] or GreenFaults[i+1] or GreenFaults[i-1]
-        GreenAuthChange[i] = GreenBlockOcc[i+1] or GreenBlockOcc[i-1] or GreenFaults[i+1] or GreenFaults[i-1]
-
+        GreenLightStatuses[i] = GreenBlockOcc[i+1]  or GreenFaults[i+1]
+        GreenAuthChange[i] = GreenBlockOcc[i+1] or GreenFaults[i+1]
+        #or GreenBlockOcc[i-1]  or GreenFaults[i-1]
 #Red Logic
 #switch Logic
 if(ManualSW == 0):
@@ -122,14 +122,11 @@ with open('CurrentWayside.txt','r') as file:
     CurrentWayside=file.readlines()
 file.close()
 CurrentWayside=CurrentWayside[0][19:].strip()
-print("!"+ CurrentWayside + "!")
 
 #Write the output to the green 1 output section
 if CurrentWayside == "Green1":
-    print("Inside Wayside")
     if ManualSW == 0:
         tempstringSW=""
-        print("Green Switch Out = " + str(GreenSWOut[4]))
         for i in range(len(GreenSWOut)):
             tempstringSW=tempstringSW+str(int(GreenSWOut[i]))+","
         tempstringSW=tempstringSW[:-1]
