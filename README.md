@@ -32,4 +32,8 @@ CTC Office (Brian Arrington):
   SPOILER_IT3-Schedule.xlsx
   IT3-Schedule.xlsx
   GreenSchedule.xlsx
+  
+HW Train Controller (Jason Matuszak):
+   HWTrainController.ino // Main Controller
+   SerialCom.py //Serial communication attempt
 
