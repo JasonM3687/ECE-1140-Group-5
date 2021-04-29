@@ -3286,9 +3286,9 @@ class Ui_MainWindow(object):
 
             self.trackModelDatabase.setRedLight(self.waysideControllers[0].getTrainLightSignals())
 
-            self.trackModelDatabase.setGreenLight(self.waysideControllers[1].getTrafficLightStatus())
+            self.trackModelDatabase.setGreenSignal(self.waysideControllers[1].getTrafficLightStatus())
 
-            self.trackModelDatabase.setRedSpeed(self.waysideControllers[0].getTrafficLightStatus())
+            self.trackModelDatabase.setRedSignal(self.waysideControllers[0].getTrafficLightStatus())
 
 
             self.tempReds=self.waysideControllers[0].getSwitchPositions()
