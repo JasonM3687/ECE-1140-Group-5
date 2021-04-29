@@ -1,5 +1,7 @@
 import serial
+import time
 
+#Methods to pass inputs values to Train Controller
 def getDoors():
     return doors
 
@@ -18,14 +20,14 @@ def getServiceBrake():
 def getEmergencyBrake():
     return emergencybrake
 
-
-if __name__ == "__main__":
-
-    ser = serial.Serial('COM3', baudrate = 9600, timeout = 1)
-
-    while 1:
-
+#Main function used to grab arduino serial data
+def main():
+    #Open serial port communication on com3 with a baud rate of 2000000
+    ser = serial.Serial('COM3', baudrate = 2000000, timeout = 1)
     
+    while 1:
+        
+        #Read/store/print all data from arduino serial monitor 
         arduinoData = ser.readline().decode('ascii')
         doors = arduinoData
         print("Doors: " + doors)
@@ -44,7 +46,13 @@ if __name__ == "__main__":
         arduinoData = ser.readline().decode('ascii')
         emergencybrake = arduinoData
         print("Emergencybrake: " + emergencybrake)
-  
+
+#Run main function
+if __name__ == "__main__":
+    main()
+    
+
+        
     
 
    
