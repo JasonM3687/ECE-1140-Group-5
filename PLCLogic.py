@@ -1,6 +1,16 @@
 
 from array import array
 import re
+
+
+
+#####  #####  #####  ####     #####  ##      ####    #####  #   #  #####  ## ##  #####   ###
+##  #  ##     #   #  ##  #    ##  #  ##     ##         #    ##  #  ##  #  ## ##    #    #
+#####  ####   #####  ##  #    #####  ##     ##         #    # # #  #####  ## ##    #     ###
+## #   ##     #   #  ##  #    ##     ##     ##         #    #  ##  ##     ## ##    #        #
+##  #  #####  #   #  ####     ##     #####   ####    #####  #   #  ##      ###     #     ###
+
+
 with open('PLC_IO.txt','r') as file:
     Content=file.readlines()
 file.close()
@@ -33,6 +43,14 @@ RedCrossStatus=0
 
 #print("Manual =" + str(ManualSW))
 
+
+
+#####  ##      ####    ####    ###    ###   ##     #####  #####  #   #    ##      ###    ####   #####   ####
+##  #  ##     ##       ##  #  #   #  #   #  ##     ##     #   #  ##  #    ##     #   #  #         #    ##
+#####  ##     ##       ####   #   #  #   #  ##     ####   #####  # # #    ##     #   #  # ###     #    ##
+##     ##     ##       ##  #  #   #  #   #  ##     ##     #   #  #  ##    ##     #   #  #   #     #    ##
+##     #####   ####    ####    ###    ###   #####  #####  #   #  #   #    #####   ###    ###    #####   ####
+
 #Green Logic
 #switch Logic
 if(ManualSW == 0):
@@ -64,9 +82,14 @@ for i in range(len(GreenBlockOcc)):
         GreenLightStatuses[99] = GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
         GreenAuthChange[99]= GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
     else:
-        GreenLightStatuses[i] = GreenBlockOcc[i+1]  or GreenFaults[i+1]
-        GreenAuthChange[i] = GreenBlockOcc[i+1] or GreenFaults[i+1]
+        GreenLightStatuses[i] = GreenBlockOcc[i+1]  or GreenFaults[i+1] or GreenBlockOcc[i-1]  or GreenFaults[i-1]
+        GreenAuthChange[i] = GreenBlockOcc[i+1] or GreenFaults[i+1] or GreenBlockOcc[i-1]  or GreenFaults[i-1]
         #or GreenBlockOcc[i-1]  or GreenFaults[i-1]
+
+
+
+
+
 #Red Logic
 #switch Logic
 if(ManualSW == 0):
@@ -108,6 +131,19 @@ for i in range(len(RedBlockOcc)):
     else:
         RedLightStatuses[i] = RedBlockOcc[i+1] or RedBlockOcc[i-1] or RedFaults[i+1] or RedFaults[i-1]
         RedAuthChange[i] = RedBlockOcc[i+1] or RedBlockOcc[i-1] or RedFaults[i+1] or RedFaults[i-1]
+
+
+
+
+
+
+##         ##  #####  #####  #####  #####     ###   ## ##  #####  #####  ## ##  #####   ###
+##   ###   ##  ##  #    #      #    ##       #   #  ## ##    #    ##  #  ## ##    #    #
+##  ## ##  ##  #####    #      #    ####     #   #  ## ##    #    #####  ## ##    #     ###
+##  ## ##  ##  ## #     #      #    ##       #   #  ## ##    #    ##     ## ##    #        #
+ ####  ####    ##  #  #####    #    #####     ###    ###     #    ##      ###     #     ###
+
+
 
 
 
