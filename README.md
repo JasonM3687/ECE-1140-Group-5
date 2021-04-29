@@ -34,6 +34,6 @@ CTC Office (Brian Arrington):
   GreenSchedule.xlsx
   
 HW Train Controller (Jason Matuszak):
-   HWTrainController.ino // Main Controller
-   SerialCom.py //Serial communication attempt
+   HWTrainController.ino - Main Controller
+   /SerialCom.py - Serial communication attempt
 
