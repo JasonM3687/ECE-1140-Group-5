@@ -1,12 +1,12 @@
 # ECE-1140-
 ECE 1140 Systems and Project Engineering
 
-Track Model 
+Track Model: 
   trackModel.py - Main File, Run for individual operation
   trackImport.py
   image.png
   
-SW Track Controller
+SW Track Controller:
   SWTrackControllerNew.py - Main file, Run for individual operation
   PLC_IO.txt
   PLCLogic.py
