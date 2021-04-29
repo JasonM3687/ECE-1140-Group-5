@@ -98,8 +98,6 @@ class TrainClass():
                                 self.acceleration = self.maxAcceleration
                         elif (self.acceleration > self.maxAcceleration):
                                 self.acceleration = self.maxAcceleration
-                        
-                        print(self.acceleration)
 
                         self.velocity = self.prevVel + (self.timeChange/2)*(self.acceleration + self.prevAcc)
                         #print(self.velocity)
