@@ -7,7 +7,7 @@ Track Model
   image.png
   
 SW Track Controller
-  SWTrackControllerNew.py - Main file, Run for individual operation\n
+  SWTrackControllerNew.py - Main file, Run for individual operation
   PLC_IO.txt
   PLCLogic.py
   Green Line.jpg
