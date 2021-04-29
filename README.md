@@ -16,7 +16,7 @@ SW Track Controller:
   WaysideController.py
   PLC_Backup.txt
   
-Train Model
+Train Model:
   trainModel.py
   Train.py
   BlockClass.py
