@@ -38,9 +38,10 @@ import numpy as np
 
 class CTCOFFICE:
 	
-	def __init__(self):		
+	def __init__(self,m):		
 		#create Tab Window
-		self.master=Tk();
+		self.master=m;
+		
 		self.tabControl = ttk.Notebook(self.master)
 		tab1 = ttk.Frame(self.tabControl,width=700,height=400) 
 		tab2 = ttk.Frame(self.tabControl,width=700,height=600) 
@@ -56,7 +57,7 @@ class CTCOFFICE:
 		self.end=0;
 		
 		#--KEEP UPDATING THE TRAIN STATS--
-		threading.Timer(2.0, self.GO).start();
+		#threading.Timer(2.0, self.GO).start();
 		
 		
 		#rename screen title
@@ -64,7 +65,7 @@ class CTCOFFICE:
 		date_time = now.strftime("%H:%M %p")
 		self.master.title("CTC OFFICE  -  "+date_time) 
 		
-		#----------------------- TAB1 ----------------------------
+		'''#----------------------- TAB1 ----------------------------
 		self.A=["50","22","STATION 1","STATION 5","200","100"];
 		self.B=["70","34","STATION 6","STATION 1","267","100"];
 		self.C=["60","75","STATION 12","STATION 1","291","100"];
@@ -105,7 +106,7 @@ class CTCOFFICE:
 		self.B6 = ttk.Label(tab1, text="POSITION").place(x=135,y=305);
 		self.B7 = ttk.Label(tab1, text="DESTINATION").place(x=135,y=360);
 		#self.B8 = ttk.Label(tab1, text="OCCUPANCY").place(x=135,y=415);
-		self.B9 = ttk.Label(tab1, text="THROUGHPUT (Tickets/Hour)",font=('Helvetica',12,'bold')).place(x=35,y=500)
+		self.B9 = ttk.Label(tab1, text="THROUGHPUT (Tickets/Hour)",font=('Helvetica',12,'bold')).place(x=35,y=500)'''
 
 		
 		#----------------------- TAB 2 ----------------------------
@@ -114,32 +115,35 @@ class CTCOFFICE:
 		self.switches= list();
 		self.MM=IntVar(tab2)
 		self.closure= StringVar(tab2);
-		self.im = Image.open("Track.png");
+		'''self.im = Image.open("Track.png");
 		self.im= self.im.resize((275,350),Image.ANTIALIAS);
-		self.img = ImageTk.PhotoImage(self.im);
+		self.img = ImageTk.PhotoImage(self.im);'''
 		
 		#Create Labels + ListBoxes + Buttons
-		self.V1 =ttk.Label(tab2, text="TRACK STATUS",font=('Helvetica',19,'bold'),foreground='blue').place(x=35,y=65)
+		'''self.V1 =ttk.Label(tab2, text="TRACK STATUS",font=('Helvetica',19,'bold'),foreground='blue').place(x=35,y=65)
 		self.V2 =ttk.Label(tab2, text="TRACK SECTION").place(x=51,y=180)
 		self.V3 =ttk.Label(tab2, text="SWITCHES").place(x=232,y=180)
 		self.l6= Listbox(tab2,height=12,width=17);
-		self.l6.place(x=35,y=215);
-		self.l7= Listbox(tab2,height=12,width=10);
-		self.l7.place(x=220,y=215);
-		self.l8= ttk.Label(tab2,image=self.img);
-		self.l8.place(x=370,y=100);
-		self.E17=Entry(tab2,width=15,relief=FLAT,textvariable=self.closure);
-		self.E17.place(x=35,y=435);
-		self.V4= ttk.Button(tab2, text="Upload", width=8,command=self.PIC_UPDATE).place(x=470,y=475)
-		self.V5 =ttk.Button(tab2, text="Logout", width=8,command=self.OUT).place(x=580,y=550)
-		self.plus = ttk.Button(tab2, text="+", width=3,state=DISABLED,command=self.AddC)
-		self.plus.place(x=35,y=475)
-		self.minus= ttk.Button(tab2, text="-", width=3,state=DISABLED,command=self.CancelC)
-		self.minus.place(x=98,y=475)
-		self.togg= ttk.Button(tab2, text="Toggle",state=DISABLED,command=self.TOGGLE, width=6)
-		self.togg.place(x=225,y=475)
-		self.r2= Checkbutton(tab2, text="MAINTINENCE MODE",bg='grey',relief=FLAT,variable=self.MM,command=self.Mode);
-		self.r2.place(x=35,y=120);
+		self.l6.place(x=35,y=215);'''
+		self.l6_debugger=[];
+		self.l7_bebugger=[];
+		
+		#self.l7= Listbox(tab2,height=12,width=10);
+		#self.l7.place(x=220,y=215);
+		#self.l8= ttk.Label(tab2,image=self.img);
+		#self.l8.place(x=370,y=100);
+		#self.E17=Entry(tab2,width=15,relief=FLAT,textvariable=self.closure);
+		#self.E17.place(x=35,y=435);
+		#self.V4= ttk.Button(tab2, text="Upload", width=8,command=self.PIC_UPDATE).place(x=470,y=475)
+		#self.V5 =ttk.Button(tab2, text="Logout", width=8,command=self.OUT).place(x=580,y=550)
+		#self.plus = ttk.Button(tab2, text="+", width=3,state=DISABLED,command=self.AddC)
+		#self.plus.place(x=35,y=475)
+		#self.minus= ttk.Button(tab2, text="-", width=3,state=DISABLED,command=self.CancelC)
+		#self.minus.place(x=98,y=475)
+		#self.togg= ttk.Button(tab2, text="Toggle",state=DISABLED,command=self.TOGGLE, width=6)
+		#self.togg.place(x=225,y=475)
+		#self.r2= Checkbutton(tab2, text="MAINTINENCE MODE",bg='grey',relief=FLAT,variable=self.MM,command=self.Mode);
+		#self.r2.place(x=35,y=120);
 		
 
 		#----------------------- TAB 3 ----------------------------
@@ -155,9 +159,22 @@ class CTCOFFICE:
 		self.routes=[];
 		self.sections=list();
 		self.line_used=list();
+		
+		self.l_debugger=[];
+		self.l2_debugger=[];
+		self.l3_debugger=[];
+		self.l4_debugger=[];
+		self.l5_debugger=[];
+		
+		self.route_Block_debug=[];
+		self.section_debug=[];
+		self.line_debug=[];
+		self.speed_debug=0;
+		self.auth_debug=0;
+		
 		#Create Entries + Listboxes + Buttons
 		
-		self.E6 =  Entry(tab3,width=6,textvariable=self.T,relief=FLAT).place(x=37,y=440);
+		'''self.E6 =  Entry(tab3,width=6,textvariable=self.T,relief=FLAT).place(x=37,y=440);
 		self.E7 =  Entry(tab3,width=30,textvariable=self.D,relief=FLAT).place(x=119,y=440);
 		self.E8 =  Entry(tab3,width=6,textvariable=self.ti,relief=FLAT).place(x=415,y=440);
 		self.E9 =  Entry(tab3,width=6,textvariable=self.s,relief=FLAT).place(x=495,y=440);
@@ -196,13 +213,13 @@ class CTCOFFICE:
 		self.l5.place(x=573,y=215);
 
 		self.r= Checkbutton(tab3, text="AUTO-DISPATCH",bg='grey',relief=FLAT,variable=self.autodisp,command= self.Auto);
-		self.r.place(x=35,y=120);
+		self.r.place(x=35,y=120);'''
 		
 		
 		#----------------------- TAB 4 ---------------------------- V16
 		
 		#CREATE GUI FOR DEBUGGING
-		self.V16 = ttk.Label(tab4, text="DEBUG",font=('Helvetica',19,'bold')).place(x=35,y=60)
+	'''	self.V16 = ttk.Label(tab4, text="DEBUG",font=('Helvetica',19,'bold')).place(x=35,y=60)
 		self.V17 = ttk.Label(tab4, text="TRACK DEBUG",font=('Helvetica',16,'bold')).place(x=35,y=375)
 
 		self.E11=ttk.Entry(tab4,width=15);
@@ -242,38 +259,21 @@ class CTCOFFICE:
 		self.CS =ttk.Label(tab4, text="")
 		self.CS.place(x=200,y=415)
 		self.SS=ttk.Label(tab4, text="")
-		self.SS.place(x=200,y=460)
+		self.SS.place(x=200,y=460)'''
 		
-		self.master.mainloop();
+		
 		
 	#TAB 1 FUNCTIONS
+	def SHOW(self):
+		self.master.mainloop();
 	def GO(self):
 			#call method from Grant to update Trains_current 2D array 
 			#Use the Train ID to select the row of the 2D array 
-			if(self.tkvarq.get()=="TRAIN 1"):
-				self.sp.set(self.A[0]);
-				self.aut.set(self.A[1]);
-				self.pos.set(self.A[2]);
-				self.des.set(self.A[3]);
-				self.occ.set(self.A[4]);
-				self.tp.set(self.A[5]);
-			if(self.tkvarq.get()=="TRAIN 2"):
-				self.sp.set(self.B[0]);
-				self.aut.set(self.B[1]);
-				self.pos.set(self.B[2]);
-				self.des.set(self.B[3]);
-				self.occ.set(self.B[4]);
-				self.tp.set(self.B[5]);
-			if(self.tkvarq.get()=="TRAIN 3"):
-				self.sp.set(self.C[0]);
-				self.aut.set(self.C[1]);
-				self.pos.set(self.C[2]);
-				self.des.set(self.C[3]);
-				self.occ.set(self.C[4]);	
-				self.tp.set(self.C[5]);
+			
 		#repeat every second add a condition so it checks if the text box still matches	the text file	
 			if(self.end==0):
-				threading.Timer(2.0, self.GO).start();
+				print("HI");
+				#threading.Timer(2.0, self.GO).start();
 			return;		
 	#TAB 2 FUNCTIONS
 	def Mode1(self):
@@ -298,11 +298,13 @@ class CTCOFFICE:
 			self.closure.set("");
 		return	
 	def AddC2(self,s):
-		t=self.l6.get(0,"end");
-		if((s in t) or s==""):
+	
+		if((s in self.l6_debugger) or s==""):
 			return;
 		else:
-			self.l6.insert(self.l6.size()+1,s);
+			
+			#self.l6.insert(self.l6.size()+1,s);
+			self.l6_debugger.append(s);
 			
 		return	
 	def CancelC(self):
@@ -310,6 +312,9 @@ class CTCOFFICE:
 		if(x != tuple()):
 			self.l6.delete(x);
 		return; 
+	def CancelC2(self,index):
+		if(index<len(self.l6_debugger)):
+			del self.l6_debugger[index];
 	def TOGGLE(self):
 		
 		x=self.l7.curselection();
@@ -386,6 +391,7 @@ class CTCOFFICE:
 	def Auto2(self):
 		self.autodisp.set(1);
 	def UPLOAD_SCHEDULE(self):
+	
 		
 		#loc= "schedule.xlsx";
 		loc= filedialog.askopenfilename();
@@ -552,13 +558,12 @@ class CTCOFFICE:
 		osascript -e 'display notification "{message}" with title "{title}"'
 		'''
 		os.system(command);	
-			
+	
 	def GetDispatchInfo(self):
 		#for sections A=0, B=1, ......
 		#for lines Green=1, red =0
 		#L1= route block #, L2= section of track, L3=line
 		#make all lists + speed+ auth as inputs to the function
-		
 		L1=list();
 		L2=list();
 		L3=list();
@@ -575,37 +580,245 @@ class CTCOFFICE:
 		
 			Speed= format(self.l4.get(0),"08b");
 			Auth= format(self.l5.get(0),"08b");
-			print(L1);
-			print(L2);
-			print(L3);
-			print(Speed);
-			print(Auth);
+			
+			self.route_Block_debug= L1;
+			self.section_debug= L2;
+			self.line_debug=L3;
+			self.speed_debug= Speed;
+			self.auth_debug= Auth;
+			#print(L1);
+			#print(L2);
+			#print(L3);
+			#print(Speed);
+			#print(Auth);
 			self.Remove();
+			
+			
+	def GetDispatchInfo2(self):
+		#for sections A=0, B=1, ......
+		#for lines Green=1, red =0
+		#L1= route block #, L2= section of track, L3=line
+		#make all lists + speed+ auth as inputs to the function
+		L1=list();
+		L2=list();
+		L3=list();
+		if(len(self.routes)>0):
+			temp = self.routes[0];
+			for i in range(0,len(self.routes[0])):
+				L1.append(format(temp[i],"08b"));
+				L2.append(format((ord(self.sections[temp[i]-2]))-65,"08b"));
+				if(str(self.line_used[temp[i]-2])=="Green"):
+					L3.append(1);
+				else:
+					L3.append(0);
+	
+		
+			Speed= format(self.l4_debugger[0],"08b");
+			Auth= format(self.l5_debugger[0],"08b");
+			
+			self.route_Block_debug= L1;
+			self.section_debug= L2;
+			self.line_debug=L3;
+			self.speed_debug= Speed;
+			self.auth_debug= Auth;
+			#print(L1);
+			#print(L2);
+			#print(L3);
+			#print(Speed);
+			#print(Auth);
+			#self.Remove();
+			
+	def TOGGLE2(self,index):
+		
+		
+		if(index <len(self.switches) and len(self.switches)>0):
+			if(self.switches[index] == "OFF"):
+				self.switches[index] ="ON";
+				
+			else:
+				self.switches[index]="OFF"
+				
+		return
+	
+	def UPLOAD_SCHEDULE2(self):
+		
+		loc= "schedule.xlsx";
+		#loc= filedialog.askopenfilename();
+		wb = openpyxl.load_workbook(loc);
+		sc= wb.active;
+		rows= sc.max_row;
+		cols= sc.max_column;
+		recieved_Time=list();
+		recieved_Route=list();
+		recieved_AUTH=list();
+		Train_Num=list();
+		S_perBlock= list();
+		S_real=list();
+		Block_route= list();
+		c=0;
+		T=list();
+		holder=list();
+		D=list();
+		far=list();
+		count=0;
+		meters_sep=0;
+		for i in range (2,rows):
+			if(sc.cell(i,32).value is not None and sc.cell(i,7).value is not None):
+				
+				S_perBlock.append(sc.cell(i,6).value);
+				Block_route.append(sc.cell(i,3).value);
+				if(count>0):
+					far.append(count+1);
+					meters_sep=0;
+					count=0;
+					slowest=S_perBlock[0];
+					for t in range (0,len(S_perBlock)):
+						if(slowest>S_perBlock[t]):
+							slowest=S_perBlock[t];
+					S_real.append(slowest);
+					S_perBlock.clear();
+			
+					self.routes.append(np.array(Block_route));
+					Block_route.clear();
+					
+					
+				holder.append(sc.cell(i,32).value);
+				temp2=str(sc.cell(i,7).value);
+				self.line_used.append(sc.cell(i,1).value);
+				self.sections.append(sc.cell(i,2).value);
+				D.append(temp2.strip());
+				Train_Num.append("Train 1");
+				
+			if(sc.cell(i,32).value is  None):
+					count=count+1;
+					if(sc.cell(i,4).value is not None):
+						meters_sep= meters_sep+int(sc.cell(i,4).value);
+						Block_route.append(sc.cell(i,3).value);
+					#print (sc.cell(i,4).value);
+					self.sections.append(sc.cell(i,2).value);
+					self.line_used.append(sc.cell(i,1).value);
+					S_perBlock.append(sc.cell(i,6).value);
+					
+		
+		
+		now=datetime.now();
+		del holder[0];
+		del Train_Num[0];
+		initial=0;
+		stop=len(D)-1;
+		holdval= S_real;
+		
+#		for i in range (2,11):
+#			if(i>2):
+#				initial=checkpoint;
+#			checkpoint= len(holder);
+#			S_real=S_real+holdval;
+			#calculate all of the time value
+#			for z in range(initial,checkpoint):
+#				Train_Num.append("Train "+str(i));
+#				holder.append((datetime.combine(now.date(),holder[z])+timedelta(minutes=sc.cell(1,43).value.minute, hours=sc.cell(1,43).value.hour)).time());
+	
+	#ONLY UPLOAD SCHEDULE FOR 1 TRAIN
+		for i in range (0,len(D)-1):
+			
+			recieved_Route.append(str(D[i])+" -> "+str(D[i+1]));
+		recieved_AUTH= recieved_AUTH+far;
+#		for i in range (0,10):
+#			for i in range (0,len(D)-1):
+#				recieved_Route.append(str(D[i])+" -> "+str(D[i+1]));	
+#			recieved_AUTH= recieved_AUTH+far;
+		
+		#repeat the block # routes for all trains
+#		rep_len= len(self.routes);	
+		
+#		for i in range (0,9):
+#			for z in range(0,rep_len):
+#				self.routes.append(self.routes[z]);
+					
+		
+		#SORTING BY TIME
+		for i in range (0,len(holder)):
+			for z in range (0,len(holder)-1):
+				if(holder[z]>holder[z+1]):
+					switch=holder[z+1];
+					holder[z+1]=holder[z];
+					holder[z]=switch;
+				
+					switch=recieved_Route[z+1];
+					recieved_Route[z+1]=recieved_Route[z];
+					recieved_Route[z]= switch;
+					
+					switch=recieved_AUTH[z+1];
+					recieved_AUTH[z+1]=recieved_AUTH[z];
+					recieved_AUTH[z]= switch;
+					
+					switch= Train_Num[z+1];
+					Train_Num[z+1]=Train_Num[z];
+					Train_Num[z]=switch;
+					
+					switch= S_real[z+1];
+					S_real[z+1]= S_real[z];
+					S_real[z]=switch;	
+				
+					switch= self.routes[z+1];
+					self.routes[z+1]=self.routes[z];
+					self.routes[z]= switch;				
+		
+		for i in range (0,len(holder)):
+			temp=str(holder[i]);
+			T.append(temp[-8:-3]);
+		
+		#UPDATE SCHEDULE LIST BOXES
+		
+		'''self.l.delete(0,END);
+		self.l2.delete(0,END);
+		self.l3.delete(0,END);
+		self.l4.delete(0,END);
+		self.l5.delete(0,END);'''
+		
+		self.l_debugger.clear();
+		self.l2_debugger.clear();
+		self.l3_debugger.clear();
+		self.l4_debugger.clear();
+		self.l5_debugger.clear();
+		
+		
+		for i in range (0,len(Train_Num)):
+			#self.l.insert(i,Train_Num[i]);
+			self.l_debugger.append(Train_Num[i]);
+			#self.l2.insert(i,recieved_Route[i]);
+			self.l2_debugger.append(recieved_Route[i]);
+			#self.l3.insert(i,T[i]);
+			self.l3_debugger.append(T[i]);
+			#self.l5.insert(i,recieved_AUTH[i]);
+			self.l5_debugger.append(recieved_AUTH[i]);
+			#self.l4.insert(i,S_real[i]);
+			self.l4_debugger.append(S_real[i]);
+		
+		#UPDATE TRACK MODEL
+		
+		Track_Switches= list();
+		
+		for i in range (2,rows):
+			if("SWITCH" in str(sc.cell(i,7).value).upper()):
+				Track_Switches.append(str(sc.cell(i,2).value)+str(sc.cell(i,3).value)+"-"+str(sc.cell(i,1).value));
+		
+		
+		#self.l7.delete(0,END);
+		self.l7_bebugger.clear();
+		#self.l6.delete(0,END);
+		self.l6_debugger.clear();
+		self.switches.clear();
+		for i in range (0,len(Track_Switches)):
+			#self.l7.insert(i,Track_Switches[i]);
+			self.l7_bebugger.append(Track_Switches[i]);
+			self.switches.insert(i,"OFF");
+	
 			
 		
 	#TAB 4 FUNCTIONS
 	def DEBUGGER(self):
-		if(self.tkvarq2.get()=="TRAIN A"):
-			self.A[0]=self.E11.get();
-			self.A[1]=self.E12.get();
-			self.A[2]=self.E13.get();
-			self.A[3]=self.E14.get();
-			self.A[4]=self.E15.get();
-			self.A[5]=self.E16.get();
-		if(self.tkvarq2.get()=="TRAIN B"):
-			self.B[0]=self.E11.get();
-			self.B[1]=self.E12.get();
-			self.B[2]=self.E13.get();
-			self.B[3]=self.E14.get();
-			self.B[4]=self.E15.get();
-			self.B[5]=self.E16.get();
-		if(self.tkvarq2.get()=="TRAIN C"):
-			self.C[0]=self.E11.get();
-			self.C[1]=self.E12.get();
-			self.C[2]=self.E13.get();
-			self.C[3]=self.E14.get();
-			self.C[4]=self.E15.get();
-			self.C[5]=self.E16.get();
+		print("HI");
 		return
 
 	def UPDATE(self):
@@ -616,26 +829,107 @@ class CTCOFFICE:
 		self.end=1;
 		for item in self.tabControl.winfo_children():
 			item.destroy();
+		del self;
+		
 		return 
+		
+		
  
-c= CTCOFFICE();
 
-
+#NOTEL need to exit out of large and small window to run each test
 class TestStringMethods(unittest.TestCase):
 	
 	def test_EnterMaintenanceMode(self):
+		master= Tk();
+		tp= tkinter.Toplevel(master)
+		c= CTCOFFICE(tp);
 		c.Mode1()
 		self.assertEqual(c.MM.get(),1)
+		c.OUT()
+		master.mainloop();
+
+		
+		
 	def test_EnterAutoDispatch(self):
+		master= Tk();
+		tp= tkinter.Toplevel(master)
+		c= CTCOFFICE(tp);
 		c.Auto2()
 		self.assertEqual(c.autodisp.get(),1)
+		c.OUT()
+		master.mainloop();
+				
+		
 	def test_CloseTrack(self):
-		c.Mode1();
-		c.AddC2("10A");
-		self.assertEqual(c.l6[0],"10A"); #Not working yet need to make list verisions of my listboxes
+		master= Tk();
+		tp= tkinter.Toplevel(master)
+		c= CTCOFFICE(tp);
+		c.AddC2("Green - 55");
+		self.assertEqual(c.l6_debugger[0],"Green - 55");
+		c.OUT()
+		master.mainloop();
+	
+	def test_OpenTrack(self):
+		master= Tk();
+		tp= tkinter.Toplevel(master)
+		c= CTCOFFICE(tp);
+		c.AddC2("Green - 55");
+		c.AddC2("Green - 56");
+		c.AddC2("Green - 57");
+		c.AddC2("Green - 58");
+		c.CancelC2(2);
+		self.assertEqual(c.l6_debugger[0],"Green - 55");
+		self.assertEqual(c.l6_debugger[1],"Green - 56");
+		self.assertEqual(c.l6_debugger[2],"Green - 58");
+		c.OUT()
+		master.mainloop();	
+		
+	def test_Upload_Schedule(self):
+		master= Tk();
+		tp= tkinter.Toplevel(master)
+		c= CTCOFFICE(tp);
+		c.UPLOAD_SCHEDULE2();
+		self.assertEqual(c.l_debugger[0],"Train 1");
+		self.assertEqual(c.l2_debugger[0],"STATION; PIONEER -> STATION; EDGEBROOK");
+		
+		#COMPARE REST OF SCHEDULE
+		c.OUT()
+		master.mainloop();		
 
+	def test_ToggleSwitch(self):
+		master= Tk();
+		tp= tkinter.Toplevel(master)
+		c= CTCOFFICE(tp);
+		c.UPLOAD_SCHEDULE2();
+		c.TOGGLE2(0);
+		self.assertEqual(c.switches[0],"ON");
+		self.assertEqual(c.switches[1],"OFF");
+		self.assertEqual(c.switches[2],"OFF");
+		self.assertEqual(c.switches[3],"OFF");
+		self.assertEqual(c.switches[4],"OFF");
+		self.assertEqual(c.switches[5],"OFF");
+		c.OUT()
+		master.mainloop();
+
+	def test_ManualDispatch(self):
+		master= Tk();
+		tp= tkinter.Toplevel(master)
+		c= CTCOFFICE(tp);
+		c.UPLOAD_SCHEDULE2();
+		c.GetDispatchInfo2()
+		
+		self.assertEqual(c.speed_debug,"00110111");
+		self.assertEqual(c.auth_debug,"00000111");
+		
+		#COMPARE THE REST OF THE VALUES (route blocks, sections, lines);
+		c.OUT()
+		master.mainloop();
+	
+	
+	
 
 
 if __name__ == "__main__":
 	unittest.main()
+
 
