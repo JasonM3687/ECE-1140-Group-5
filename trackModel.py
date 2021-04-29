@@ -1492,6 +1492,22 @@ class trackModel(object):
                 i.light=state[j]
                 j=j+1
         self.refresh()
+        
+    def setRedSignal(self,state):
+        j=0
+        for i in self.signals:
+            if(i.line=="Red"):
+                i.state=state[j]
+                j=j+1
+        self.refresh()
+        
+    def setGreenSignal(self,state):
+        j=0
+        for i in self.signals:
+            if(i.line=="Green"):
+                i.state=state[j]
+                j=j+1
+        self.refresh()
     
     def getAuth(self,num,block):
         if(num==0):
