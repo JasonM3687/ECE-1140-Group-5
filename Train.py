@@ -33,7 +33,7 @@ class TrainClass():
         emergency = True
         emergencyPass = True
         emergencyFail = True
-        service = False
+        service = True
         brakeFailure = False
         engineFailure = False
         signalFailure = False
@@ -98,8 +98,11 @@ class TrainClass():
                                 self.acceleration = self.maxAcceleration
                         elif (self.acceleration > self.maxAcceleration):
                                 self.acceleration = self.maxAcceleration
+                        
+                        print(self.acceleration)
 
                         self.velocity = self.prevVel + (self.timeChange/2)*(self.acceleration + self.prevAcc)
+                        #print(self.velocity)
 
                         #makes sure the velocity is never greater than the speed limit
                         if (self.velocity > self.mphTOmps(self.set_speed)) and (self.mphTOmps(self.set_speed) < self.mphTOmps(self.speed_limit)):
@@ -115,7 +118,7 @@ class TrainClass():
                                 self.acceleration = 0
                         
                         #if velocity becomes less than zero, it is essentially zero
-                        if self.velocity < self.minSpeed and self.emergencyPass == 0:
+                        if self.velocity < self.minSpeed and self.emergencyPass == 0 and self.emergencyFail == 0 and self.emergency == 0 and self.service == 0:
                                 self.velocity = 0
                                 self.acceleration = 0
                                 self.brakesDone()
@@ -194,12 +197,13 @@ class TrainClass():
                         self.doorStatus=False
 
         def calculatePassengers(self):
-                if (self.boarding != 0 and self.prevblock!=self.blockNum and self.blockNum!=65):
+                if (self.boarding != 0 and self.prevblock!=self.blockNum):
                         temp = self.passenger
                         self.passenger = self.boarding - temp
                 if self.passenger > 250:
                         self.passenger = 250
                 self.prevblock=self.blockNum
+                
 
         def setLine(self,line):
                 if line == 0:

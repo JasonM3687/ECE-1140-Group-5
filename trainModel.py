@@ -960,23 +960,20 @@ class Ui_MainWindow(object):
                 return [self.trains[0].dispatched,self.trains[1].dispatched,self.trains[2].dispatched,self.trains[3].dispatched,self.trains[4].dispatched,self.trains[5].dispatched,self.trains[6].dispatched,self.trains[7].dispatched,self.trains[8].dispatched,self.trains[9].dispatched]
 
         def getValuesFromTrainController(self,trainID):
-                emerTemp = self.trains[trainID].emergency
+                
                 serviceTemp = self.trains[trainID].service
-
-                if self.trains[trainID].velocity == 0 and self.trains[trainID].service == 1:
-                        self.trains[trainID].power = 0
-                else:
-                        self.trains[trainID].power = self.trainController.getPower(trainID)
+                self.trains[trainID].power = self.trainController.getPower(trainID)
                 #check power
-                if self.trains[trainID].power > 120000:
-                        self.trains[trainID].power = 120000
-                elif self.trains[trainID].power < -120000:
-                        self.trains[trainID].power = -120000
+                #if self.trains[trainID].power > 120000:
+                 #       self.trains[trainID].power = 120000
+                #elif self.trains[trainID].power < -120000:
+                #        self.trains[trainID].power = -120000
 
                 self.trains[trainID].externalStatus = self.trainController.getHeadlightStatus(trainID)
                 self.trains[trainID].internalStatus = self.trainController.getCabinLightStatus(trainID)
                 self.trains[trainID].doorStatus = self.trainController.getDoorStatus(trainID)
                 self.trains[trainID].emergency = self.trainController.getEBrake(trainID)
+                
                 self.trains[trainID].service = self.trainController.getServiceBrake(trainID)
                 
                 self.trains[trainID].announcement = self.trainController.getAnnouncement(trainID)
@@ -985,25 +982,31 @@ class Ui_MainWindow(object):
                 if (self.trains[trainID].doorStatus == 1):
                         self.trains[trainID].openDoors()
 
-                if self.trains[trainID].brakeFailure == 1 and self.trains[trainID].service == 1:
-                        self.trains[trainID].brakesDone()
+                #if self.trains[trainID].brakeFailure == 1 and self.trains[trainID].service == 1:
+                        #self.trains[trainID].brakesDone()
 
                 if self.trains[trainID].emergencyPass == 1:
                         pass
-                elif self.trains[trainID].emergency != emerTemp and self.trains[trainID].emergency == 1:
+                elif (self.trains[trainID].service == 1):
+                        self.trains[trainID].serviceBrake()
+                """elif self.trains[trainID].emergency != emerTemp and self.trains[trainID].emergency == 1:
                         self.trains[trainID].eBrakePressed(1)
                 elif (self.trains[trainID].service != serviceTemp) and (self.trains[trainID].service == 0):
                         self.trains[trainID].brakesDone()
-                elif (self.trains[trainID].service != serviceTemp) and (self.trains[trainID].service == 1) and (self.trains[trainID].emergency != 1):
-                        self.trains[trainID].serviceBrake()
+                elif (self.trains[trainID].service != serviceTemp) and (self.trains[trainID].service == 1):
+                        self.trains[trainID].serviceBrake()"""
 
                 self.trains[trainID].calculateVelocity()
 
         ################ track model functions ##################
         def getValuesFromTrackModel(self,trainID):
                 tempAuth = self.trains[trainID].authority
+                
                 self.trains[trainID].authority = int(self.trackModel.getAuth(self.trains[trainID].line,self.trains[trainID].blockNum))
-                self.trains[trainID].commSpeed, self.trains[trainID].speed_limit = self.trackModel.getSpeed(self.trains[trainID].line,self.trains[trainID].blockNum)
+                tempComm, self.trains[trainID].speed_limit = self.trackModel.getSpeed(self.trains[trainID].line,self.trains[trainID].blockNum)
+                if (tempComm != 0):
+                        self.trains[trainID].commSpeed = tempComm
+
                 tempBeacon = self.trackModel.getBeacon(self.trains[trainID].line,self.trains[trainID].blockNum)
                 if(tempBeacon!="None"):
                         self.trains[trainID].beacon=tempBeacon 
@@ -1025,6 +1028,7 @@ class Ui_MainWindow(object):
                         self.trains[trainID].authority = 0
                         self.trainController.serviceBrakeControl()
                 elif int(self.trains[trainID].authority) <= 0 and tempAuth != 0:
+                        self.trains[trainID].serviceBrake()
                         if trainID == 0:
                                 self.trainController.serviceBrakeControl()
                         elif trainID == 1:

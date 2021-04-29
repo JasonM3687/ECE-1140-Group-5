@@ -82,8 +82,8 @@ for i in range(len(GreenBlockOcc)):
         GreenLightStatuses[99] = GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
         GreenAuthChange[99]= GreenBlockOcc[84] or GreenBlockOcc[83] or GreenBlockOcc[82] or GreenBlockOcc[81] or GreenBlockOcc[80] or GreenBlockOcc[79] or GreenBlockOcc[78] or GreenBlockOcc[77] or GreenBlockOcc[76] or GreenFaults[84]
     else:
-        GreenLightStatuses[i] = GreenBlockOcc[i+1]  or GreenFaults[i+1] or GreenBlockOcc[i-1]  or GreenFaults[i-1]
-        GreenAuthChange[i] = GreenBlockOcc[i+1] or GreenFaults[i+1] or GreenBlockOcc[i-1]  or GreenFaults[i-1]
+        GreenLightStatuses[i] = GreenBlockOcc[i+1]  or GreenFaults[i+1] #or GreenBlockOcc[i-1]  or GreenFaults[i-1]
+        GreenAuthChange[i] = GreenBlockOcc[i+1] or GreenFaults[i+1] #or GreenBlockOcc[i-1]  or GreenFaults[i-1]
         #or GreenBlockOcc[i-1]  or GreenFaults[i-1]
 
 
@@ -129,8 +129,8 @@ for i in range(len(RedBlockOcc)):
         RedLightStatuses[65] = RedBlockOcc[52] or RedBlockOcc[51] or RedBlockOcc[64] or RedFaults[52] or RedFaults[51] or RedFaults[64]
         RedLightStatuses[65] = RedBlockOcc[52] or RedBlockOcc[51] or RedBlockOcc[64] or RedFaults[52] or RedFaults[51] or RedFaults[64]
     else:
-        RedLightStatuses[i] = RedBlockOcc[i+1] or RedBlockOcc[i-1] or RedFaults[i+1] or RedFaults[i-1]
-        RedAuthChange[i] = RedBlockOcc[i+1] or RedBlockOcc[i-1] or RedFaults[i+1] or RedFaults[i-1]
+        RedLightStatuses[i] = RedBlockOcc[i+1] or RedFaults[i+1] #or RedBlockOcc[i-1] or RedFaults[i-1]
+        RedAuthChange[i] = RedBlockOcc[i+1] or RedFaults[i+1] #or RedBlockOcc[i-1] or RedFaults[i-1]
 
 
 

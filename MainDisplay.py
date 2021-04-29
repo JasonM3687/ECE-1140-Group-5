@@ -1215,12 +1215,13 @@ class Ui_LoginWindow(object):
     def serviceBrakeControl(self):
         if self.serviceBrake[0] == False:
             self.serviceBrake[0] = True
+            self.calcPower()
         else:
             self.serviceBrake[0] = False
-        while(self.serviceBrake[0] == True and self.speed[0] > 0):
+        """while(self.serviceBrake[0] == True and self.speed[0] > 0):
             self.speed[0] = self.speed[0] - .0001
             self.displayUI.speedInput.setValue(self.speed[0])
-            self.calcPower()
+            self.calcPower()"""
 
     #Train 2
     def serviceBrakeControl1(self):
