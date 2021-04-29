@@ -61,7 +61,7 @@ if(ManualSW == 0):
     GreenSWOut[4]=GreenRoute[76] and GreenRoute[75] and not(GreenBlockOcc[75]) and not(GreenBlockOcc[76]) and not(GreenBlockOcc[100])
     GreenSWOut[5]=GreenRoute[84] and GreenRoute[85] and not(GreenBlockOcc[84]) and not(GreenBlockOcc[85]) and not(GreenBlockOcc[99])
 #crossing logic
-GreenCrossStatus = GreenBlockOcc[17] or GreenBlockOcc[19]
+GreenCrossStatus = GreenBlockOcc[17] or GreenBlockOcc[19] or GreenBlockOcc[18]
 
 #Train light signals for tunnels logic
 for i in range(len(GreenTrainLightSigs)):
@@ -102,7 +102,7 @@ if(ManualSW == 0):
     RedSWOut[6]=RedRoute[52] and RedRoute[51] and not(RedBlockOcc[52]) and not(RedBlockOcc[51]) and not(RedBlockOcc[65])
 
 #crossing logic
-RedCrossStatus = RedBlockOcc[47] or RedBlockOcc[45]
+RedCrossStatus = RedBlockOcc[47] or RedBlockOcc[45] or RedBlockOcc[46]
 
 #Train light signals for tunnels logic
 for i in range(len(RedTrainLightSigs)):
