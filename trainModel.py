@@ -845,7 +845,7 @@ class Ui_MainWindow(object):
                         if self.trains[trainNum].externalStatus == False and self.trains[trainNum].externalStatusTrack == 0:
                                 self.externalLights[x].setText("Off")
                                 self.externalLights[x].setStyleSheet("background-color: rgb(234, 234, 234)")
-                        elif self.trains[trainNum].internalStatus == True or self.trains[trainNum].externalStatusTrack == True:
+                        elif self.trains[trainNum].externalStatus == True: # or self.trains[trainNum].externalStatusTrack == True:
                                 self.externalLights[x].setText("On")
                                 self.externalLights[x].setStyleSheet("background-color: rgb(57, 255, 35)")
 
@@ -879,7 +879,11 @@ class Ui_MainWindow(object):
                         
         def eBrakePressed(self,whichOne):
                 if whichOne == 0:
-                        self.trains[self.currentTrainDisplay].emergencyPass = 1
+                        if self.trains[self.currentTrainDisplay].emergencyPass == 0:
+                                self.trains[self.currentTrainDisplay].emergencyPass = 1
+                        else:
+                               self.trains[self.currentTrainDisplay].emergencyPass = 0
+                               self.trains[self.currentTrainDisplay].brakesDone() 
                 elif whichOne == 1:
                         self.trains[self.currentTrainDisplay].emergency = 1
                 elif whichOne == 2:
@@ -913,6 +917,9 @@ class Ui_MainWindow(object):
         def bFail(self):
                 self.trains[self.currentTrainDisplay].brakeFailure = True
                 self.trains[self.currentTrainDisplay].faults = 3
+
+                #causes brakes not to work
+                
 
                 self.failureOutput.setText("Brake Failure")
                 self.brakeFailure.setStyleSheet("background-color: rgb(255, 0, 0);")
@@ -955,17 +962,31 @@ class Ui_MainWindow(object):
         def getValuesFromTrainController(self,trainID):
                 emerTemp = self.trains[trainID].emergency
                 serviceTemp = self.trains[trainID].service
-                self.trains[trainID].power = self.trainController.getPower(trainID)
+
+                if self.trains[trainID].velocity == 0 and self.trains[trainID].service == 1:
+                        self.trains[trainID].power = 0
+                else:
+                        self.trains[trainID].power = self.trainController.getPower(trainID)
+                #check power
+                if self.trains[trainID].power > 120000:
+                        self.trains[trainID].power = 120000
+                elif self.trains[trainID].power < -120000:
+                        self.trains[trainID].power = -120000
+
                 self.trains[trainID].externalStatus = self.trainController.getHeadlightStatus(trainID)
                 self.trains[trainID].internalStatus = self.trainController.getCabinLightStatus(trainID)
                 self.trains[trainID].doorStatus = self.trainController.getDoorStatus(trainID)
                 self.trains[trainID].emergency = self.trainController.getEBrake(trainID)
                 self.trains[trainID].service = self.trainController.getServiceBrake(trainID)
+                
                 self.trains[trainID].announcement = self.trainController.getAnnouncement(trainID)
                 self.trains[trainID].set_speed = self.trainController.getSetSpeed(trainID)
 
                 if (self.trains[trainID].doorStatus == 1):
                         self.trains[trainID].openDoors()
+
+                if self.trains[trainID].brakeFailure == 1 and self.trains[trainID].service == 1:
+                        self.trains[trainID].brakesDone()
 
                 if self.trains[trainID].emergencyPass == 1:
                         pass
@@ -981,7 +1002,7 @@ class Ui_MainWindow(object):
         ################ track model functions ##################
         def getValuesFromTrackModel(self,trainID):
                 tempAuth = self.trains[trainID].authority
-                self.trains[trainID].authority = self.trackModel.getAuth(self.trains[trainID].line,self.trains[trainID].blockNum)
+                self.trains[trainID].authority = int(self.trackModel.getAuth(self.trains[trainID].line,self.trains[trainID].blockNum))
                 self.trains[trainID].commSpeed, self.trains[trainID].speed_limit = self.trackModel.getSpeed(self.trains[trainID].line,self.trains[trainID].blockNum)
                 tempBeacon = self.trackModel.getBeacon(self.trains[trainID].line,self.trains[trainID].blockNum)
                 if(tempBeacon!="None"):
@@ -1024,6 +1045,29 @@ class Ui_MainWindow(object):
                                 self.trainController.serviceBrakeControl8()
                         elif trainID == 9:
                                 self.trainController.serviceBrakeControl9()
+                elif int(self.trains[trainID].authority) > 0 and int(tempAuth) < 1:
+                        self.trains[trainID].brakesDone()
+                        """print("authority more than zero after zero")
+                        if trainID == 0:
+                                self.trainController.serviceBrakeControl()
+                        elif trainID == 1:
+                                self.trainController.serviceBrakeControl1()
+                        elif trainID == 2:
+                                self.trainController.serviceBrakeControl2()
+                        elif trainID == 3:
+                                self.trainController.serviceBrakeControl3()
+                        elif trainID == 4:
+                                self.trainController.serviceBrakeControl4()
+                        elif trainID == 5:
+                                self.trainController.serviceBrakeControl5()
+                        elif trainID == 6:
+                                self.trainController.serviceBrakeControl6()
+                        elif trainID == 7:
+                                self.trainController.serviceBrakeControl7()
+                        elif trainID == 8:
+                                self.trainController.serviceBrakeControl8()
+                        elif trainID == 9:
+                                self.trainController.serviceBrakeControl9() """
 
         # when a train is dispatch
         def dispatched(self,trainID,temp):

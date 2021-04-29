@@ -92,7 +92,7 @@ class TrainClass():
                         
                         self.acceleration = force / self.mass
 
-                        if self.emergency == 1:
+                        if self.emergency == 1 or self.emergencyPass == 1 or self.emergencyFail == 1:
                                 self.acceleration = self.maxAcceleration
                         elif self.service == 1:
                                 self.acceleration = self.maxAcceleration
@@ -102,7 +102,7 @@ class TrainClass():
                         self.velocity = self.prevVel + (self.timeChange/2)*(self.acceleration + self.prevAcc)
 
                         #makes sure the velocity is never greater than the speed limit
-                        if (self.velocity > self.mphTOmps(self.set_speed) and self.service == False):
+                        if (self.velocity > self.mphTOmps(self.set_speed)) and (self.mphTOmps(self.set_speed) < self.mphTOmps(self.speed_limit)):
                                 self.velocity = self.mphTOmps(self.set_speed)
                                 self.acceleration = 0
                         elif (self.velocity > self.mphTOmps(self.speed_limit)):
@@ -115,10 +115,13 @@ class TrainClass():
                                 self.acceleration = 0
                         
                         #if velocity becomes less than zero, it is essentially zero
-                        if self.velocity < self.minSpeed:
+                        if self.velocity < self.minSpeed and self.emergencyPass == 0:
                                 self.velocity = 0
                                 self.acceleration = 0
                                 self.brakesDone()
+                        elif self.velocity < self.minSpeed:
+                                self.velocity = 0
+                                self.acceleration = 0
 
                         self.prevAcc = self.acceleration
                         self.prevVel = self.velocity
@@ -201,11 +204,15 @@ class TrainClass():
         def setLine(self,line):
                 if line == 0:
                         self.blocks.initialize("red")
+                        self.blockNum = self.blocks.lineRoute[0]
                 elif line == 1:
                         self.blocks.initialize("green")
+                        self.blockNum = self.blocks.lineRoute[0]
                 
         def switches(self):
                 if self.line == 0:
                         self.blocks.redSwitchYard(self.base,self.switchBlock)
+                        
                 elif self.line == 1:
                         self.blocks.greenSwitchYard(self.base,self.switchBlock)
+                        self.blockNum = self.blocks.lineRoute[0]
